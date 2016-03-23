@@ -1,0 +1,73 @@
+package group14.tutoru;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.Button;
+import android.view.View;
+import android.content.Intent;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import java.util.HashMap;
+
+public class MainScreenActivity extends AppCompatActivity implements AsyncResponse {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main_screen);
+
+        //Buttons
+        Button btnLogin = (Button) findViewById(R.id.btnSignin);
+        Button btnRegister = (Button) findViewById(R.id.btnRegister);
+        
+        //Click event
+        if(btnLogin!=null) {
+            btnLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(), "Signing in...", Toast.LENGTH_SHORT).show();
+
+                    EditText text = (EditText) findViewById(R.id.username);
+                    String username = text.getText().toString();
+                    text = (EditText) findViewById(R.id.password);
+                    String password = text.getText().toString();
+                    if(!username.isEmpty() && !password.isEmpty()) {
+                        HashMap postData = new HashMap();
+                        postData.put("username", username);
+                        postData.put("password", password);
+
+                        PostResponseAsyncTask login = new PostResponseAsyncTask(MainScreenActivity.this, postData);
+                        login.execute("http://192.168.1.4/app/login.php");
+                        Intent i = new Intent(getApplicationContext(), SignIn.class);
+                        startActivity(i);
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(), "Missing Field", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+        
+        if (btnRegister != null) {
+            btnRegister.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(MainScreenActivity.this, AddUser.class);
+                    startActivity(i);
+                }
+            });
+        }
+    }
+    @Override
+    public void processFinish(String output){
+        if(output.equals("success")){
+            Toast.makeText(this, "Login Successful", Toast.LENGTH_LONG).show();
+        }
+        else{
+            Toast.makeText(this, "Failed, Incorrect Username or Password", Toast.LENGTH_LONG).show();
+        }
+        Intent i = new Intent(MainScreenActivity.this, SignIn.class);
+        startActivity(i);
+    }
+}
