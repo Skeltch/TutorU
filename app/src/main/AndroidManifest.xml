@@ -32,7 +32,11 @@
             android:name=".AddUser"
             android:label="Add User" />
         <activity android:name=".PostRegistrationActivity" />
-        <activity android:name=".SignIn"></activity>
+        <activity android:name=".SignIn" />
+        <activity
+            android:name=".MainPage"
+            android:label="@string/title_activity_main_page"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

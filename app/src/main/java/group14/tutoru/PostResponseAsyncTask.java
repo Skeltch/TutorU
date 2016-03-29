@@ -10,9 +10,12 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -37,6 +40,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
             new HashMap<String, String>();
     private String loadingMessage = "Loading...";
     private boolean pause;
+    private boolean type;
 
 
     //Constructors
@@ -44,7 +48,9 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
     public PostResponseAsyncTask(AsyncResponse delegate){
         this.delegate = delegate;
         this.context = (Context)delegate;
+
         this.pause = true;
+        this.type = true;
     }
 
     public PostResponseAsyncTask(AsyncResponse delegate,
@@ -53,14 +59,18 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
         this.delegate = delegate;
         this.context = (Context)delegate;
         this.postData = postData;
+
         this.pause = true;
+        this.type = true;
     }
 
     public PostResponseAsyncTask(AsyncResponse delegate, String loadingMessage){
         this.delegate = delegate;
         this.context = (Context)delegate;
         this.loadingMessage = loadingMessage;
+
         this.pause = true;
+        this.type = true;
     }
 
     public PostResponseAsyncTask(AsyncResponse delegate,
@@ -70,7 +80,9 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
         this.context = (Context)delegate;
         this.postData = postData;
         this.loadingMessage = loadingMessage;
+
         this.pause = true;
+        this.type = true;
     }
     //End Constructors
 
@@ -87,15 +99,61 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... urls){
 
-        String result = "";
-        //Change this later for multiple urls
-        for(int i = 0; i <= 0; i++){
+        if(type) {
+            String result = "";
+            //Change this later for multiple urls
+            for (int i = 0; i <= 0; i++) {
 
-            result = invokePost(urls[i], postData);
+                result = invokePost(urls[i], postData);
+            }
+
+            return result;
         }
+        else{
+            InputStream is = null;
+            try{
+                URL url = new URL(urls[0]);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /* milliseconds */);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("GET");
+                conn.setDoInput(true);
 
-        return result;
+                conn.connect();
+                int response = conn.getResponseCode();
+                Log.d("DEBUG_TAG", "The response is: " + response);
+                is = conn.getInputStream();
+
+                //Length 500
+                String contentAsString = readIt(is);
+                return contentAsString;
+            } catch(Exception e){
+                e.printStackTrace();
+                return null;
+            }
+            finally{
+                if(is!=null){
+                    try {
+                        is.close();
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }//doInBackground
+
+    public String readIt(InputStream stream){
+        try {
+            Reader reader = new InputStreamReader(stream, "UTF-8");
+            char[] buffer = new char[500];
+            reader.read(buffer);
+            return new String(buffer);
+        } catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     private String invokePost(String requestURL, HashMap<String,
             String> postDataParams) {
@@ -162,7 +220,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-
+        Log.d("RESULT******", result);
         if(progressDialog.isShowing()){
             progressDialog.dismiss();
         }
@@ -198,6 +256,10 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
     }
 
     public void useLoad(boolean pause){ this.pause = pause;}
+
+    public void GET(boolean type){ this.type = false;}
+
+    public void POST(boolean type){ this.type = true;}
 
     //End Setter & Getter
 }

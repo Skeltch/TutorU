@@ -1,5 +1,6 @@
 package group14.tutoru;
 
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import java.util.HashMap;
 
 public class MainScreenActivity extends AppCompatActivity implements AsyncResponse {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +41,10 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
 
                         PostResponseAsyncTask login = new PostResponseAsyncTask(MainScreenActivity.this, postData);
                         login.execute("http://192.168.1.4/app/login.php");
+                        /*If logging in takes a while we'll move the verificaiton to the signin class
                         Intent i = new Intent(getApplicationContext(), SignIn.class);
                         startActivity(i);
+                        */
                     }
                     else{
                         Toast.makeText(getApplicationContext(), "Missing Field", Toast.LENGTH_SHORT).show();
@@ -63,11 +67,11 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
     public void processFinish(String output){
         if(output.equals("success")){
             Toast.makeText(this, "Login Successful", Toast.LENGTH_LONG).show();
+            Intent i = new Intent(MainScreenActivity.this, SignIn.class);
+            startActivity(i);
         }
         else{
             Toast.makeText(this, "Failed, Incorrect Username or Password", Toast.LENGTH_LONG).show();
         }
-        Intent i = new Intent(MainScreenActivity.this, SignIn.class);
-        startActivity(i);
     }
 }
