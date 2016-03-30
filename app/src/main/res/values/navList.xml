@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array
+        name="navList">
+        <item
+            >Profile</item>
+        <item
+            >Tutors</item>
+        <item
+            >Schedule</item>
+        <item
+            >Log Out</item>
+    </string-array>
+</resources>

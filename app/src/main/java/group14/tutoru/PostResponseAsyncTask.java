@@ -41,6 +41,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
     private String loadingMessage = "Loading...";
     private boolean pause;
     private boolean type;
+    public int len;
 
 
     //Constructors
@@ -51,6 +52,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
         this.pause = true;
         this.type = true;
+        len=500;
     }
 
     public PostResponseAsyncTask(AsyncResponse delegate,
@@ -62,6 +64,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
         this.pause = true;
         this.type = true;
+        len=500;
     }
 
     public PostResponseAsyncTask(AsyncResponse delegate, String loadingMessage){
@@ -71,6 +74,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
         this.pause = true;
         this.type = true;
+        len=500;
     }
 
     public PostResponseAsyncTask(AsyncResponse delegate,
@@ -83,6 +87,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
         this.pause = true;
         this.type = true;
+        len=500;
     }
     //End Constructors
 
@@ -110,7 +115,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
             return result;
         }
         else{
-            InputStream is = null;
+            InputStream istream = null;
             try{
                 URL url = new URL(urls[0]);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -122,19 +127,20 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
                 conn.connect();
                 int response = conn.getResponseCode();
                 Log.d("DEBUG_TAG", "The response is: " + response);
-                is = conn.getInputStream();
+                istream = conn.getInputStream();
 
-                //Length 500
-                String contentAsString = readIt(is);
-                return contentAsString;
+                Reader reader = new InputStreamReader(istream, "UTF-8");
+                char[] buffer = new char[len];
+                reader.read(buffer);
+                return new String(buffer);
             } catch(Exception e){
                 e.printStackTrace();
                 return null;
             }
             finally{
-                if(is!=null){
+                if(istream!=null){
                     try {
-                        is.close();
+                        istream.close();
                     }catch(Exception e){
                         e.printStackTrace();
                     }
@@ -142,18 +148,6 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
             }
         }
     }//doInBackground
-
-    public String readIt(InputStream stream){
-        try {
-            Reader reader = new InputStreamReader(stream, "UTF-8");
-            char[] buffer = new char[500];
-            reader.read(buffer);
-            return new String(buffer);
-        } catch(Exception e){
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     private String invokePost(String requestURL, HashMap<String,
             String> postDataParams) {

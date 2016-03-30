@@ -1,5 +1,6 @@
 package group14.tutoru;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -36,7 +37,6 @@ public class MainPage extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -82,14 +82,15 @@ public class MainPage extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-            PostResponseAsyncTask register = new PostResponseAsyncTask(MainPage.this);
-            register.execute("http://192.168.1.4/app/dataTest.php");
+        if (id == R.id.profile) {
+            Intent i = new Intent(MainPage.this, Profile.class);
+            startActivity(i);
         } else if (id == R.id.nav_gallery) {
-
+            //Intent i = new Intent(MainPage.this, drawerTest.class);
+            //startActivity(i);
         } else if (id == R.id.nav_slideshow) {
-
+            PostResponseAsyncTask login = new PostResponseAsyncTask(MainPage.this);
+            login.execute("http://192.168.1.4/app/tutors.php");
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {

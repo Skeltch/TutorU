@@ -3,6 +3,7 @@ package group14.tutoru;
 import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.view.View;
 import android.content.Intent;
@@ -65,13 +66,20 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
     }
     @Override
     public void processFinish(String output){
+        Log.d("result", output);
         if(output.equals("success")){
             Toast.makeText(this, "Login Successful", Toast.LENGTH_LONG).show();
             Intent i = new Intent(MainScreenActivity.this, SignIn.class);
             startActivity(i);
         }
-        else{
+        else if(output.equals("Login Failed")){
             Toast.makeText(this, "Failed, Incorrect Username or Password", Toast.LENGTH_LONG).show();
         }
+        else{
+            Toast.makeText(this, "Failed could not connect to server",Toast.LENGTH_LONG).show();
+        }
+        //Debugging on phone
+        //Intent i = new Intent(MainScreenActivity.this, SignIn.class);
+        //startActivity(i);
     }
 }
