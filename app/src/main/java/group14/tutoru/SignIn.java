@@ -20,7 +20,7 @@ public class SignIn extends AppCompatActivity {
                 try {
                     super.run();
                     //Temporary
-                    sleep(5000);
+                    sleep(1000);
                 } catch (Exception e) {
 
                 } finally {

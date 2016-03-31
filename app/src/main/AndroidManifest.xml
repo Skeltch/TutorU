@@ -5,12 +5,14 @@
     android:versionName="1.0">
 
     <uses-sdk android:minSdkVersion="8" />
-    <!-- Internet Permissions -->
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <android:uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <grant-uri-permission   android:path="string"
+                            android:pathPattern="string"
+                            android:pathPrefix="string"/>
 
     <application
         android:allowBackup="true"
@@ -37,20 +39,6 @@
             android:name=".MainPage"
             android:label="@string/title_activity_main_page"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".tempListActivity"
-            android:label="@string/title_temp_list"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".tempDetailActivity"
-            android:label="@string/title_temp_detail"
-            android:parentActivityName=".tempListActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="group14.tutoru.tempListActivity" />
-        </activity>
-        <activity android:name=".drawerTest" />
         <activity
             android:name=".Profile"
             android:label="@string/title_activity_profile"

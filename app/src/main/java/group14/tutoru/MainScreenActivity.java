@@ -1,6 +1,7 @@
 package group14.tutoru;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,9 @@ import android.view.View;
 import android.content.Intent;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -67,16 +71,28 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
     @Override
     public void processFinish(String output){
         Log.d("result", output);
-        if(output.equals("success")){
-            Toast.makeText(this, "Login Successful", Toast.LENGTH_LONG).show();
-            Intent i = new Intent(MainScreenActivity.this, SignIn.class);
-            startActivity(i);
+        try {
+            JSONObject login = new JSONObject(output);
+            if(login.optString("result").equals("success")){
+                //Storing user information, possibly used in future
+                SharedPreferences settings = getSharedPreferences("Userinfo",0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("id",login.optString("id").toString());
+                editor.commit();
+
+                Toast.makeText(this, "Login Successful", Toast.LENGTH_LONG).show();
+                Intent i = new Intent(MainScreenActivity.this, SignIn.class);
+                startActivity(i);
+            }
+            else if(login.optString("result").equals("Login Failed")){
+                Toast.makeText(this, "Failed, Incorrect Username or Password", Toast.LENGTH_LONG).show();
+            }
+            else{
+                Toast.makeText(this, "Failed could not connect to server",Toast.LENGTH_LONG).show();
+            }
         }
-        else if(output.equals("Login Failed")){
-            Toast.makeText(this, "Failed, Incorrect Username or Password", Toast.LENGTH_LONG).show();
-        }
-        else{
-            Toast.makeText(this, "Failed could not connect to server",Toast.LENGTH_LONG).show();
+        catch(JSONException e){
+            e.printStackTrace();
         }
         //Debugging on phone
         //Intent i = new Intent(MainScreenActivity.this, SignIn.class);
