@@ -1,8 +1,10 @@
 package group14.tutoru;
 
 import android.content.Intent;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -20,7 +22,7 @@ public class SignIn extends AppCompatActivity {
                 try {
                     super.run();
                     //Temporary
-                    sleep(1000);
+                    //sleep(1000);
                 } catch (Exception e) {
 
                 } finally {
@@ -41,5 +43,14 @@ public class SignIn extends AppCompatActivity {
             }
         };
         LogIn.start();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

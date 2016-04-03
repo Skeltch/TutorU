@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="group14.tutoru.otherProfile"
+    tools:showIn="@layout/activity_other_profile">
+
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical" >
+		
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="@drawable/border"
+			android:layout_marginTop="40dp">
+			<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textStyle="bold"
+			android:layout_marginLeft="10dp"
+			android:layout_marginTop="5dp"
+			android:text="Basic Info"/>
+		</LinearLayout>
+		
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="@dimen/text_margin" 
+				android:textStyle="bold"
+				android:text="Name"/>
+				
+			<TextView
+				android:id="@+id/name"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="@dimen/text_margin"/>
+
+		<LinearLayout
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent"
+			android:background="@drawable/border"
+			android:orientation="vertical">
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="@dimen/text_margin" 
+				android:textStyle="bold"
+				android:text="E-mail"/>
+				
+			<TextView
+				android:id="@+id/email"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="@dimen/text_margin"/>
+		</LinearLayout>
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="@dimen/text_margin" 
+				android:textStyle="bold"
+				android:text="GPA"/>
+				
+			<TextView
+				android:id="@+id/gpa"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="@dimen/text_margin"/>
+			
+		<LinearLayout
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent"
+			android:background="@drawable/border"
+			android:orientation="vertical">
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="@dimen/text_margin" 
+				android:textStyle="bold"
+				android:text="Graduation Year"/>
+				
+			<TextView
+				android:id="@+id/graduation_year"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="@dimen/text_margin"/>
+		</LinearLayout>
+						
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="@dimen/text_margin" 
+				android:textStyle="bold"
+				android:text="Major"/>
+				
+			<TextView
+				android:id="@+id/major"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="@dimen/text_margin"/>
+		
+		<LinearLayout
+			android:layout_height="wrap_content"
+			android:layout_width="match_parent"
+			android:background="@drawable/border"
+			android:orientation="vertical">
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="@dimen/text_margin"
+				android:textStyle="bold"
+				android:text="Classes this person can tutor in:"/>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="@dimen/text_margin"
+				android:id="@+id/classes"
+				android:text="None"/>
+		</LinearLayout>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="@dimen/text_margin"
+				android:textStyle="bold"
+				android:text="Description"/>
+			<TextView
+				android:id="@+id/description"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_margin="@dimen/text_margin"
+				android:text="Enter something about yourself!"/>
+				
+	</LinearLayout>
+
+
+</android.support.v4.widget.NestedScrollView>

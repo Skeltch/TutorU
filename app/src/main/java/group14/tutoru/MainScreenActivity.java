@@ -45,7 +45,7 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
                         postData.put("password", password);
 
                         PostResponseAsyncTask login = new PostResponseAsyncTask(MainScreenActivity.this, postData);
-                        login.execute("http://192.168.1.4/app/login.php");
+                        login.execute("login.php");
                         /*If logging in takes a while we'll move the verificaiton to the signin class
                         Intent i = new Intent(getApplicationContext(), SignIn.class);
                         startActivity(i);
@@ -95,7 +95,7 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
             e.printStackTrace();
         }
         //Debugging on phone
-        //Intent i = new Intent(MainScreenActivity.this, SignIn.class);
-        //startActivity(i);
+        Intent i = new Intent(MainScreenActivity.this, SignIn.class);
+        startActivity(i);
     }
 }

@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">SearchParameters</string>
+    <string name="action_settings">Settings</string>
+
+    <string-array name="Subjects">
+        <item>MATH</item>
+        <item>Pre-Calc</item>
+        <item>Calculus I</item>
+        <item>Calculus II</item>
+        <item>Multivariable Calculus</item>
+        <item>Differential Equations</item>
+        <item>Linear Algebra</item>
+        <item>SCIENCE</item>
+        <item>Chemistry I</item>
+        <item>Chemistry II</item>
+        <item>Biology I</item>
+        <item>Biology II</item>
+        <item>Organic Chemistry I</item>
+        <item>Organic Chemisry II</item>
+        <item>History</item>
+        <item>ENGINEERING</item>
+        <item>Matlab</item>
+        <item>Principles of E.E. I</item>
+        <item>Principles of E.E. II</item>
+        <item>Programming Methodolgy</item>
+        <item>Discrete Mathematics</item>
+        <item>Statics and Mechanics</item>
+        <item>Fluid Dynamics</item>
+        <item>Software Engineering</item>
+    </string-array>
+
+    <string-array name="PriceBands">
+        <item>Less than $10</item>
+        <item>$10-15</item>
+        <item>$15-25</item>
+        <item>$25-35</item>
+        <item>Greater than $35</item>
+    </string-array>
+    <string name="title_activity_advanced_search">Advanced Search</string>
+    <string name="title_activity_perform_search">PerformSearch</string>
+
+
+</resources>

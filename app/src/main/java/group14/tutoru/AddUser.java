@@ -3,8 +3,6 @@ package group14.tutoru;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -52,7 +50,7 @@ public class AddUser extends AppCompatActivity implements AsyncResponse {
                         //Crash the app.
                         PostResponseAsyncTask checkUsername = new PostResponseAsyncTask(AddUser.this, postData);
                         checkUsername.useLoad(false);
-                        checkUsername.execute("http://192.168.1.4/app/checkUsername.php");
+                        checkUsername.execute("checkUsername.php");
                     }
                 }
             }
@@ -66,7 +64,7 @@ public class AddUser extends AppCompatActivity implements AsyncResponse {
                         postData.put("email", email);
                         PostResponseAsyncTask checkEmail = new PostResponseAsyncTask(AddUser.this, postData);
                         checkEmail.useLoad(false);
-                        checkEmail.execute("http://192.168.1.4/app/checkEmail.php");
+                        checkEmail.execute("checkEmail.php");
                     }
                 }
             }
@@ -111,6 +109,7 @@ public class AddUser extends AppCompatActivity implements AsyncResponse {
                         et=true;
                     }
                     //Debugging
+                    /*
                     Log.e("Value", usern);
                     Log.e("Value", password);
                     Log.e("Value", email);
@@ -122,14 +121,14 @@ public class AddUser extends AppCompatActivity implements AsyncResponse {
                     Log.e("Value", dob);
                     Log.e("Value", graduation_year);
                     Log.e("Value", major);
+                    */
 
-                    //Need something to make sure that if email and username are taken they cannot continue
                     //All fields are entered
                     if(et) {
                         //Need to handle text too large
                         //Error handling
-                        if (Float.valueOf(gpa) <= 4.00 && Float.valueOf(gpa) > 0 && gpa.length()<=4 && gpa.length()>0 && usern.length() <= 16
-                                && usern.length() >= 6 && password.length() <= 25 && password.length() >= 6
+                        if (Float.valueOf(gpa) <= 4.00 && Float.valueOf(gpa) > 0 && gpa.length()<=5 && gpa.length()>0 && usern.length() <= 16
+                                && usern.length() >= 6 && password.length() <= 128 && password.length() >= 6
                                 && first_name.length()<=35 && last_name.length()<=35 && major.length()<=255) {
                             Toast.makeText(getApplicationContext(), "Signing up...", Toast.LENGTH_SHORT).show();
 
@@ -146,18 +145,19 @@ public class AddUser extends AppCompatActivity implements AsyncResponse {
                             postData.put("major", major);
 
                             PostResponseAsyncTask register = new PostResponseAsyncTask(AddUser.this, postData);
-                            register.execute("http://192.168.1.4/app/addUser.php");
+                            register.execute("addUser.php");
                         } else if (Float.valueOf(gpa) > 4.00 && Float.valueOf(gpa) <= 0) {
                             Toast.makeText(getApplicationContext(), "Invalid GPA", Toast.LENGTH_SHORT).show();
-                        } else if(gpa.length()>4 || gpa.length()<=0){
+                        } else if(gpa.length()>5 || gpa.length()<=0){
+                            Log.e("length", String.valueOf(gpa.length()));
                             Toast.makeText(getApplicationContext(), "GPA must be to 3 decimal places", Toast.LENGTH_SHORT).show();
                         } else if (usern.length() > 16) {
                             Toast.makeText(getApplicationContext(), "Username too long", Toast.LENGTH_SHORT).show();
                         } else if (usern.length() < 6) {
                             Toast.makeText(getApplicationContext(), "Username too short", Toast.LENGTH_SHORT).show();
                         }
-                        //Maybe create a larger upperbound?
-                        else if (password.length() > 25) {
+
+                        else if (password.length() > 128) {
                             Toast.makeText(getApplicationContext(), "Password too long", Toast.LENGTH_SHORT).show();
                         } else if (password.length() < 6) {
                             Toast.makeText(getApplicationContext(), "Password too short", Toast.LENGTH_SHORT).show();
@@ -167,6 +167,10 @@ public class AddUser extends AppCompatActivity implements AsyncResponse {
                             Toast.makeText(getApplicationContext(), "Last name is too long", Toast.LENGTH_SHORT).show();
                         } else if (major.length() > 255){
                             Toast.makeText(getApplicationContext(), "Major is too long", Toast.LENGTH_SHORT).show();
+                        }
+                        //This should NEVER happen
+                        else{
+                            Toast.makeText(getApplicationContext(),"Something went wrong", Toast.LENGTH_SHORT).show();
                         }
                         //Possibly error check for dob (age<x), graduation year (year<x), maybe choose from majors
                     }
@@ -198,6 +202,6 @@ public class AddUser extends AppCompatActivity implements AsyncResponse {
             Toast.makeText(this, "Failed", Toast.LENGTH_LONG).show();
         }
         //Debugging
-        Log.e("output", output);
+        //Log.e("output", output);
     }
 }

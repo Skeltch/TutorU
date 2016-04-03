@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" 
+	android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--This is just a prototype of the information we will ask for
+    This should be scrollable eventually and we should probably add first name, last name, dob, etc
+    Also create front end max limits in the characters of all the fields.
+    Username should be 16 characters
+    Password should be 25 characters
+    Email should be 255 characters
+    Role should be drop down for tutor, tutee, or both
+    GPA should be of length 4, with 3 decimal places
+    -->
+	<ScrollView
+		android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+			<!--Register-->
+			<TextView android:layout_width = "fill_parent"
+				android:layout_height="wrap_content"
+				android:text="Register for TutorU"
+				android:paddingLeft="10dip"
+				android:paddingRight="10dip"
+				android:paddingTop="10dip"
+				android:textSize="30dip"/>
+				
+			<!-- First Name Label -->
+			<TextView android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="First Name"
+				android:paddingLeft="10dip"
+				android:paddingRight="10dip"
+				android:paddingTop="10dip"
+				android:textSize="17dip"/>
+		 
+			<!-- First Name -->
+			<EditText android:id="@+id/first_name"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="5dip"
+				android:layout_marginBottom="15dip"
+				android:singleLine="true"/>
+				
+			<!-- Last Name Label -->
+			<TextView android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="Last Name"
+				android:paddingLeft="10dip"
+				android:paddingRight="10dip"
+				android:paddingTop="10dip"
+				android:textSize="17dip"/>
+		 
+			<!-- Last Name -->
+			<EditText android:id="@+id/last_name"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="5dip"
+				android:layout_marginBottom="15dip"
+				android:singleLine="true"/>
+
+			<!--Username label-->
+			<TextView android:layout_width = "fill_parent"
+				android:layout_height="wrap_content"
+				android:text="Username"
+				android:paddingLeft="10dip"
+				android:paddingRight="10dip"
+				android:paddingTop="20dip"
+				android:textSize="17dip"/>
+				
+			<!-- Username -->
+			<EditText android:id="@+id/username"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="5dip"
+				android:layout_marginBottom="15dip"
+				android:singleLine="true"/>
+				
+			<!-- Password label -->
+			<TextView android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="Password"
+				android:paddingLeft="10dip"
+				android:paddingRight="10dip"
+				android:paddingTop="10dip"
+				android:textSize="17dip"/>
+		 
+			<!-- Password -->
+			<EditText android:id="@+id/password"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="5dip"
+				android:layout_marginBottom="15dip"
+				android:singleLine="true"
+				android:inputType="textPassword"/>
+				
+			<!-- E-mail label -->
+			<TextView android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="E-mail"
+				android:paddingLeft="10dip"
+				android:paddingRight="10dip"
+				android:paddingTop="10dip"
+				android:textSize="17dip"/>
+		 
+			<!-- Email -->
+
+			<EditText android:id="@+id/email"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="5dip"
+				android:layout_marginBottom="15dip"
+				android:singleLine="true"
+				android:inputType="textEmailAddress"/>
+				
+			<!-- Major label -->
+			<TextView android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="Major"
+				android:paddingLeft="10dip"
+				android:paddingRight="10dip"
+				android:paddingTop="10dip"
+				android:textSize="17dip"/>
+		 
+			<!-- Major -->
+
+			<EditText android:id="@+id/major"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="5dip"
+				android:layout_marginBottom="15dip"
+				android:singleLine="true"/>
+			
+			<!-- GPA Label -->
+			<TextView android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="GPA to 3 decimal places"
+				android:paddingLeft="10dip"
+				android:paddingRight="10dip"
+				android:paddingTop="10dip"
+				android:textSize="17dip"/>
+		 
+			<!-- GPA -->
+			<EditText android:id="@+id/gpa"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="5dip"
+				android:layout_marginBottom="15dip"
+				android:singleLine="true"
+				android:inputType="numberDecimal"/>
+				
+			<!-- DOB Label -->
+			<TextView android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="Date of Birth"
+				android:paddingLeft="10dip"
+				android:paddingRight="10dip"
+				android:paddingTop="10dip"
+				android:textSize="17dip"/>
+			<!-- Use date picker or 3 drop downs for day month year however you will
+			need to concat the result into the result of YYYY-MM-DD -->
+			<!-- DOB -->
+			<EditText android:id="@+id/dob"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="5dip"
+				android:layout_marginBottom="15dip"
+				android:singleLine="true"
+				android:inputType="date"/>
+			<!-- Drop down preferred -->
+			<!-- Graduation Label -->
+			<TextView android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="Graduation Year"
+				android:paddingLeft="10dip"
+				android:paddingRight="10dip"
+				android:paddingTop="10dip"
+				android:textSize="17dip"/>
+		 
+			<!-- Graduation year -->
+			<EditText android:id="@+id/graduation_year"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="5dip"
+				android:layout_marginBottom="15dip"
+				android:singleLine="true"
+				android:inputType="numberDecimal"/>
+				
+			<!-- Make role into a spinner -->
+			<!-- Role label -->
+			<TextView android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="Role"
+				android:paddingLeft="10dip"
+				android:paddingRight="10dip"
+				android:paddingTop="10dip"
+				android:textSize="17dip"/>
+				
+			<!-- Role -->
+			<EditText android:id="@+id/type"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:layout_margin="5dip"
+				android:layout_marginBottom="15dip"
+				android:singleLine="true"/>
+				
+			<!--Make this into a drop down with options, Tutor, Tutee, and both and put it into id type
+			<Spinner
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/type"
+				android:spinnerMode="dropdown" />
+			-->	
+			
+			<!-- Button Register -->
+			<Button android:id="@+id/btnRegister"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="Register"/>
+			</LinearLayout>
+		</ScrollView>
+</LinearLayout>

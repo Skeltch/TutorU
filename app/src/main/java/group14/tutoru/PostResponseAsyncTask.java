@@ -33,12 +33,13 @@ import javax.net.ssl.HttpsURLConnection;
 public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
     private ProgressDialog progressDialog;
-
     private AsyncResponse delegate;
     private Context context;
     private HashMap<String, String> postData =
             new HashMap<String, String>();
     private String loadingMessage = "Loading...";
+
+    public  String ip="http://192.168.1.6/app/";
     private boolean pause;
     private boolean type;
     public int len;
@@ -108,7 +109,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
             String result = "";
             //Change this later for multiple urls
             for (int i = 0; i <= 0; i++) {
-
+                urls[i]=ip+urls[i];
                 result = invokePost(urls[i], postData);
             }
 
@@ -117,6 +118,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
         else{
             InputStream istream = null;
             try{
+                urls[0]=ip+urls[0];
                 URL url = new URL(urls[0]);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000 /* milliseconds */);

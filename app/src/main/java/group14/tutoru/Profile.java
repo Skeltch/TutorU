@@ -1,6 +1,7 @@
 package group14.tutoru;
 
 import android.app.Activity;
+import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -8,11 +9,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,7 +25,18 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
+//THIS ACTIVITY NEEDS A BACK BUTTON
 public class Profile extends AppCompatActivity implements AsyncResponse {
+
+    String uUsername;
+    String uPassword;
+    String uEmail;
+    String uName;
+    String uGpa;
+    String uGradYear;
+    String uMajor;
+    String uClasses;
+    String uDescription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +47,16 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
         SharedPreferences settings = getSharedPreferences("Userinfo",0);
 
 
-        postData.put("id",settings.getString("id","").toString());
+        postData.put("id", settings.getString("id", ""));
         PostResponseAsyncTask profile = new PostResponseAsyncTask(Profile.this,postData);
-        Log.e("id**********",settings.getString("id","").toString());
-        profile.execute("http://192.168.1.4/app/profile.php");
+        Log.e("id**********",settings.getString("id",""));
+        profile.useLoad(false);
+        profile.execute("profile.php");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -49,6 +66,41 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                         android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), 1);
             }
         });
+
+        Button edit = (Button) findViewById(R.id.edit);
+        edit.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent i = new Intent(Profile.this,editProfile.class);
+                i.putExtra("username",uUsername);
+                i.putExtra("password",uPassword);
+                i.putExtra("name",uName);
+                i.putExtra("email",uEmail);
+                i.putExtra("gpa",uGpa);
+                i.putExtra("gradYear",uGradYear);
+                i.putExtra("major",uMajor);
+                i.putExtra("classes",uClasses);
+                i.putExtra("description",uDescription);
+                startActivity(i);
+            }
+        });
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()){
+            case android.R.id.home:
+                Intent upIntent = NavUtils.getParentActivityIntent(this);
+                if(NavUtils.shouldUpRecreateTask(this,upIntent)){
+                    TaskStackBuilder.create(this)
+                        .addNextIntentWithParentStack(upIntent)
+                        .startActivities();
+                }
+                else{
+                    NavUtils.navigateUpTo(this,upIntent);
+                }
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -73,7 +125,9 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
     public void processFinish(String output) {
         Log.d("raw output*********",output);
         try {
-            JSONObject profile = new JSONObject(output);
+            JSONObject profileT = new JSONObject(output);
+            JSONObject profile=profileT.optJSONObject("info");
+            JSONArray tutorProfile=profileT.optJSONArray("tutorInfo");
             TextView username = (TextView)findViewById(R.id.username);
             TextView password = (TextView)findViewById(R.id.password);
             TextView name = (TextView)findViewById(R.id.name);
@@ -81,18 +135,35 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
             TextView gpa = (TextView)findViewById(R.id.gpa);
             TextView gradYear = (TextView)findViewById(R.id.graduation_year);
             TextView major = (TextView)findViewById(R.id.major);
+            TextView classes = (TextView)findViewById(R.id.classes);
+            TextView description = (TextView)findViewById(R.id.description);
 
-            username.setText(profile.optString("username"));
-            password.setText(profile.optString("password"));
-            name.setText(profile.optString("first_name")+" "+profile.optString("last_name"));
-            email.setText(profile.optString("email"));
-            gpa.setText(profile.optString("gpa"));
-            gradYear.setText(profile.optString("graduation_year"));
-            major.setText(profile.optString("major"));
-
-
-
-            //username.setText(username.getText().toString()+profile.optString("username"));
+            //Hide classes you can tutor and something about yourself if tuttee
+            uUsername = profile.optString("username");
+            username.setText(uUsername);
+            uPassword = profile.optString("password");
+            password.setText(uPassword);
+            uName = profile.optString("first_name")+" "+profile.optString("last_name");
+            name.setText(uName);
+            uEmail = profile.optString("email");
+            email.setText(uEmail);
+            uGpa = profile.optString("gpa");
+            gpa.setText(uGpa);
+            uGradYear = profile.optString("graduation_year");
+            gradYear.setText(uGradYear);
+            uMajor = profile.optString("major");
+            major.setText(uMajor);
+            //Implement loop for all classes
+            if(tutorProfile.getJSONObject(0).optString("classes")!="null"){
+                Log.e("classes",tutorProfile.getJSONObject(0).optString("classes"));
+                uClasses = tutorProfile.getJSONObject(0).optString("classes");
+                classes.setText(uClasses);
+            }
+            //Take description only from starting row
+            if(tutorProfile.getJSONObject(1).optString("description")!="null"){
+                uDescription = tutorProfile.getJSONObject(1).optString("description");
+                description.setText(uDescription);
+            }
         }
         catch(JSONException e){
             e.printStackTrace();
