@@ -20,7 +20,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-//Could not find fix for this error however code runs fine. Fix this for the final product
 public class search extends AppCompatActivity implements AsyncResponse, AdapterView.OnItemSelectedListener {
 
 

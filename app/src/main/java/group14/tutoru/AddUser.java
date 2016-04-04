@@ -4,24 +4,32 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 //Loading popup
+import android.widget.Spinner;
 import android.widget.Toast;
 
 //Debugging use
 import android.util.Log;
 
 //For input data
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+//IMPORTANT**** currently date must be added in the mysql fashion, yyyy/mm/dd, however
+//This will be changed to be easier for the user
+public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemSelectedListener {
 
 
-public class AddUser extends AppCompatActivity implements AsyncResponse {
-
-
-    private EditText etUsername, etPassword, etEmail, etType, etGpa,
+    private EditText etUsername, etPassword, etEmail, etGpa,
                     etFirst_name, etLast_name, etDob, etGraduation_year, etMajor;
+    private Spinner etType;
     private String usern, password, email, type, gpa,
                     first_name, last_name, dob, graduation_year, major;
     boolean et;
@@ -75,7 +83,7 @@ public class AddUser extends AppCompatActivity implements AsyncResponse {
                 public void onClick(View view) {
                     //Getting value
                     etPassword = (EditText) findViewById(R.id.password);
-                    etType = (EditText) findViewById(R.id.type);
+                    etType = (Spinner) findViewById(R.id.type);
                     etGpa = (EditText) findViewById(R.id.gpa);
 
                     etFirst_name = (EditText) findViewById(R.id.first_name);
@@ -88,7 +96,7 @@ public class AddUser extends AppCompatActivity implements AsyncResponse {
                     usern = etUsername.getText().toString();
                     password = etPassword.getText().toString();
                     email = etEmail.getText().toString();
-                    type = etType.getText().toString();
+                    //type = etType.getText().toString();
                     gpa = etGpa.getText().toString();
 
                     first_name = etFirst_name.getText().toString();
@@ -101,7 +109,8 @@ public class AddUser extends AppCompatActivity implements AsyncResponse {
                     //If any are null a required field is empty
                     if(usern.isEmpty() || password.isEmpty() || email.isEmpty() || type.isEmpty() || gpa.isEmpty()
                             || first_name.isEmpty() || last_name.isEmpty() || dob.isEmpty()
-                            || graduation_year.isEmpty() || major.isEmpty()){
+                            || graduation_year.isEmpty() || major.isEmpty()
+                            || type.equals("Select Role")){
                         Toast.makeText(getApplicationContext(), "Required Field Missing", Toast.LENGTH_SHORT).show();
                         et=false;
                     }
@@ -127,7 +136,8 @@ public class AddUser extends AppCompatActivity implements AsyncResponse {
                     if(et) {
                         //Need to handle text too large
                         //Error handling
-                        if (Float.valueOf(gpa) <= 4.00 && Float.valueOf(gpa) > 0 && gpa.length()<=5 && gpa.length()>0 && usern.length() <= 16
+                        if (Float.valueOf(gpa) <= 4.00 && Float.valueOf(gpa) > 0
+                                && gpa.length()<=5 && gpa.length()>0 && usern.length() <= 16
                                 && usern.length() >= 6 && password.length() <= 128 && password.length() >= 6
                                 && first_name.length()<=35 && last_name.length()<=35 && major.length()<=255) {
                             Toast.makeText(getApplicationContext(), "Signing up...", Toast.LENGTH_SHORT).show();
@@ -177,7 +187,29 @@ public class AddUser extends AppCompatActivity implements AsyncResponse {
                 }
             });
         }
+
+        Spinner role = (Spinner)findViewById(R.id.type);
+        List<String> list = new ArrayList<String>();
+        list.add("Select Role");
+        list.add("Tutor");
+        list.add("Tutee");
+        list.add("Both");
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        role.setAdapter(dataAdapter);
+        role.setOnItemSelectedListener(this);
+
     }
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
+        type = parent.getItemAtPosition(position).toString();
+    }
+    @Override
+    public void onNothingSelected(AdapterView<?> arg0){
+        type="";
+    }
+
     @Override
     public void processFinish(String output){
         //php file echo's the following phrases

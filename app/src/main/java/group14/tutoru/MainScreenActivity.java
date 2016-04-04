@@ -93,9 +93,10 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
         }
         catch(JSONException e){
             e.printStackTrace();
+            Toast.makeText(this, "Failed, error connecting to server",Toast.LENGTH_LONG).show();
         }
         //Debugging on phone
-        Intent i = new Intent(MainScreenActivity.this, SignIn.class);
-        startActivity(i);
+        //Intent i = new Intent(MainScreenActivity.this, SignIn.class);
+        //startActivity(i);
     }
 }

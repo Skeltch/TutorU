@@ -70,7 +70,7 @@
             android:name=".search"
             android:label="@string/title_activity_search"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateVisible|adjustResize"/>
+            android:windowSoftInputMode="stateVisible"/>
         <activity
             android:name=".PerformSearch"
             android:label="@string/title_activity_perform_search"

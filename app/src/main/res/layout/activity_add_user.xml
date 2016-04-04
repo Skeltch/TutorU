@@ -199,15 +199,19 @@
 				android:paddingRight="10dip"
 				android:paddingTop="10dip"
 				android:textSize="17dip"/>
-				
-			<!-- Role -->
+
+			<Spinner
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/type"/>
+			<!-- Role
 			<EditText android:id="@+id/type"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:layout_margin="5dip"
 				android:layout_marginBottom="15dip"
 				android:singleLine="true"/>
-				
+				-->
 			<!--Make this into a drop down with options, Tutor, Tutee, and both and put it into id type
 			<Spinner
 				android:layout_width="match_parent"

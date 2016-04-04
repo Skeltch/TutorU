@@ -6,81 +6,102 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="group14.tutoru.Profile"
-    tools:showIn="@layout/activity_profile">
+    tools:showIn="@layout/activity_profile"
+	android:paddingLeft="10dp"
+	android:paddingRight="10dp"
+	android:paddingTop="40dp">
 
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:orientation="vertical" >
-		
+		android:orientation="vertical"
+		android:background="@drawable/round_layout">
+
 		<LinearLayout
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="@drawable/border"
-			android:layout_marginTop="40dp">
+			android:layout_height="wrap_content">
 			<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:textStyle="bold"
-			android:layout_marginLeft="10dp"
-			android:layout_marginTop="5dp"
-			android:text="Basic Info"/>
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textStyle="bold"
+				android:layout_marginLeft="10dp"
+				android:layout_marginTop="10dp"
+				android:text="Basic Info"/>
 
 			<Button
 				style="?android:attr/buttonStyleSmall"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
+				android:layout_width="30dp"
+				android:layout_height="20dp"
 				android:text="Edit"
 				android:textStyle="bold"
-				android:id="@+id/edit" 
+				android:id="@+id/edit"
 				android:background="@null"
-				android:layout_marginLeft="255dp"/>
+				android:layout_marginTop="5dp"
+				android:layout_marginLeft="230dp"/>
 		</LinearLayout>
-		
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:background="@drawable/border">
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_margin="@dimen/text_margin"
+				android:textStyle="bold"
+				android:text="Username"/>
+			<TextView
+				android:id="@+id/username"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:layout_margin="@dimen/text_margin"/>
+		</LinearLayout>
+
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_margin="@dimen/text_margin" 
+			android:layout_margin="@dimen/text_margin"
 			android:textStyle="bold"
-			android:text="Username"/>
+			android:text="Password"/>
+
 		<TextView
-			android:id="@+id/username"
+			android:id="@+id/password"
+			android:inputType="textPassword"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_margin="@dimen/text_margin"/>
-			
+
 		<LinearLayout
 			android:layout_height="wrap_content"
 			android:layout_width="match_parent"
 			android:background="@drawable/border"
 			android:orientation="vertical">
-				<TextView
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_margin="@dimen/text_margin"
-					android:textStyle="bold"
-					android:text="Password"/>
-
-				<TextView
-					android:id="@+id/password"
-					android:inputType="textPassword"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_margin="@dimen/text_margin"/>
-		</LinearLayout>
-		
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin" 
+				android:layout_margin="@dimen/text_margin"
 				android:textStyle="bold"
 				android:text="Name"/>
-				
+
 			<TextView
 				android:id="@+id/name"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_margin="@dimen/text_margin"/>
+		</LinearLayout>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="@dimen/text_margin"
+			android:textStyle="bold"
+			android:text="E-mail"/>
+
+		<TextView
+			android:id="@+id/email"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="@dimen/text_margin"/>
 
 		<LinearLayout
 			android:layout_height="wrap_content"
@@ -90,80 +111,66 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin" 
-				android:textStyle="bold"
-				android:text="E-mail"/>
-				
-			<TextView
-				android:id="@+id/email"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin"/>
-		</LinearLayout>
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin" 
+				android:layout_margin="@dimen/text_margin"
 				android:textStyle="bold"
 				android:text="GPA"/>
-				
+
 			<TextView
 				android:id="@+id/gpa"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_margin="@dimen/text_margin"/>
-			
+		</LinearLayout>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="@dimen/text_margin"
+			android:textStyle="bold"
+			android:text="Graduation Year"/>
+
+		<TextView
+			android:id="@+id/graduation_year"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="@dimen/text_margin"/>
 		<LinearLayout
 			android:layout_height="wrap_content"
 			android:layout_width="match_parent"
 			android:background="@drawable/border"
 			android:orientation="vertical">
+
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin" 
-				android:textStyle="bold"
-				android:text="Graduation Year"/>
-				
-			<TextView
-				android:id="@+id/graduation_year"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin"/>
-		</LinearLayout>
-						
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin" 
+				android:layout_margin="@dimen/text_margin"
 				android:textStyle="bold"
 				android:text="Major"/>
-				
+
 			<TextView
 				android:id="@+id/major"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_margin="@dimen/text_margin"/>
-		
+		</LinearLayout>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="@dimen/text_margin"
+			android:textStyle="bold"
+			android:text="Classes you can tutor in"/>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_margin="@dimen/text_margin"
+			android:id="@+id/classes"
+			android:text="None"/>
 		<LinearLayout
 			android:layout_height="wrap_content"
 			android:layout_width="match_parent"
 			android:background="@drawable/border"
 			android:orientation="vertical">
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin"
-				android:textStyle="bold"
-				android:text="Classes you can tutor in"/>
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin"
-				android:id="@+id/classes"
-				android:text="None"/>
-		</LinearLayout>
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -176,7 +183,7 @@
 				android:layout_height="wrap_content"
 				android:layout_margin="@dimen/text_margin"
 				android:text="Enter something about yourself!"/>
-				
+		</LinearLayout>
 	</LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

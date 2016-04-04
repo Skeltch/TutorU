@@ -126,8 +126,10 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
         Log.d("raw output*********",output);
         try {
             JSONObject profileT = new JSONObject(output);
-            JSONObject profile=profileT.optJSONObject("info");
-            JSONArray tutorProfile=profileT.optJSONArray("tutorInfo");
+            JSONObject profile = profileT.optJSONObject("info");
+            JSONArray classesArray = profileT.optJSONArray("classes");
+            JSONObject tutorInfo = profileT.optJSONObject("tutorInfo");
+
             TextView username = (TextView)findViewById(R.id.username);
             TextView password = (TextView)findViewById(R.id.password);
             TextView name = (TextView)findViewById(R.id.name);
@@ -154,14 +156,16 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
             uMajor = profile.optString("major");
             major.setText(uMajor);
             //Implement loop for all classes
-            if(tutorProfile.getJSONObject(0).optString("classes")!="null"){
-                Log.e("classes",tutorProfile.getJSONObject(0).optString("classes"));
-                uClasses = tutorProfile.getJSONObject(0).optString("classes");
-                classes.setText(uClasses);
+            if(classesArray.length()>0) {
+                if (classesArray.getJSONObject(0).optString("classes") != "null") {
+                    Log.e("classes", classesArray.getJSONObject(0).optString("classes"));
+                    uClasses = classesArray.getJSONObject(0).optString("classes");
+                    classes.setText(uClasses);
+                }
             }
-            //Take description only from starting row
-            if(tutorProfile.getJSONObject(1).optString("description")!="null"){
-                uDescription = tutorProfile.getJSONObject(1).optString("description");
+            if(tutorInfo.optString("description")!="null"){
+                Log.e("tutorInfo",tutorInfo.optString("description"));
+                uDescription = tutorInfo.optString("description");
                 description.setText(uDescription);
             }
         }
