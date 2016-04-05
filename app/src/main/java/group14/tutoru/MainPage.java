@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -124,18 +125,42 @@ public class MainPage extends AppCompatActivity
     public void processFinish(String output){
         Log.e("output", output);
         try {
-            JSONObject featured = new JSONObject(output);
+            JSONObject profileT = new JSONObject(output);
+            JSONObject profile = profileT.optJSONObject("info");
+            JSONArray classesArray = profileT.optJSONArray("classes");
+            JSONObject tutorInfo = profileT.optJSONObject("tutorInfo");
             TextView featuredTutor = (TextView)findViewById(R.id.tutorInfo);
-            featuredId=Integer.parseInt(featured.optString("id"));
-            featuredName=featured.optString("first_name" + " " + "last_name");
-            String temp="Name: "+featured.optString("first_name")+" "+featured.optString("last_name")
-                    +"\nGpa: "+featured.optString("gpa")
-                    +"\nMajor: "+featured.optString("major")
-                    +"\nGraduation Year: "+featured.optString("graduation_year")
-                    +"\nClasses: "+featured.optString("classes")
-                    +"\nDescription: "+featured.optString("description");
+            featuredId=Integer.parseInt(profile.optString("id"));
+            featuredName=profile.optString("first_name" + " " + "last_name");
+            String info="Name: "+profile.optString("first_name")+" "+profile.optString("last_name")
+                    +"\nGpa: "+profile.optString("gpa")
+                    +"\nMajor: "+profile.optString("major")
+                    +"\nGraduation Year: "+profile.optString("graduation_year");
+
+            //Initiating classes
+            String classString="\nClasses: ";
+            //No classes, temporary text instead
+            if(classesArray.length()==0){
+                classString+="None";
+            }
+            //For one, don't add comma
+            else{
+                classString+=classesArray.getJSONObject(0).optString("classes");
+            }
+            for(int i=1; i<classesArray.length(); i++) {
+                classString+=", " + classesArray.getJSONObject(i).optString("classes");
+            }
+            //String for reviews, price, etc
+            String temp=tutorInfo.optString("description");
+            String description = "\nDescription: ";
+            if(temp.isEmpty()){
+                description+="None";
+            }
+            else{
+                description+=temp;
+            }
+            temp = info + classString + description;
             featuredTutor.setText(temp);
-            //Add rating and price, also add
         }
         catch(JSONException e){
             e.printStackTrace();

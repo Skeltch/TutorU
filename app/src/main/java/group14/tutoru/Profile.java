@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -35,7 +36,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
     String uGpa;
     String uGradYear;
     String uMajor;
-    String uClasses;
+    String[] uClasses;
     String uDescription;
 
     @Override
@@ -45,7 +46,8 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
 
         HashMap postData = new HashMap();
         SharedPreferences settings = getSharedPreferences("Userinfo",0);
-
+        //Max class length?
+        uClasses = new String[20];
 
         postData.put("id", settings.getString("id", ""));
         PostResponseAsyncTask profile = new PostResponseAsyncTask(Profile.this,postData);
@@ -79,6 +81,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                 i.putExtra("gpa",uGpa);
                 i.putExtra("gradYear",uGradYear);
                 i.putExtra("major",uMajor);
+                //uClasses Array
                 i.putExtra("classes",uClasses);
                 i.putExtra("description",uDescription);
                 startActivity(i);
@@ -137,10 +140,10 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
             TextView gpa = (TextView)findViewById(R.id.gpa);
             TextView gradYear = (TextView)findViewById(R.id.graduation_year);
             TextView major = (TextView)findViewById(R.id.major);
-            TextView classes = (TextView)findViewById(R.id.classes);
+            //TextView classes = (TextView)findViewById(R.id.classes);
             TextView description = (TextView)findViewById(R.id.description);
 
-            //Hide classes you can tutor and something about yourself if tuttee
+            //Hide classes you can tutor and something about yourself if tutee
             uUsername = profile.optString("username");
             username.setText(uUsername);
             uPassword = profile.optString("password");
@@ -155,7 +158,13 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
             gradYear.setText(uGradYear);
             uMajor = profile.optString("major");
             major.setText(uMajor);
-            //Implement loop for all classes
+
+            LinearLayout classLayout = (LinearLayout)findViewById(R.id.classLayout);
+            LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams
+                    (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            lparams.setMargins(48,0,0,10);
+            //For the first class, must overwrite the current textview
+            /*
             if(classesArray.length()>0) {
                 if (classesArray.getJSONObject(0).optString("classes") != "null") {
                     Log.e("classes", classesArray.getJSONObject(0).optString("classes"));
@@ -163,6 +172,21 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                     classes.setText(uClasses);
                 }
             }
+            */
+            if(classesArray.length()==0){
+                TextView newClass = new TextView(this);
+                newClass.setText("None");
+                newClass.setLayoutParams(lparams);
+                classLayout.addView(newClass);
+            }
+            for(int i=0; i<classesArray.length(); i++){
+                TextView newClass = new TextView(this);
+                uClasses[i]=classesArray.getJSONObject(i).optString("classes");
+                newClass.setText(uClasses[i]);
+                newClass.setLayoutParams(lparams);
+                classLayout.addView(newClass);
+            }
+
             if(tutorInfo.optString("description")!="null"){
                 Log.e("tutorInfo",tutorInfo.optString("description"));
                 uDescription = tutorInfo.optString("description");

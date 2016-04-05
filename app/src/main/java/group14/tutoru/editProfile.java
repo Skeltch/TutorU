@@ -32,7 +32,6 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         setTitle("Profile");
 
-
         String username = getIntent().getStringExtra("username");
         final String password = getIntent().getStringExtra("password");
         final String email = getIntent().getStringExtra("email");
@@ -40,7 +39,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
         final String gpa = getIntent().getStringExtra("gpa");
         final String gradYear = getIntent().getStringExtra("gradYear");
         final String major = getIntent().getStringExtra("major");
-        final String classes = getIntent().getStringExtra("classes");
+        final String[] classes = getIntent().getStringArrayExtra("classes");
         final String description = getIntent().getStringExtra("description");
 
         final TextView uUsername = (TextView)findViewById(R.id.username);
@@ -64,7 +63,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
         uGpa.setText(gpa);
         uGradYear.setText(gradYear);
         uMajor.setText(major);
-        uClasses.setText(classes);
+        //uClasses.setText(classes);
         uDescription.setText(description);
 
 
@@ -109,7 +108,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                     }
                     //Classes should be entered on a new line and come with suggestions like the search
                     //Implement multiple classes
-                    if (classes != tClasses) {
+                    if (classes[0] != tClasses) {
                         postData.put("classes", tClasses);
                     }
                     if (description != tDescription) {
@@ -131,4 +130,6 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
     public void processFinish(String output){
         Log.e("MYSQL", output);
     }
+
+
 }

@@ -71,6 +71,7 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
             JSONObject profile = profileT.optJSONObject("info");
             JSONArray classesArray = profileT.optJSONArray("classes");
             JSONObject tutorInfo = profileT.optJSONObject("tutorInfo");
+
             TextView name = (TextView)findViewById(R.id.name);
             TextView email = (TextView)findViewById(R.id.email);
             TextView gpa = (TextView)findViewById(R.id.gpa);
@@ -102,13 +103,20 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
             gradYear.setText(uGradYear);
             uMajor = profile.optString("major");
             major.setText(uMajor);
-            if(classesArray.length()>0) {
-                if (classesArray.getJSONObject(0).optString("classes") != "null") {
-                    Log.e("classes", classesArray.getJSONObject(0).optString("classes"));
-                    uClasses = classesArray.getJSONObject(0).optString("classes");
-                    classes.setText(uClasses);
+
+            uClasses="";
+            if(classesArray.length()==0){
+                uClasses = "None";
+            }
+            for(int i=0; i<classesArray.length(); i++){
+                uClasses += classesArray.getJSONObject(i).optString("classes");
+                if(i!=classesArray.length()-1){
+                    uClasses+='\n';
                 }
             }
+            classes.setText(uClasses);
+
+            description.setText("None");
             if(tutorInfo.optString("description")!="null"){
                 Log.e("tutorInfo",tutorInfo.optString("description"));
                 uDescription = tutorInfo.optString("description");

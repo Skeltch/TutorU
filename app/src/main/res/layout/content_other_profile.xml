@@ -12,34 +12,36 @@
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:orientation="vertical" >
-		
+		android:orientation="vertical"
+		android:background="@drawable/round_layout"
+		android:layout_marginTop="0dp">
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:background="@drawable/border"
-			android:layout_marginTop="40dp">
+			android:background="@drawable/border">
 			<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textStyle="bold"
-			android:layout_marginLeft="10dp"
-			android:layout_marginTop="5dp"
+			android:layout_margin="10dp"
 			android:text="Basic Info"/>
 		</LinearLayout>
 		
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin" 
 				android:textStyle="bold"
-				android:text="Name"/>
+				android:text="Name"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="5dp"/>
 				
 			<TextView
 				android:id="@+id/name"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin"/>
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="10dp"/>
 
 		<LinearLayout
 			android:layout_height="wrap_content"
@@ -49,7 +51,9 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin" 
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="5dp"
 				android:textStyle="bold"
 				android:text="E-mail"/>
 				
@@ -57,13 +61,16 @@
 				android:id="@+id/email"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin"/>
+				android:layout_marginLeft="16dp"
+                android:layout_marginBottom="10dp"/>
 		</LinearLayout>
 
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin" 
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="5dp"
 				android:textStyle="bold"
 				android:text="GPA"/>
 				
@@ -71,7 +78,8 @@
 				android:id="@+id/gpa"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin"/>
+				android:layout_marginLeft="@dimen/text_margin"
+                android:layout_marginBottom="10dp"/>
 			
 		<LinearLayout
 			android:layout_height="wrap_content"
@@ -81,7 +89,9 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin" 
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="5dp"
 				android:textStyle="bold"
 				android:text="Graduation Year"/>
 				
@@ -89,13 +99,16 @@
 				android:id="@+id/graduation_year"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin"/>
+				android:layout_marginLeft="16dp"
+                android:layout_marginBottom="10dp"/>
 		</LinearLayout>
 						
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin" 
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="5dp"
 				android:textStyle="bold"
 				android:text="Major"/>
 				
@@ -103,7 +116,8 @@
 				android:id="@+id/major"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin"/>
+				android:layout_marginLeft="@dimen/text_margin"
+                android:layout_marginBottom="10dp"/>
 		
 		<LinearLayout
 			android:layout_height="wrap_content"
@@ -113,20 +127,25 @@
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="5dp"
 				android:textStyle="bold"
 				android:text="Classes this person can tutor in:"/>
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin"
+				android:layout_marginLeft="@dimen/text_margin"
+                android:layout_marginBottom="10dp"
 				android:id="@+id/classes"
 				android:text="None"/>
 		</LinearLayout>
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_margin="@dimen/text_margin"
+				android:layout_marginTop="10dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="5dp"
 				android:textStyle="bold"
 				android:text="Description"/>
 			<TextView
