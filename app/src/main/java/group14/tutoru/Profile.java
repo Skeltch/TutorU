@@ -5,6 +5,7 @@ import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -33,6 +34,8 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
     String uPassword;
     String uEmail;
     String uName;
+    //String uFirstName;
+    //String uLastName;
     String uGpa;
     String uGradYear;
     String uMajor;
@@ -46,8 +49,8 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
 
         HashMap postData = new HashMap();
         SharedPreferences settings = getSharedPreferences("Userinfo",0);
-        //Max class length?
-        uClasses = new String[20];
+        //Max class length? 20?
+        //uClasses = new String[20];
 
         postData.put("id", settings.getString("id", ""));
         PostResponseAsyncTask profile = new PostResponseAsyncTask(Profile.this,postData);
@@ -61,32 +64,38 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivityForResult(new Intent(Intent.ACTION_PICK,
-                        android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), 1);
-            }
-        });
+        if(fab!=null) {
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivityForResult(new Intent(Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), 1);
+                }
+            });
+        }
 
         Button edit = (Button) findViewById(R.id.edit);
-        edit.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                Intent i = new Intent(Profile.this,editProfile.class);
-                i.putExtra("username",uUsername);
-                i.putExtra("password",uPassword);
-                i.putExtra("name",uName);
-                i.putExtra("email",uEmail);
-                i.putExtra("gpa",uGpa);
-                i.putExtra("gradYear",uGradYear);
-                i.putExtra("major",uMajor);
-                //uClasses Array
-                i.putExtra("classes",uClasses);
-                i.putExtra("description",uDescription);
-                startActivity(i);
-            }
-        });
+        if(edit!=null) {
+            edit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(Profile.this, editProfile.class);
+                    i.putExtra("username", uUsername);
+                    i.putExtra("password", uPassword);
+                    i.putExtra("name", uName);
+                    //i.putExtra("first_name",uFirstName);
+                    //i.putExtra("last_name",uLastName);
+                    i.putExtra("email", uEmail);
+                    i.putExtra("gpa", uGpa);
+                    i.putExtra("gradYear", uGradYear);
+                    i.putExtra("major", uMajor);
+                    //uClasses Array
+                    i.putExtra("classes", uClasses);
+                    i.putExtra("description", uDescription);
+                    startActivity(i);
+                }
+            });
+        }
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
@@ -105,10 +114,12 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
         }
         return super.onOptionsItemSelected(item);
     }
+    //Next, work on profile picture, replace button with invisible button on picture, cropping, scaling, etc
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
         Bitmap bitmap = null;
+
         if(requestCode == 1 && resultCode == Activity.RESULT_OK){
             Uri selectedImage = data.getData();
             try {
@@ -121,12 +132,15 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                 Log.e("Error", "Exception in onActivityResult : " + e.getMessage());
             }
         }
+        //Temp fix
         ImageView img = (ImageView) findViewById(R.id.profile);
-        img.setImageBitmap(bitmap);
+        //BitmapDrawable bmDrawable = new BitmapDrawable(getResources(), bitmap);
+        int nh = (int) (bitmap.getHeight() * (512.0/bitmap.getWidth()));
+        Bitmap scaled = Bitmap.createScaledBitmap(bitmap,512,nh,true);
+        img.setImageBitmap(scaled);
     }
     @Override
     public void processFinish(String output) {
-        Log.d("raw output*********",output);
         try {
             JSONObject profileT = new JSONObject(output);
             JSONObject profile = profileT.optJSONObject("info");
@@ -149,6 +163,8 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
             uPassword = profile.optString("password");
             password.setText(uPassword);
             uName = profile.optString("first_name")+" "+profile.optString("last_name");
+            //uFirstName = profile.optString("first_name");
+            //uLastName = profile.optString("last_name");
             name.setText(uName);
             uEmail = profile.optString("email");
             email.setText(uEmail);
@@ -173,6 +189,12 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                 }
             }
             */
+            if(classesArray.length()!=0) {
+                uClasses = new String[classesArray.length()];
+            }
+            else{
+                uClasses= new String[1];
+            }
             if(classesArray.length()==0){
                 TextView newClass = new TextView(this);
                 newClass.setText("None");
@@ -191,6 +213,9 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                 Log.e("tutorInfo",tutorInfo.optString("description"));
                 uDescription = tutorInfo.optString("description");
                 description.setText(uDescription);
+            }
+            else{
+                description.setText("Enter something about yourself!");
             }
         }
         catch(JSONException e){

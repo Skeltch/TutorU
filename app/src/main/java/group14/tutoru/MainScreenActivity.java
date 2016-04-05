@@ -77,8 +77,9 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
                 //Storing user information, possibly used in future
                 SharedPreferences settings = getSharedPreferences("Userinfo",0);
                 SharedPreferences.Editor editor = settings.edit();
-                //editor.putString("id",login.optString("id").toString());
-                editor.putString("id","1");
+                editor.putString("id",login.optString("id").toString());
+                //Debugging
+                //editor.putString("id","1");
                 editor.commit();
 
                 Toast.makeText(this, "Login Successful", Toast.LENGTH_LONG).show();

@@ -135,6 +135,7 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                     //All fields are entered
                     if(et) {
                         //Need to handle text too large
+                        //Need more validation, check email and name are valid, etc.
                         //Error handling
                         if (Float.valueOf(gpa) <= 4.00 && Float.valueOf(gpa) > 0
                                 && gpa.length()<=5 && gpa.length()>0 && usern.length() <= 16

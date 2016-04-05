@@ -36,7 +36,7 @@
 				android:paddingLeft="10dip"
 				android:paddingRight="10dip"
 				android:paddingTop="10dip"
-				android:textSize="17dip"/>
+				android:textSize="17dip" />
 		 
 			<!-- First Name -->
 			<EditText android:id="@+id/first_name"
@@ -44,7 +44,8 @@
 				android:layout_height="wrap_content"
 				android:layout_margin="5dip"
 				android:layout_marginBottom="15dip"
-				android:singleLine="true"/>
+				android:singleLine="true"
+				android:inputType="textCapWords"/>
 				
 			<!-- Last Name Label -->
 			<TextView android:layout_width="fill_parent"
@@ -61,7 +62,8 @@
 				android:layout_height="wrap_content"
 				android:layout_margin="5dip"
 				android:layout_marginBottom="15dip"
-				android:singleLine="true"/>
+				android:singleLine="true"
+				android:inputType="textCapWords"/>
 
 			<!--Username label-->
 			<TextView android:layout_width = "fill_parent"
