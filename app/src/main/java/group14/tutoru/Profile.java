@@ -193,7 +193,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                 uClasses = new String[classesArray.length()];
             }
             else{
-                uClasses= new String[1];
+                uClasses= new String[0];
             }
             if(classesArray.length()==0){
                 TextView newClass = new TextView(this);

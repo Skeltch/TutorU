@@ -24,11 +24,14 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class editProfile extends AppCompatActivity implements AsyncResponse{
 
+    private int classViewLength;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +44,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
 
         //Use bundle instead?
         String username = getIntent().getStringExtra("username");
+        //These can be final because the reference to the object is not changed
         final String password = getIntent().getStringExtra("password");
         final String email = getIntent().getStringExtra("email");
         final String name = getIntent().getStringExtra("name");
@@ -52,7 +56,8 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
         final String[] classes = getIntent().getStringArrayExtra("classes");
         final String description = getIntent().getStringExtra("description");
 
-        final int classViewLength=classes.length;
+        //This however cannot because the length needs to change based on the user input
+        classViewLength=classes.length;
 
         final TextView uUsername = (TextView)findViewById(R.id.username);
         final EditText uPassword = (EditText)findViewById(R.id.password);
@@ -84,32 +89,81 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
         //uClasses.setText(classes);
         uDescription.setText(description);
 
-        LinearLayout classLayout = (LinearLayout)findViewById(R.id.classLayout);
-        LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams
+        final LinearLayout classLayout = (LinearLayout)findViewById(R.id.classLayout);
+        final LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams
                 (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
         lparams.setMargins(48, 0, 0, 10);
 
-        final AutoCompleteTextView[] classesArray = new AutoCompleteTextView[classViewLength];
+        //final AutoCompleteTextView[] classesArray = new AutoCompleteTextView[classViewLength];
+        final List<AutoCompleteTextView> classesList = new ArrayList(classViewLength+1);
+        Log.e("classViewLength",Integer.toString(classViewLength));
+        Log.e("classesListLength",Integer.toString(classesList.size()));
+        final AutoCompleteTextView[] classesArray = classesList.toArray(new AutoCompleteTextView[classesList.size()+1]);
+        final ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.Subjects, android.R.layout.select_dialog_item);
+
+        for(int i=0; i<classViewLength; i++){
+            Log.e("Message","Should not be called");
+            classesArray[i] = new AutoCompleteTextView(this);
+            classesArray[i].setText(classes[i]);
+            classesArray[i].setLayoutParams(lparams);
+            classesArray[i].setId(i);
+            classLayout.addView(classesArray[i]);
+            classesArray[i].setThreshold(1);
+            classesArray[i].setAdapter(adapter);
+            //Temp
+            classesList.add(classesArray[i]);
+        }
         if(classViewLength==0){
             classesArray[0] = new AutoCompleteTextView(this);
             classesArray[0].setLayoutParams(lparams);
             classesArray[0].setId(0);
             classesArray[0].setHint("None");
-            classLayout.addView(classesArray[0]);
-        }
-        for(int i=0; i<classViewLength; i++){
-            classesArray[i] = new AutoCompleteTextView(this);
-            classesArray[i].setText(classes[i]);
-            classesArray[i].setLayoutParams(lparams);
-            classesArray[i].setId(0);
-            classLayout.addView(classesArray[i]);
-        }
 
-        ArrayAdapter[] adapterArray = new ArrayAdapter[classViewLength];
+            classLayout.addView(classesArray[0]);
+            classesArray[0].setThreshold(1);
+            classesArray[0].setAdapter(adapter);
+            //Temp
+            classesList.add(classesArray[0]);
+            classViewLength++;
+        }
+        Log.e("Message","Should be called");
+        Log.e("message*","views created");
+        //ArrayAdapter[] adapterArray = new ArrayAdapter[classViewLength];
+        //ArrayList<ArrayAdapter> adapterList = new ArrayList(classViewLength);
+        //ArrayAdapter[] adapterArray = adapterList.toArray(new ArrayAdapter[adapterList.size()]);
+
+        //Maybe combine this with for loop above
+        /*
         for(int i=0; i<classViewLength; i++) {
-            adapterArray[i] = ArrayAdapter.createFromResource(this, R.array.Subjects, android.R.layout.select_dialog_item);
+            //adapterArray[i] = ArrayAdapter.createFromResource(this, R.array.Subjects, android.R.layout.select_dialog_item);
             classesArray[i].setThreshold(1);
-            classesArray[i].setAdapter(adapterArray[i]);
+            //classesArray[i].setAdapter(adapterArray[i]);
+            classesArray[i].setAdapter(adapter);
+        }
+        */
+        Button addClasses = (Button)findViewById(R.id.addClass);
+        if(addClasses!=null){
+            addClasses.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view){
+                    if(classViewLength>=20){
+                        //Message box saying max classes
+                    }
+                    else{
+                        Log.e("classViewLength", Integer.toString(classViewLength));
+                        Log.e("before", Integer.toString(classesList.size()));
+                        classesList.add(new AutoCompleteTextView(editProfile.this));
+                        Log.e("add","true");
+                        Log.e("classesList", Integer.toString(classesList.size()));
+                        classesList.get(classViewLength).setLayoutParams(lparams);
+                        classLayout.addView(classesList.get(classViewLength));
+                        classesList.get(classViewLength).setThreshold(1);
+                        classesList.get(classViewLength).setAdapter(adapter);
+                        classViewLength++;
+                        Log.e("success","success");
+                    }
+                }
+            });
         }
 
         Button submitEdit = (Button) findViewById(R.id.submitEdit);
@@ -122,8 +176,9 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                     String[] subjects = getResources().getStringArray(R.array.Subjects);
                     String[] tClasses = new String[classViewLength];
                     //uClasses.getText().toString();
+                    AutoCompleteTextView[] newClassesArray = classesList.toArray(new AutoCompleteTextView[classesList.size()]);
                     for (int i = 0; i < classViewLength; i++) {
-                        tClasses[i] = classesArray[i].getText().toString();
+                        tClasses[i] = newClassesArray[i].getText().toString();
                     }
                     boolean validClasses = true;
                     for (int i = 0; i < classViewLength; i++) {
@@ -166,6 +221,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                         //Implement multiple classes
                         //Right now the system is delete all rows and insert new ones. Need new version
                         JSONObject classJson = new JSONObject();
+                        Log.e("Insertion",Integer.toString(classViewLength));
                         for (int i = 0; i < classViewLength; i++) {
                             //postData.put("classes", tClasses);
                             try {
@@ -176,7 +232,8 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                                 e.printStackTrace();
                             }
                         }
-                        postData.put("JSON", classJson.toString());
+                        Log.e("JSON", classJson.toString());
+                        postData.put("classes", classJson.toString());
                         /*
                         if (classes[0] != tClasses) {
                             postData.put("classes", tClasses);
@@ -199,7 +256,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
     }
     @Override
     public void processFinish(String output){
-        //Log.e("MYSQL",output);
+        Log.e("MYSQL",output);
     }
 
 
