@@ -128,7 +128,7 @@ public class MainPage extends AppCompatActivity
             JSONObject profileT = new JSONObject(output);
             JSONObject profile = profileT.optJSONObject("info");
             JSONArray classesArray = profileT.optJSONArray("classes");
-            JSONObject tutorInfo = profileT.optJSONObject("tutorInfo");
+            //JSONObject tutorInfo = profileT.optJSONObject("tutorInfo");
             TextView featuredTutor = (TextView)findViewById(R.id.tutorInfo);
             featuredId=Integer.parseInt(profile.optString("id"));
             featuredName=profile.optString("first_name" + " " + "last_name");
@@ -151,7 +151,7 @@ public class MainPage extends AppCompatActivity
                 classString+=", " + classesArray.getJSONObject(i).optString("classes");
             }
             //String for reviews, price, etc
-            String temp=tutorInfo.optString("description");
+            String temp=profile.optString("description");
             String description = "\nDescription: ";
             if(temp.isEmpty()){
                 description+="None";

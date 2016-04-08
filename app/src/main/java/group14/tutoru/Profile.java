@@ -1,18 +1,25 @@
 package group14.tutoru;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.TaskStackBuilder;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +27,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,11 +76,17 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startActivityForResult(new Intent(Intent.ACTION_PICK,
-                            android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), 1);
+                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
+                        if(!Settings.System.canWrite(Profile.this)){
+                            ActivityCompat.requestPermissions(Profile.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE}, 5);
+                        }
+                    }
                 }
             });
         }
+
+
 
         Button edit = (Button) findViewById(R.id.edit);
         if(edit!=null) {
@@ -98,6 +112,22 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
         }
     }
     @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
+        switch(requestCode){
+            case 5: {
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Log.e("Permission", "Granted");
+                    startActivityForResult(new Intent(Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), 1);
+                }
+                else{
+                    Log.e("Permission", "Denied");
+                }
+                return;
+            }
+        }
+    }
+    @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()){
             case android.R.id.home:
@@ -118,14 +148,46 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-        Bitmap bitmap = null;
+        /*
+        Uri picUri = data.getData();
+        try{
+            if(requestCode == 1 && resultCode == Activity.RESULT_OK) {
+                Intent cropIntent = new Intent("com.android.camera.action.CROP");
+                cropIntent.setDataAndType(picUri, "image/*");
+                cropIntent.putExtra("crop", "true");
+                cropIntent.putExtra("aspectX", "16");
+                cropIntent.putExtra("aspectY", "9");
+                cropIntent.putExtra("outputX", 256*16);
+                cropIntent.putExtra("outputY", 256*9);
+                cropIntent.putExtra("return-data", true);
+                startActivityForResult(cropIntent, 2);
+            }
+            else if(requestCode == 2 && resultCode == Activity.RESULT_OK){
+                Bundle extras = data.getExtras();
+                Bitmap bitmap = null;
+                bitmap = extras.getParcelable("data");
+                ImageView pic = (ImageView)findViewById(R.id.profile);
+                pic.setImageBitmap(bitmap);
+            }
+        } catch(ActivityNotFoundException e){
+            String errorMessage = "Your device doesn't support the crop action!";
+            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        }
+        */
 
+        Bitmap bitmap = null;
+        Bitmap scaled = null;
         if(requestCode == 1 && resultCode == Activity.RESULT_OK){
             Uri selectedImage = data.getData();
             try {
                 switch (requestCode) {
                     case 1:
                         bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                        int nh = (int) (bitmap.getHeight() * (512.0/bitmap.getWidth()));
+                        scaled = Bitmap.createScaledBitmap(bitmap,512,nh,true);
+                        DisplayMetrics display = getResources().getDisplayMetrics();
+                        //Stretches
+                        //scaled = Bitmap.createScaledBitmap(bitmap, Math.round(display.widthPixels/display.density), 200, true);
                 }
             }
             catch(Exception e){
@@ -135,9 +197,8 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
         //Temp fix
         ImageView img = (ImageView) findViewById(R.id.profile);
         //BitmapDrawable bmDrawable = new BitmapDrawable(getResources(), bitmap);
-        int nh = (int) (bitmap.getHeight() * (512.0/bitmap.getWidth()));
-        Bitmap scaled = Bitmap.createScaledBitmap(bitmap,512,nh,true);
         img.setImageBitmap(scaled);
+
     }
     @Override
     public void processFinish(String output) {
@@ -145,7 +206,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
             JSONObject profileT = new JSONObject(output);
             JSONObject profile = profileT.optJSONObject("info");
             JSONArray classesArray = profileT.optJSONArray("classes");
-            JSONObject tutorInfo = profileT.optJSONObject("tutorInfo");
+            //JSONObject tutorInfo = profileT.optJSONObject("tutorInfo");
 
             TextView username = (TextView)findViewById(R.id.username);
             TextView password = (TextView)findViewById(R.id.password);
@@ -209,9 +270,9 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                 classLayout.addView(newClass);
             }
 
-            if(tutorInfo.optString("description")!="null"){
-                Log.e("tutorInfo",tutorInfo.optString("description"));
-                uDescription = tutorInfo.optString("description");
+            if(profile.optString("description")!="null"){
+                Log.e("tutorInfo",profile.optString("description"));
+                uDescription = profile.optString("description");
                 description.setText(uDescription);
             }
             else{

@@ -3,6 +3,7 @@ package group14.tutoru;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,10 +28,10 @@ import java.util.List;
 public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemSelectedListener {
 
 
-    private EditText etUsername, etPassword, etEmail, etGpa,
+    private EditText etUsername, etPassword, etConfirmPassword, etEmail, etGpa,
                     etFirst_name, etLast_name, etDob, etGraduation_year, etMajor;
     private Spinner etType;
-    private String usern, password, email, type, gpa,
+    private String usern, password, confirmPassword, email, type, gpa,
                     first_name, last_name, dob, graduation_year, major;
     boolean et;
     HashMap postData = new HashMap();
@@ -39,10 +40,16 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_user);
         Button btnRegister = (Button) findViewById(R.id.btnRegister);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         et=false;
         //This is declared separately to allow for uniqueness checking
         etUsername = (EditText)findViewById(R.id.username);
         etEmail = (EditText) findViewById(R.id.email);
+        etPassword = (EditText) findViewById(R.id.password);
+        etConfirmPassword = (EditText) findViewById(R.id.confirmPassword);
         //Would like to implement an email is already being used feature as well
         //This checks the username against our database when the user has changed into another box
         //This allows us to check for uniqueness
@@ -77,6 +84,30 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                 }
             }
         });
+
+        etPassword.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+            @Override
+            public void onFocusChange(View v, boolean hasFocus){
+                if(!hasFocus){
+                    if(!etConfirmPassword.getText().toString().isEmpty()
+                        && !etConfirmPassword.getText().toString().equals(etPassword.getText().toString())){
+                        Toast.makeText(getApplicationContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+
+        etConfirmPassword.setOnFocusChangeListener(new View.OnFocusChangeListener(){
+            @Override
+            public void onFocusChange(View v, boolean hasFocus){
+                if(!hasFocus){
+                    if(!etPassword.getText().toString().equals(etConfirmPassword.getText().toString())){
+                        Toast.makeText(getApplicationContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+
         if (btnRegister != null) {
             btnRegister.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -95,27 +126,27 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                     //Converting to string
                     usern = etUsername.getText().toString();
                     password = etPassword.getText().toString();
+                    confirmPassword = etConfirmPassword.getText().toString();
                     email = etEmail.getText().toString();
                     //type = etType.getText().toString();
                     gpa = etGpa.getText().toString();
 
                     first_name = etFirst_name.getText().toString();
-                    last_name =  etLast_name.getText().toString();
+                    last_name = etLast_name.getText().toString();
                     dob = etDob.getText().toString();
                     graduation_year = etGraduation_year.getText().toString();
                     major = etMajor.getText().toString();
 
 
                     //If any are null a required field is empty
-                    if(usern.isEmpty() || password.isEmpty() || email.isEmpty() || type.isEmpty() || gpa.isEmpty()
+                    if (usern.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || email.isEmpty() || type.isEmpty() || gpa.isEmpty()
                             || first_name.isEmpty() || last_name.isEmpty() || dob.isEmpty()
                             || graduation_year.isEmpty() || major.isEmpty()
-                            || type.equals("Select Role")){
+                            || type.equals("Select Role")) {
                         Toast.makeText(getApplicationContext(), "Required Field Missing", Toast.LENGTH_SHORT).show();
-                        et=false;
-                    }
-                    else {
-                        et=true;
+                        et = false;
+                    } else {
+                        et = true;
                     }
                     //Debugging
                     /*
@@ -133,14 +164,15 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                     */
 
                     //All fields are entered
-                    if(et) {
+                    if (et) {
                         //Need to handle text too large
                         //Need more validation, check email and name are valid, etc.
                         //Error handling
                         if (Float.valueOf(gpa) <= 4.00 && Float.valueOf(gpa) > 0
-                                && gpa.length()<=5 && gpa.length()>0 && usern.length() <= 16
+                                && gpa.length() <= 5 && gpa.length() > 0 && usern.length() <= 16
                                 && usern.length() >= 6 && password.length() <= 128 && password.length() >= 6
-                                && first_name.length()<=35 && last_name.length()<=35 && major.length()<=255) {
+                                && password.equals(confirmPassword)
+                                && first_name.length() <= 35 && last_name.length() <= 35 && major.length() <= 255) {
                             Toast.makeText(getApplicationContext(), "Signing up...", Toast.LENGTH_SHORT).show();
 
                             postData.put("username", usern);
@@ -159,29 +191,29 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                             register.execute("addUser.php");
                         } else if (Float.valueOf(gpa) > 4.00 && Float.valueOf(gpa) <= 0) {
                             Toast.makeText(getApplicationContext(), "Invalid GPA", Toast.LENGTH_SHORT).show();
-                        } else if(gpa.length()>5 || gpa.length()<=0){
+                        } else if (gpa.length() > 5 || gpa.length() <= 0) {
                             Log.e("length", String.valueOf(gpa.length()));
                             Toast.makeText(getApplicationContext(), "GPA must be to 3 decimal places", Toast.LENGTH_SHORT).show();
                         } else if (usern.length() > 16) {
                             Toast.makeText(getApplicationContext(), "Username too long", Toast.LENGTH_SHORT).show();
                         } else if (usern.length() < 6) {
                             Toast.makeText(getApplicationContext(), "Username too short", Toast.LENGTH_SHORT).show();
-                        }
-
-                        else if (password.length() > 128) {
+                        } else if (password.length() > 128) {
                             Toast.makeText(getApplicationContext(), "Password too long", Toast.LENGTH_SHORT).show();
                         } else if (password.length() < 6) {
                             Toast.makeText(getApplicationContext(), "Password too short", Toast.LENGTH_SHORT).show();
-                        } else if(first_name.length() >35){
+                        } else if (!password.equals(confirmPassword)) {
+                            Toast.makeText(getApplicationContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
+                        } else if (first_name.length() > 35) {
                             Toast.makeText(getApplicationContext(), "First name is too long", Toast.LENGTH_SHORT).show();
-                        } else if(last_name.length() > 35){
+                        } else if (last_name.length() > 35) {
                             Toast.makeText(getApplicationContext(), "Last name is too long", Toast.LENGTH_SHORT).show();
-                        } else if (major.length() > 255){
+                        } else if (major.length() > 255) {
                             Toast.makeText(getApplicationContext(), "Major is too long", Toast.LENGTH_SHORT).show();
                         }
                         //This should NEVER happen
-                        else{
-                            Toast.makeText(getApplicationContext(),"Something went wrong", Toast.LENGTH_SHORT).show();
+                        else {
+                            Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
                         }
                         //Possibly error check for dob (age<x), graduation year (year<x), maybe choose from majors
                     }

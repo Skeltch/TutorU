@@ -10,7 +10,9 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="group14.tutoru.search"
-    tools:showIn="@layout/activity_search">
+    tools:showIn="@layout/activity_search"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <Button
         style="?android:attr/buttonStyleSmall"

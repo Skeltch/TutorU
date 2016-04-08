@@ -70,7 +70,7 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
             JSONObject profileT = new JSONObject(output);
             JSONObject profile = profileT.optJSONObject("info");
             JSONArray classesArray = profileT.optJSONArray("classes");
-            JSONObject tutorInfo = profileT.optJSONObject("tutorInfo");
+            //JSONObject tutorInfo = profileT.optJSONObject("tutorInfo");
 
             TextView name = (TextView)findViewById(R.id.name);
             TextView email = (TextView)findViewById(R.id.email);
@@ -117,9 +117,9 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
             classes.setText(uClasses);
 
             description.setText("None");
-            if(tutorInfo.optString("description")!="null"){
-                Log.e("tutorInfo",tutorInfo.optString("description"));
-                uDescription = tutorInfo.optString("description");
+            if(profile.optString("description")!="null"){
+                Log.e("tutorInfo",profile.optString("description"));
+                uDescription = profile.optString("description");
                 description.setText(uDescription);
             }
         }

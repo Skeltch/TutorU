@@ -4,7 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
  
     <!--  Sample Dashboard screen with Two buttons -->
 	<!-- TutorU Label -->
