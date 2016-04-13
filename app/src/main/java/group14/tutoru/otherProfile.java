@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -50,7 +51,7 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
         }
         postData.put("id",id);
         PostResponseAsyncTask profile = new PostResponseAsyncTask(otherProfile.this,postData);
-        profile.execute("profile.php");
+        profile.execute("otherProfile.php");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -80,6 +81,9 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
             TextView classes = (TextView)findViewById(R.id.classes);
             TextView description = (TextView)findViewById(R.id.description);
 
+            LinearLayout emailView = (LinearLayout)findViewById(R.id.emailView);
+            View emailBorder = (View)findViewById(R.id.emailBorder);
+
             //getActionBar().setTitle(profile.optString("first_name")+" "+profile.optString("last_name"));
             setTitle(profile.optString("first_name") + " " + profile.optString("last_name"));
             getSupportActionBar().setTitle(profile.optString("first_name") + " " + profile.optString("last_name"));
@@ -96,7 +100,13 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
             uName = profile.optString("first_name")+" "+profile.optString("last_name");
             name.setText(uName);
             uEmail = profile.optString("email");
-            email.setText(uEmail);
+            if(uEmail.isEmpty()){
+                emailView.setVisibility(View.GONE);
+                emailBorder.setVisibility(View.VISIBLE);
+            }
+            else {
+                email.setText(uEmail);
+            }
             uGpa = profile.optString("gpa");
             gpa.setText(uGpa);
             uGradYear = profile.optString("graduation_year");

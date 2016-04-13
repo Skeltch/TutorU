@@ -38,11 +38,11 @@
         <activity
             android:name=".AddUser"
             android:label="Add User"
-            android:windowSoftInputMode="adjustResize|stateUnchanged"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateUnchanged">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="group14.tutoru.MainPage"/>
+                android:value="group14.tutoru.MainPage" />
         </activity>
         <activity android:name=".PostRegistrationActivity" />
         <activity android:name=".SignIn" />
@@ -53,10 +53,10 @@
         <activity
             android:name=".Profile"
             android:label="@string/title_activity_profile"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="group14.tutoru.MainPage"/>
+                android:value="group14.tutoru.MainPage" />
         </activity>
         <activity
             android:name=".editProfile"
@@ -65,7 +65,7 @@
             android:windowSoftInputMode="adjustResize|stateUnchanged">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="group14.tutoru.Profile"/>
+                android:value="group14.tutoru.Profile" />
         </activity>
         <activity
             android:name=".otherProfile"
@@ -75,7 +75,7 @@
             android:name=".search"
             android:label="@string/title_activity_search"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateUnchanged"/>
+            android:windowSoftInputMode="stateUnchanged" />
         <activity
             android:name=".PerformSearch"
             android:label="@string/title_activity_perform_search"
@@ -84,7 +84,8 @@
             android:name=".advancedSearch"
             android:label="@string/title_activity_advanced_search"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize|stateUnchanged"/>
+            android:windowSoftInputMode="adjustResize|stateUnchanged" />
+        <activity android:name=".test" />
     </application>
 
 </manifest>

@@ -5,11 +5,15 @@ package group14.tutoru;
  */
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -41,8 +45,9 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
     public  String ip="http://192.168.1.6/app/";
     private boolean pause;
-    private boolean type;
+    private int type;
     public int len;
+    private Bitmap bitmap;
 
 
     //Constructors
@@ -52,7 +57,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
         this.context = (Context)delegate;
 
         this.pause = true;
-        this.type = true;
+        this.type = 0;
         len=500;
     }
 
@@ -64,7 +69,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
         this.postData = postData;
 
         this.pause = true;
-        this.type = true;
+        this.type = 0;
         len=500;
     }
 
@@ -74,7 +79,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
         this.loadingMessage = loadingMessage;
 
         this.pause = true;
-        this.type = true;
+        this.type = 0;
         len=500;
     }
 
@@ -87,8 +92,17 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
         this.loadingMessage = loadingMessage;
 
         this.pause = true;
-        this.type = true;
+        this.type = 0;
         len=500;
+    }
+
+    public PostResponseAsyncTask(AsyncResponse delegate, Bitmap bitmap){
+        this.delegate = delegate;
+        this.context = (Context)delegate;
+        this.bitmap = bitmap;
+
+        this.pause = false;
+        this.type = 2;
     }
     //End Constructors
 
@@ -105,7 +119,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... urls){
 
-        if(type) {
+        if(type==0) {
             String result = "";
             //Change this later for multiple urls
             for (int i = 0; i <= 0; i++) {
@@ -115,7 +129,8 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
             return result;
         }
-        else{
+        //Not really needed
+        else if(type==1){
             InputStream istream = null;
             try{
                 urls[0]=ip+urls[0];
@@ -148,6 +163,33 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
                     }
                 }
             }
+        }
+        //Multipart for fileuploading
+        else{
+            try {
+                URL url = new URL(ip + urls[0]);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Type", "image/jpeg");
+                connection.setRequestProperty("Connection", "Keep-Alive");
+                connection.setRequestProperty("Cache-Control", "no-cache");
+                DataOutput request = new DataOutputStream(connection.getOutputStream());
+                String lineEnd = "\r\n";
+                String twoHyphens = "--";
+                String boundary = "*****";
+                String attachmentName="bitmap";
+                String attachmentFileName = "bitmap.bmp";
+                request.writeBytes(twoHyphens + boundary + lineEnd);
+                request.writeBytes("Content-Disposition: form-data; name=\""
+                                    + attachmentName + "\";filename=\""
+                                    +attachmentFileName + "\"" + lineEnd);
+                request.writeBytes(lineEnd);
+            }
+            catch(Exception e){
+
+                e.printStackTrace();
+            }
+            return null;
         }
     }//doInBackground
 
@@ -253,9 +295,10 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
     public void useLoad(boolean pause){ this.pause = pause;}
 
-    public void GET(boolean type){ this.type = false;}
+    public void POST(){ this.type = 0;}
 
-    public void POST(boolean type){ this.type = true;}
+    public void GET(){ this.type = 1;}
 
+    public void FILE(){ this.type=2;}
     //End Setter & Getter
 }

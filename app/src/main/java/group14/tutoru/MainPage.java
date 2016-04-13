@@ -143,7 +143,7 @@ public class MainPage extends AppCompatActivity
             if(classesArray.length()==0){
                 classString+="None";
             }
-            //For one, don't add comma
+            //Multiple featured tutors?
             else{
                 classString+=classesArray.getJSONObject(0).optString("classes");
             }

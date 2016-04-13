@@ -62,8 +62,12 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
             btnRegister.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent i = new Intent(MainScreenActivity.this, AddUser.class);
-                    startActivity(i);
+                    //Debugging
+                    Intent intent = new Intent(MainScreenActivity.this, Profile.class);
+                    startActivity(intent);
+
+                    //Intent i = new Intent(MainScreenActivity.this, AddUser.class);
+                    //startActivity(i);
                 }
             });
         }
@@ -77,7 +81,8 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
                 //Storing user information, possibly used in future
                 SharedPreferences settings = getSharedPreferences("Userinfo",0);
                 SharedPreferences.Editor editor = settings.edit();
-                editor.putString("id",login.optString("id").toString());
+                editor.putString("id",login.optString("id"));
+                editor.putString("role",login.optString("role"));
                 //Debugging
                 //editor.putString("id","1");
                 editor.commit();

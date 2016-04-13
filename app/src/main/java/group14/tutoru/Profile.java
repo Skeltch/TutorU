@@ -148,6 +148,8 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
+        //com.android.camera.action.CROP is not supported in many devices
+        //The UI is poor anyways
         /*
         Uri picUri = data.getData();
         try{
