@@ -3,27 +3,35 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/profile"
-            android:title="Profile" />
-            <!--android:icon="@drawable/ic_menu_camera"-->
+            android:id="@+id/advanced_search"
+            android:title="Advanced Search"
+            android:visible="true"/>
         <item
-            android:id="@+id/nav_gallery"
-            android:title="Tutors" />
+            android:id="@+id/notifications"
+            android:title="Notifications"/>
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/temp"
+            android:title="Temporary"
+            android:visible="false"/>
+        <item
+            android:id="@+id/friends"
+            android:title="Friends" />
+        <item
+            android:id="@+id/schedule"
             android:title="Schedule" />
-        <item
-            android:id="@+id/nav_manage"
-            android:title="Home" />
     </group>
 
     <item android:title="User">
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/profile"
+                android:title="Profile" />
+            <!--android:icon="@drawable/ic_menu_camera"-->
+            <item
+                android:id="@+id/settings"
                 android:title="Settings" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/log_out"
                 android:title="Log Out" />
         </menu>
     </item>

@@ -3,12 +3,10 @@ package group14.tutoru;
 import android.Manifest;
 import android.app.Activity;
 import android.app.TaskStackBuilder;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,15 +25,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 
-//THIS ACTIVITY NEEDS A BACK BUTTON
 public class Profile extends AppCompatActivity implements AsyncResponse {
 
     String uUsername;
@@ -57,6 +54,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
 
         HashMap postData = new HashMap();
         SharedPreferences settings = getSharedPreferences("Userinfo",0);
+        //String id = settings.getString("id","");
         //Max class length? 20?
         //uClasses = new String[20];
 
@@ -81,6 +79,10 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                             ActivityCompat.requestPermissions(Profile.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                     Manifest.permission.READ_EXTERNAL_STORAGE}, 5);
                         }
+                    }
+                    else{
+                        startActivityForResult(new Intent(Intent.ACTION_PICK,
+                                android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI), 1);
                     }
                 }
             });
@@ -176,31 +178,44 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
             Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
         }
         */
-
-        Bitmap bitmap = null;
-        Bitmap scaled = null;
-        if(requestCode == 1 && resultCode == Activity.RESULT_OK){
-            Uri selectedImage = data.getData();
-            try {
-                switch (requestCode) {
-                    case 1:
-                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-                        int nh = (int) (bitmap.getHeight() * (512.0/bitmap.getWidth()));
-                        scaled = Bitmap.createScaledBitmap(bitmap,512,nh,true);
-                        DisplayMetrics display = getResources().getDisplayMetrics();
-                        //Stretches
-                        //scaled = Bitmap.createScaledBitmap(bitmap, Math.round(display.widthPixels/display.density), 200, true);
+        if (resultCode == Activity.RESULT_OK) {
+            Bitmap bitmap = null;
+            Bitmap scaled = null;
+            if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+                Uri selectedImage = data.getData();
+                try {
+                    switch (requestCode) {
+                        case 1:
+                            bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                            int nh = (int) (bitmap.getHeight() * (512.0 / bitmap.getWidth()));
+                            scaled = Bitmap.createScaledBitmap(bitmap, 512, nh, true);
+                            DisplayMetrics display = getResources().getDisplayMetrics();
+                            //Stretches
+                            //scaled = Bitmap.createScaledBitmap(bitmap, Math.round(display.widthPixels/display.density), 200, true);
+                    }
+                } catch (Exception e) {
+                    Log.e("Error", "Exception in onActivityResult : " + e.getMessage());
                 }
             }
-            catch(Exception e){
-                Log.e("Error", "Exception in onActivityResult : " + e.getMessage());
-            }
+            //Temp fix
+            ImageView img = (ImageView) findViewById(R.id.profile);
+            //BitmapDrawable bmDrawable = new BitmapDrawable(getResources(), bitmap);
+            PostResponseAsyncTask fileUpload = new PostResponseAsyncTask(this, scaled);
+            fileUpload.execute("uploadString.php");
+            /*
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            int bytes = bitmap.getByteCount();
+            Log.e("bitmap bytes",Integer.toString(bytes));
+            byte[] byte_arr = baos.toByteArray();
+            String image_str = Base64.encodeToString(byte_arr, Base64.DEFAULT);
+            HashMap postData = new HashMap();
+            postData.put("image",image_str);
+            PostResponseAsyncTask fileUpload = new PostResponseAsyncTask(this, postData);
+            fileUpload.execute("uploadString.php");
+            */
+            img.setImageBitmap(scaled);
         }
-        //Temp fix
-        ImageView img = (ImageView) findViewById(R.id.profile);
-        //BitmapDrawable bmDrawable = new BitmapDrawable(getResources(), bitmap);
-        img.setImageBitmap(scaled);
-
     }
     @Override
     public void processFinish(String output) {
@@ -210,22 +225,22 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
             JSONArray classesArray = profileT.optJSONArray("classes");
             //JSONObject tutorInfo = profileT.optJSONObject("tutorInfo");
 
-            TextView username = (TextView)findViewById(R.id.username);
-            TextView password = (TextView)findViewById(R.id.password);
-            TextView name = (TextView)findViewById(R.id.name);
-            TextView email = (TextView)findViewById(R.id.email);
-            TextView gpa = (TextView)findViewById(R.id.gpa);
-            TextView gradYear = (TextView)findViewById(R.id.graduation_year);
-            TextView major = (TextView)findViewById(R.id.major);
+            TextView username = (TextView) findViewById(R.id.username);
+            TextView password = (TextView) findViewById(R.id.password);
+            TextView name = (TextView) findViewById(R.id.name);
+            TextView email = (TextView) findViewById(R.id.email);
+            TextView gpa = (TextView) findViewById(R.id.gpa);
+            TextView gradYear = (TextView) findViewById(R.id.graduation_year);
+            TextView major = (TextView) findViewById(R.id.major);
             //TextView classes = (TextView)findViewById(R.id.classes);
-            TextView description = (TextView)findViewById(R.id.description);
+            TextView description = (TextView) findViewById(R.id.description);
 
             //Hide classes you can tutor and something about yourself if tutee
             uUsername = profile.optString("username");
             username.setText(uUsername);
             uPassword = profile.optString("password");
             password.setText(uPassword);
-            uName = profile.optString("first_name")+" "+profile.optString("last_name");
+            uName = profile.optString("first_name") + " " + profile.optString("last_name");
             //uFirstName = profile.optString("first_name");
             //uLastName = profile.optString("last_name");
             name.setText(uName);
@@ -237,48 +252,54 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
             gradYear.setText(uGradYear);
             uMajor = profile.optString("major");
             major.setText(uMajor);
+            SharedPreferences settings = getSharedPreferences("Userinfo", 0);
+            LinearLayout classLayout = (LinearLayout) findViewById(R.id.classLayout);
+            LinearLayout descriptionView = (LinearLayout) findViewById(R.id.descriptionView);
+            String role = settings.getString("role","");
+            if (role.equals("Tutor") || role.equals("Both")) {
+                LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams
+                        (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                lparams.setMargins(48, 0, 0, 10);
+                    //For the first class, must overwrite the current textview
+                /*
+                if(classesArray.length()>0) {
+                    if (classesArray.getJSONObject(0).optString("classes") != "null") {
+                        Log.e("classes", classesArray.getJSONObject(0).optString("classes"));
+                        uClasses = classesArray.getJSONObject(0).optString("classes");
+                        classes.setText(uClasses);
+                    }
+                }
+                */
+                if (classesArray.length() != 0) {
+                    uClasses = new String[classesArray.length()];
+                } else {
+                    uClasses = new String[0];
+                }
+                if (classesArray.length() == 0) {
+                    TextView newClass = new TextView(this);
+                    newClass.setText("None");
+                    newClass.setLayoutParams(lparams);
+                    classLayout.addView(newClass);
+                }
+                for (int i = 0; i < classesArray.length(); i++) {
+                    TextView newClass = new TextView(this);
+                    uClasses[i] = classesArray.getJSONObject(i).optString("classes");
+                    newClass.setText(uClasses[i]);
+                    newClass.setLayoutParams(lparams);
+                    classLayout.addView(newClass);
+                }
 
-            LinearLayout classLayout = (LinearLayout)findViewById(R.id.classLayout);
-            LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams
-                    (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            lparams.setMargins(48,0,0,10);
-            //For the first class, must overwrite the current textview
-            /*
-            if(classesArray.length()>0) {
-                if (classesArray.getJSONObject(0).optString("classes") != "null") {
-                    Log.e("classes", classesArray.getJSONObject(0).optString("classes"));
-                    uClasses = classesArray.getJSONObject(0).optString("classes");
-                    classes.setText(uClasses);
+                if (profile.optString("description") != "null") {
+                    Log.e("tutorInfo", profile.optString("description"));
+                    uDescription = profile.optString("description");
+                    description.setText(uDescription);
+                } else {
+                    description.setText("Enter something about yourself!");
                 }
             }
-            */
-            if(classesArray.length()!=0) {
-                uClasses = new String[classesArray.length()];
-            }
             else{
-                uClasses= new String[0];
-            }
-            if(classesArray.length()==0){
-                TextView newClass = new TextView(this);
-                newClass.setText("None");
-                newClass.setLayoutParams(lparams);
-                classLayout.addView(newClass);
-            }
-            for(int i=0; i<classesArray.length(); i++){
-                TextView newClass = new TextView(this);
-                uClasses[i]=classesArray.getJSONObject(i).optString("classes");
-                newClass.setText(uClasses[i]);
-                newClass.setLayoutParams(lparams);
-                classLayout.addView(newClass);
-            }
-
-            if(profile.optString("description")!="null"){
-                Log.e("tutorInfo",profile.optString("description"));
-                uDescription = profile.optString("description");
-                description.setText(uDescription);
-            }
-            else{
-                description.setText("Enter something about yourself!");
+                classLayout.setVisibility(View.GONE);
+                descriptionView.setVisibility(View.GONE);
             }
         }
         catch(JSONException e){

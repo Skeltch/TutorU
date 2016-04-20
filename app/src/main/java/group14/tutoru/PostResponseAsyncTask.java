@@ -5,16 +5,15 @@ package group14.tutoru;
  */
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.util.Base64;
 import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -29,7 +28,6 @@ import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
-//Class responsible for communicating with the server.
 // The current method is very insecure however generic to allow for easy communication
 //I will probably need to change this later
 //This class takes a hashmap with the first value as the variable used in php, ex: username
@@ -40,14 +38,22 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
     private AsyncResponse delegate;
     private Context context;
     private HashMap<String, String> postData =
-            new HashMap<String, String>();
+            new HashMap<>();
     private String loadingMessage = "Loading...";
 
-    public  String ip="http://192.168.1.6/app/";
+    public  String ip="http://172.31.237.9/app/";
     private boolean pause;
     private int type;
     public int len;
     private Bitmap bitmap;
+
+    /*
+    String attachmentName = "bitmap";
+    String attachmentFileName = "bitmap.bmp";
+    String crlf = "\r\n";
+    String twoHyphens = "--";
+    String boundary =  "*****";
+    */
 
 
     //Constructors
@@ -164,16 +170,192 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
                 }
             }
         }
-        //Multipart for fileuploading
         else{
             try {
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                int bytes = bitmap.getByteCount();
+                Log.e("bitmap bytes",Integer.toString(bytes));
+                byte[] byte_arr = baos.toByteArray();
+                String image_str = Base64.encodeToString(byte_arr, Base64.DEFAULT);
+                SharedPreferences settings = context.getSharedPreferences("Userinfo", 0);
+                String id = settings.getString("id","");
+                postData.put("id",id);
+                postData.put("image", image_str);
+                urls[0]=ip+urls[0];
+                return invokePost(urls[0], postData);
+
+                /*
+                HttpURLConnection httpUrlConnection = null;
+                URL url = new URL(ip+urls[0]);
+                httpUrlConnection = (HttpURLConnection) url.openConnection();
+                httpUrlConnection.setUseCaches(false);
+                httpUrlConnection.setDoOutput(true);
+
+                httpUrlConnection.setRequestMethod("POST");
+                httpUrlConnection.setRequestProperty("Connection", "Keep-Alive");
+                httpUrlConnection.setRequestProperty("Cache-Control", "no-cache");
+                httpUrlConnection.setRequestProperty(
+                        "Content-Type", "multipart/form-data;boundary=" + this.boundary);
+
+                DataOutputStream request = new DataOutputStream(
+                        httpUrlConnection.getOutputStream());
+
+                request.writeBytes(this.twoHyphens + this.boundary + this.crlf);
+                request.writeBytes("Content-Disposition: form-data; name=\"" +
+                        this.attachmentName + "\";filename=\"" +
+                        this.attachmentFileName + "\"" + this.crlf);
+                request.writeBytes(this.crlf);
+
+                /*
+                byte[] pixels = new byte[bitmap.getWidth() * bitmap.getHeight()];
+                for (int i = 0; i < bitmap.getWidth(); ++i) {
+                    for (int j = 0; j < bitmap.getHeight(); ++j) {
+                        //we're interested only in the MSB of the first byte,
+                        //since the other 3 bytes are identical for B&W images
+                        pixels[i + j] = (byte) ((bitmap.getPixel(i, j) & 0x80) >> 7);
+                    }
+                }
+                */
+
+                //ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                //bitmap.compress(Bitmap.CompressFormat.JPEG ,100,baos);
+                /*
+                int bytes = bitmap.getByteCount();
+                Log.e("bitmap bytes",Integer.toString(bytes));
+                ByteBuffer buffer = ByteBuffer.allocate(bytes);
+                bitmap.copyPixelsToBuffer(buffer);
+                byte[] pixels = buffer.array();
+
+                request.write(pixels);
+                request.writeBytes(this.crlf);
+                request.writeBytes(this.twoHyphens + this.boundary +
+                        this.twoHyphens + this.crlf);
+                request.flush();
+                request.close();
+
+                //Response
+                InputStream responseStream = new
+                        BufferedInputStream(httpUrlConnection.getInputStream());
+
+                BufferedReader responseStreamReader =
+                        new BufferedReader(new InputStreamReader(responseStream));
+
+                String line = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ((line = responseStreamReader.readLine()) != null) {
+                    stringBuilder.append(line).append("\n");
+                }
+                responseStreamReader.close();
+
+                String response = stringBuilder.toString();
+                responseStream.close();
+                httpUrlConnection.disconnect();
+                Log.e("Response", response);
+                return response;
+                */
+                /*
+                String lineEnd = "\r\n";
+                String twoHyphens = "--";
+                String boundary = "*****";
+                String attachmentName="bitmap";
+                String attachmentFileName = "bitmap.bmp";
+
+                // open a URL connection to the Servlet
+                URL url = new URL(ip+urls[0]);
+
+                // Open a HTTP  connection to  the URL
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                //conn.setDoInput(true); // Allow Inputs
+                conn.setDoOutput(true); // Allow Outputs
+                conn.setUseCaches(false); // Don't use a Cached Copy
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Connection", "Keep-Alive");
+                conn.setRequestProperty("Cache-Control","no-cache");
+                //conn.setRequestProperty("ENCTYPE", "multipart/form-data");
+                conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+                //conn.setRequestProperty("Content-Type","image/jpeg");
+                //change uploaded_file to other
+                //conn.setRequestProperty("uploaded_file", attachmentFileName);
+
+                //Content wrapper
+
+                DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+
+
+                dos.writeBytes(twoHyphens + boundary + lineEnd);
+                //Change uploaded_file to other
+                dos.writeBytes("Content-Disposition: form-data; name=\""+ attachmentName + "\";filename=\""
+                        + attachmentFileName + "\"" + lineEnd);
+                dos.writeBytes(lineEnd);
+
+                //Convert Bitmap to ByteBuffer for file upload
+
+                byte[] pixels = new byte[bitmap.getWidth() * bitmap.getHeight()];
+                for (int i = 0; i < bitmap.getWidth(); ++i) {
+                    for (int j = 0; j < bitmap.getHeight(); ++j) {
+                        //we're interested only in the MSB of the first byte,
+                        //since the other 3 bytes are identical for B&W images
+                        //pixels[i + j] = (byte) ((bitmap.getPixel(i, j) & 0x80) >> 7);
+                        pixels[i+j] = (byte) ((bitmap.getPixel(i,j) & 0x80));
+                    }
+                }
+
+                dos.write(pixels);
+
+
+                // end content wrapper
+                dos.writeBytes(lineEnd);
+                dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+                dos.flush();
+                dos.close();
+
+
+                // Responses from the server (code and message)
+                int serverResponseCode = conn.getResponseCode();
+                String serverResponseMessage = conn.getResponseMessage();
+
+                Log.i("uploadFile", "HTTP Response is : "
+                        + serverResponseMessage + ": " + serverResponseCode);
+
+                if(serverResponseCode == 200){
+                    Log.e("responseCode","200");
+                }
+
+                //Response
+                InputStream responseStream = new
+                        BufferedInputStream(conn.getInputStream());
+
+                BufferedReader responseStreamReader =
+                        new BufferedReader(new InputStreamReader(responseStream));
+
+                String line = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ((line = responseStreamReader.readLine()) != null) {
+                    stringBuilder.append(line).append("\n");
+                }
+                responseStreamReader.close();
+
+                String response = stringBuilder.toString();
+
+                Log.e("File response", response);
+
+                responseStream.close();
+                conn.disconnect();
+                return response;
+                */
+                /*
                 URL url = new URL(ip + urls[0]);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setDoOutput(true);
                 connection.setRequestProperty("Content-Type", "image/jpeg");
                 connection.setRequestProperty("Connection", "Keep-Alive");
                 connection.setRequestProperty("Cache-Control", "no-cache");
-                DataOutput request = new DataOutputStream(connection.getOutputStream());
+                DataOutputStream request = new DataOutputStream(connection.getOutputStream());
                 String lineEnd = "\r\n";
                 String twoHyphens = "--";
                 String boundary = "*****";
@@ -184,12 +366,54 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
                                     + attachmentName + "\";filename=\""
                                     +attachmentFileName + "\"" + lineEnd);
                 request.writeBytes(lineEnd);
+
+                //Convert Bitmap to ByteBuffer for file upload
+                byte[] pixels = new byte[bitmap.getWidth() * bitmap.getHeight()];
+                for (int i = 0; i < bitmap.getWidth(); ++i) {
+                    for (int j = 0; j < bitmap.getHeight(); ++j) {
+                        //we're interested only in the MSB of the first byte,
+                        //since the other 3 bytes are identical for B&W images
+                        pixels[i + j] = (byte) ((bitmap.getPixel(i, j) & 0x80) >> 7);
+                    }
+                }
+
+                request.write(pixels);
+
+                request.writeBytes(lineEnd);
+                request.writeBytes(twoHyphens + boundary +
+                        twoHyphens + lineEnd);
+
+                request.flush();
+                request.close();
+
+                //Response
+                InputStream responseStream = new
+                        BufferedInputStream(connection.getInputStream());
+
+                BufferedReader responseStreamReader =
+                        new BufferedReader(new InputStreamReader(responseStream));
+
+                String line = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ((line = responseStreamReader.readLine()) != null) {
+                    stringBuilder.append(line).append("\n");
+                }
+                responseStreamReader.close();
+
+                String response = stringBuilder.toString();
+
+                Log.e("File response", response);
+
+                responseStream.close();
+                connection.disconnect();
+                return response;
+                */
             }
             catch(Exception e){
-
                 e.printStackTrace();
+                return null;
             }
-            return null;
         }
     }//doInBackground
 

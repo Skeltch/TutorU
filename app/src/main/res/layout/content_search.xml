@@ -18,12 +18,13 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Advanced Search"
+        android:text="More"
         android:id="@+id/advancedButton"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:onClick="onAdvancedClick" />
+        android:onClick="onAdvancedClick"
+        android:background="@drawable/button"/>
 
     <Button
         android:layout_width="wrap_content"

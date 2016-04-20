@@ -21,14 +21,15 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/primaryHeader"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="First name last name?"
+        android:text="First name last name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/secondaryHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Username/email?" />
+        android:text="Role" />
 
 </LinearLayout>

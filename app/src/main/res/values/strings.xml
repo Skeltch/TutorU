@@ -196,4 +196,5 @@
     </string-array>
     <string name="title_activity_advanced_search">Advanced Search</string>
     <string name="title_activity_perform_search">PerformSearch</string>
+    <string name="title_activity_review">Review</string>
 </resources>

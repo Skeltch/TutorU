@@ -1,9 +1,15 @@
 package group14.tutoru;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -15,11 +21,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.CursorAdapter;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 
 public class MainPage extends AppCompatActivity
@@ -34,7 +44,7 @@ public class MainPage extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        setTitle("Search bar placeholder");
+        //setTitle("Search bar placeholder");
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -43,6 +53,28 @@ public class MainPage extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        SharedPreferences settings = getSharedPreferences("Userinfo",0);
+        String role = settings.getString("role", "");
+        String name = settings.getString("first_name","") + " " + settings.getString("last_name","");
+
+        View header = navigationView.getHeaderView(0);
+        TextView primary = (TextView) header.findViewById(R.id.primaryHeader);
+        TextView secondary = (TextView) header.findViewById(R.id.secondaryHeader);
+
+        if(primary!=null && secondary!=null) {
+            Log.e("headers", primary.getText().toString());
+            primary.setText(name);
+            secondary.setText(role);
+        }
+
+        if(!role.equals("Tutee")) {
+            navigationView.getMenu().findItem(R.id.advanced_search).setVisible(false);
+            navigationView.getMenu().findItem(R.id.temp).setVisible(true);
+        }
+        else{
+            navigationView.getMenu().findItem(R.id.advanced_search).setVisible(true);
+            navigationView.getMenu().findItem(R.id.temp).setVisible(false);
+        }
 
 
         PostResponseAsyncTask featured = new PostResponseAsyncTask(MainPage.this);
@@ -61,6 +93,7 @@ public class MainPage extends AppCompatActivity
         });
     }
 
+    /*
     @Override
     public void onBackPressed() {
         //Creating issues when closing the sidebar
@@ -71,11 +104,36 @@ public class MainPage extends AppCompatActivity
             //super.onBackPressed();
         }
     }
+    */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_page, menu);
+        //SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
+
+        /*
+        //Because searchView is only compatible with cursoradapters
+        String[] columnNames = {"_id","text"};
+        MatrixCursor cursor = new MatrixCursor(columnNames);
+        String[] array = getResources().getStringArray(R.array.Subjects);
+        String[] temp = new String[2];
+        int id=0;
+        for(String item : array){
+            temp[0] = Integer.toString(id++);
+            temp[1] = item;
+            cursor.addRow(temp);
+        }
+        String[] from ={"text"};
+        CursorAdapter subjectsAdapter = new SimpleCursorAdapter()
+        */
+        //ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.Subjects, android.R.layout.select_dialog_item);
+        //SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search_title));
+        //searchView.setOnQueryTextListener(MainPage.this);
         return true;
     }
 
@@ -84,6 +142,7 @@ public class MainPage extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+        item.expandActionView();
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -103,18 +162,20 @@ public class MainPage extends AppCompatActivity
         if (id == R.id.profile) {
             Intent i = new Intent(MainPage.this, Profile.class);
             startActivity(i);
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.advanced_search) {
             Intent i = new Intent(MainPage.this, search.class);
             startActivity(i);
-        } else if (id == R.id.nav_slideshow) {
-            PostResponseAsyncTask login = new PostResponseAsyncTask(MainPage.this);
-            login.execute("tutors.php");
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.notifications){
+            //Notifications
+        } else if (id == R.id.schedule) {
+            //Schedule
+        } else if (id == R.id.friends) {
+            //Tutor/Tutee management
+        } else if (id == R.id.settings) {
+            //Settings
+        } else if (id == R.id.log_out) {
+            //Do more
+            startActivity(new Intent(MainPage.this, MainScreenActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

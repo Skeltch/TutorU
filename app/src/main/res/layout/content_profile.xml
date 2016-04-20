@@ -213,7 +213,8 @@
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:background="@drawable/border"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:id="@+id/descriptionView">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -83,6 +83,8 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("id",login.optString("id"));
                 editor.putString("role",login.optString("role"));
+                editor.putString("first_name",login.optString("first_name"));
+                editor.putString("last_name",login.optString("last_name"));
                 //Debugging
                 //editor.putString("id","1");
                 editor.commit();
