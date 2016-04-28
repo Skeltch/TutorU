@@ -47,8 +47,8 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
     private String loadingMessage = "Loading...";
 
     //Online vs local server
-    //public  String ip="http://107.170.52.23/";
-    public String ip = "http://192.168.1.6/app/";
+    public  String ip="http://107.170.52.23/";
+    //public String ip = "http://192.168.1.6/app/";
     private boolean pause;
     private int type;
     public int len;
