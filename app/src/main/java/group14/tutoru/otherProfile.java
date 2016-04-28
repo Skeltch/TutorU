@@ -3,15 +3,24 @@ package group14.tutoru;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -24,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 
 public class otherProfile extends AppCompatActivity implements AsyncResponse {
@@ -41,7 +51,21 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_other_profile);
 
-        //setTitle("Jane Doe");
+        //Finding the width of the screen and scaling the profile picture accordingly
+        /*
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        Resources resources = this.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        int dp = width / (metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        AppBarLayout bar = (AppBarLayout)findViewById(R.id.app_bar);
+        bar.setMinimumHeight(dp);
+        bar.getLayoutParams().height=dp;
+        Log.e("dp",Integer.toString(dp));
+        Log.e("imagedp",Integer.toString(bar.getHeight()));
+        */
 
 
         HashMap postData = new HashMap();
@@ -73,6 +97,7 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
             JSONArray classesArray = profileT.optJSONArray("classes");
             //JSONObject tutorInfo = profileT.optJSONObject("tutorInfo");
 
+            ImageView profilePic = (ImageView) findViewById(R.id.profile);
             TextView name = (TextView)findViewById(R.id.name);
             TextView email = (TextView)findViewById(R.id.email);
             TextView gpa = (TextView)findViewById(R.id.gpa);
@@ -82,12 +107,16 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
             TextView description = (TextView)findViewById(R.id.description);
 
             LinearLayout emailView = (LinearLayout)findViewById(R.id.emailView);
-            View emailBorder = (View)findViewById(R.id.emailBorder);
+            View emailBorder = findViewById(R.id.emailBorder);
 
-            //getActionBar().setTitle(profile.optString("first_name")+" "+profile.optString("last_name"));
+            String encodedImage = profileT.optString("imageString");
+            byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            profilePic.setImageBitmap(decodedByte);
+
+
             setTitle(profile.optString("first_name") + " " + profile.optString("last_name"));
             getSupportActionBar().setTitle(profile.optString("first_name") + " " + profile.optString("last_name"));
-
 
             /*for late
             Log.e("request","Request");
@@ -108,6 +137,10 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                 email.setText(uEmail);
             }
             uGpa = profile.optString("gpa");
+
+            DecimalFormat temp = new DecimalFormat("#.###");
+            //This function ensures that the decimal is to 3 places
+            uGpa = Double.toString(Double.valueOf(temp.format(Float.parseFloat(uGpa))));
             gpa.setText(uGpa);
             uGradYear = profile.optString("graduation_year");
             gradYear.setText(uGradYear);
@@ -128,7 +161,6 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
 
             description.setText("None");
             if(profile.optString("description")!="null"){
-                Log.e("tutorInfo",profile.optString("description"));
                 uDescription = profile.optString("description");
                 description.setText(uDescription);
             }

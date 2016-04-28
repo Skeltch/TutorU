@@ -11,9 +11,13 @@ import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -23,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,19 +46,21 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
             new HashMap<>();
     private String loadingMessage = "Loading...";
 
-    public  String ip="http://172.31.237.9/app/";
+    //Online vs local server
+    //public  String ip="http://107.170.52.23/";
+    public String ip = "http://192.168.1.6/app/";
     private boolean pause;
     private int type;
     public int len;
     private Bitmap bitmap;
 
-    /*
+
     String attachmentName = "bitmap";
     String attachmentFileName = "bitmap.bmp";
     String crlf = "\r\n";
     String twoHyphens = "--";
     String boundary =  "*****";
-    */
+
 
 
     //Constructors
@@ -187,7 +194,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
                 return invokePost(urls[0], postData);
 
                 /*
-                HttpURLConnection httpUrlConnection = null;
+                HttpURLConnection httpUrlConnection;
                 URL url = new URL(ip+urls[0]);
                 httpUrlConnection = (HttpURLConnection) url.openConnection();
                 httpUrlConnection.setUseCaches(false);
@@ -208,20 +215,21 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
                         this.attachmentFileName + "\"" + this.crlf);
                 request.writeBytes(this.crlf);
 
-                /*
-                byte[] pixels = new byte[bitmap.getWidth() * bitmap.getHeight()];
-                for (int i = 0; i < bitmap.getWidth(); ++i) {
-                    for (int j = 0; j < bitmap.getHeight(); ++j) {
-                        //we're interested only in the MSB of the first byte,
-                        //since the other 3 bytes are identical for B&W images
-                        pixels[i + j] = (byte) ((bitmap.getPixel(i, j) & 0x80) >> 7);
-                    }
-                }
-                */
+
+
+//                byte[] pixels = new byte[bitmap.getWidth() * bitmap.getHeight()];
+//                for (int i = 0; i < bitmap.getWidth(); ++i) {
+//                    for (int j = 0; j < bitmap.getHeight(); ++j) {
+//                        //we're interested only in the MSB of the first byte,
+//                        //since the other 3 bytes are identical for B&W images
+//                        pixels[i + j] = (byte) ((bitmap.getPixel(i, j) & 0x80));
+//                    }
+//                }
+
 
                 //ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 //bitmap.compress(Bitmap.CompressFormat.JPEG ,100,baos);
-                /*
+
                 int bytes = bitmap.getByteCount();
                 Log.e("bitmap bytes",Integer.toString(bytes));
                 ByteBuffer buffer = ByteBuffer.allocate(bytes);
@@ -255,7 +263,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
                 httpUrlConnection.disconnect();
                 Log.e("Response", response);
                 return response;
-                */
+
                 /*
                 String lineEnd = "\r\n";
                 String twoHyphens = "--";
@@ -348,6 +356,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
                 conn.disconnect();
                 return response;
                 */
+
                 /*
                 URL url = new URL(ip + urls[0]);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -443,6 +452,22 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
             if (responseCode == HttpsURLConnection.HTTP_OK) {
                 String line;
+                /*
+                InputStream content = conn.getInputStream();
+
+                int numRead;
+                final int bufferSize = 8192;
+                byte[] buffer = new byte[bufferSize];
+                ByteArrayOutputStream outString = new ByteArrayOutputStream();
+                try{
+                    while ((numRead = content.read(buffer)) != -1) {
+                        outString.write(buffer, 0, numRead);
+                    }
+                } finally {
+                    content.close();
+                }
+                return new String(outString.toByteArray());
+                */
                 BufferedReader br = new BufferedReader(new
                         InputStreamReader(conn.getInputStream()));
                 while ((line = br.readLine()) != null) {
@@ -457,27 +482,27 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return response;
     }//invokePost
 
     private String getPostDataString(HashMap<String, String> params)
             throws UnsupportedEncodingException {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
+            StringBuilder result = new StringBuilder();
+            boolean first = true;
 
-        for(Map.Entry<String, String> entry : params.entrySet()){
-            if (first)
-                first = false;
-            else
-                result.append("&");
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                if (first)
+                    first = false;
+                else
+                    result.append("&");
 
-            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-        }
+                result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+                result.append("=");
+                result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+            }
 
-        return result.toString();
+
+            return result.toString();
     }//getPostDataString
 
     @Override
@@ -523,6 +548,8 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
     public void GET(){ this.type = 1;}
 
-    public void FILE(){ this.type=2;}
+    public void FILE(){
+        this.type=2;
+    }
     //End Setter & Getter
 }

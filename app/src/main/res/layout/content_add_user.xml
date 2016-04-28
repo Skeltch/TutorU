@@ -85,7 +85,7 @@
             <!-- Password label -->
             <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Password"
+                android:text="Password (Minimum length of 6)"
                 android:paddingLeft="10dip"
                 android:paddingRight="10dip"
                 android:paddingTop="10dip"
@@ -172,17 +172,28 @@
                 android:inputType="numberDecimal"/>
 
             <!-- DOB Label -->
-            <TextView android:layout_width="fill_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Date of Birth"
-                android:paddingLeft="10dip"
-                android:paddingRight="10dip"
-                android:paddingTop="10dip"
-                android:textSize="17dip"/>
-            <!-- Use date picker or 3 drop downs for day month year however you will
-            need to concat the result into the result of YYYY-MM-DD -->
-            <!-- DOB -->
-            <EditText android:id="@+id/dob"
+                android:orientation="horizontal">
+                <TextView android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Date of Birth"
+                    android:paddingLeft="10dip"
+                    android:paddingRight="10dip"
+                    android:paddingTop="10dip"
+                    android:textSize="17dip"/>
+                <!-- Use date picker or 3 drop downs for day month year however you will
+                need to concat the result into the result of YYYY-MM-DD -->
+                <!-- DOB -->
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pick a Date"
+                    android:onClick="showDatePickerDialog"/>
+            </LinearLayout>
+            <EditText
+                android:id="@+id/dob"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dip"

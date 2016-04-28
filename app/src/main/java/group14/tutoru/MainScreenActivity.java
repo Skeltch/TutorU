@@ -18,11 +18,16 @@ import java.util.HashMap;
 
 public class MainScreenActivity extends AppCompatActivity implements AsyncResponse {
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
+        SharedPreferences settings = getSharedPreferences("Userinfo",0);
+        SharedPreferences.Editor editor = settings.edit();
+
+        if(settings.contains("id")){
+            startActivity(new Intent(this, MainPage.class));
+        }
 
         //Buttons
         Button btnLogin = (Button) findViewById(R.id.btnSignin);
@@ -63,18 +68,20 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
                 @Override
                 public void onClick(View view) {
                     //Debugging
-                    Intent intent = new Intent(MainScreenActivity.this, Profile.class);
-                    startActivity(intent);
+                    //Intent intent = new Intent(MainScreenActivity.this, Profile.class);
+                    //startActivity(intent);
 
-                    //Intent i = new Intent(MainScreenActivity.this, AddUser.class);
-                    //startActivity(i);
+                    Intent i = new Intent(MainScreenActivity.this, AddUser.class);
+                    startActivity(i);
                 }
             });
         }
     }
+    public void onBackPressed(){
+        //do nothing
+    }
     @Override
     public void processFinish(String output){
-        Log.d("result", output);
         try {
             JSONObject login = new JSONObject(output);
             if(login.optString("result").equals("success")){
@@ -90,7 +97,7 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
                 editor.commit();
 
                 Toast.makeText(this, "Login Successful", Toast.LENGTH_LONG).show();
-                Intent i = new Intent(MainScreenActivity.this, SignIn.class);
+                Intent i = new Intent(MainScreenActivity.this, MainPage.class);
                 startActivity(i);
             }
             else if(login.optString("result").equals("Login Failed")){
@@ -105,7 +112,7 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
             Toast.makeText(this, "Failed, error connecting to server",Toast.LENGTH_LONG).show();
         }
         //Debugging on phone
-        Intent i = new Intent(MainScreenActivity.this, SignIn.class);
-        startActivity(i);
+        //Intent i = new Intent(MainScreenActivity.this, SignIn.class);
+        //startActivity(i);
     }
 }

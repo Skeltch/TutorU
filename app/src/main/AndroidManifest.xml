@@ -18,6 +18,11 @@
         android:pathPattern="string"
         android:pathPrefix="string" />
 
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:allowBackup="true"
         android:configChanges="keyboardHidden|orientation"
@@ -49,11 +54,13 @@
         <activity
             android:name=".MainPage"
             android:label="@string/title_activity_main_page"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" />
+        <!--
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+        -->
         <activity
             android:name=".Profile"
             android:label="@string/title_activity_profile"
@@ -93,7 +100,15 @@
         <activity
             android:name=".Review"
             android:label="@string/title_activity_review"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".changePassword"
+            android:label="@string/title_activity_change_password"
+            android:parentActivityName=".editProfile">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="group14.tutoru.editProfile" />
+        </activity>
     </application>
 
 </manifest>

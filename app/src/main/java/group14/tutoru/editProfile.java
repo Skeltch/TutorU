@@ -29,7 +29,8 @@ import java.util.List;
 public class editProfile extends AppCompatActivity implements AsyncResponse{
 
     private int classViewLength;
-    private int maxClasses;
+    private int maxClasses=10;
+    private int id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +83,6 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                             System.exit(2); //Prevents the service/app from freezing
                     }
                 });
-        maxClasses=10;
         setContentView(R.layout.activity_edit_profile);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -115,8 +115,8 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
 
         //Password and email need more verification for changing
         final TextView uUsername = (TextView)findViewById(R.id.username);
-        final EditText uPassword = (EditText)findViewById(R.id.password);
-        final EditText uEmail = (EditText)findViewById(R.id.email);
+        final TextView uPassword = (TextView)findViewById(R.id.password);
+        final TextView uEmail = (TextView)findViewById(R.id.email);
         final TextView uName = (TextView)findViewById(R.id.name);
         final EditText uGpa = (EditText)findViewById(R.id.gpa);
         final EditText uGradYear = (EditText)findViewById(R.id.graduation_year);
@@ -143,6 +143,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
         uMajor.setText(major);
         //uClasses.setText(classes);
         SharedPreferences settings = getSharedPreferences("Userinfo", 0);
+        id = Integer.parseInt(settings.getString("id", ""));
         String role = settings.getString("role", "");
         final LinearLayout classLayout = (LinearLayout) findViewById(R.id.classLayout);
         final List<AutoCompleteTextView> classesList = new ArrayList(classViewLength + 1);
@@ -207,6 +208,15 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
             classesArray[i].setAdapter(adapter);
         }
         */
+        Button changePass = (Button)findViewById(R.id.changePass);
+        if(changePass!=null) {
+            changePass.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(new Intent(editProfile.this, changePassword.class));
+                }
+            });
+        }
         Button addClasses = (Button)findViewById(R.id.addClass);
         if(addClasses!=null){
             addClasses.setOnClickListener(new View.OnClickListener(){
@@ -282,8 +292,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
 
                         HashMap postData = new HashMap();
                         //Check if data has changed
-                        SharedPreferences settings = getSharedPreferences("Userinfo", 0);
-                        postData.put("id", settings.getString("id", "").toString());
+                        postData.put("id", Integer.toString(id));
                         if (password != tPassword) {
                             postData.put("password", tPassword);
                         }
@@ -343,7 +352,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
     }
     @Override
     public void processFinish(String output){
-        Log.e("MYSQL",output);
+        //success fail response
     }
 
 

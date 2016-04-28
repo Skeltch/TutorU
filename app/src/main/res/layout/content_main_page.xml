@@ -34,8 +34,12 @@
 				android:layout_height="3dp"
 				android:background="@color/colorPrimary"/>
 			<ImageView
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
 				android:layout_width="100dp"
 				android:layout_height="100dp"
+				android:id="@+id/profilePic"
+                android:scaleType="centerCrop"
 				android:src="@android:drawable/ic_menu_gallery"/>
 			<TextView
 				android:id="@+id/tutorInfo"

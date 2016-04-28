@@ -1,6 +1,9 @@
 package group14.tutoru;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -8,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.AdapterView.OnItemSelectedListener;
 
@@ -20,6 +24,7 @@ import android.util.Log;
 
 //For input data
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,11 +34,13 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
 
 
     private EditText etUsername, etPassword, etConfirmPassword, etEmail, etGpa,
-                    etFirst_name, etLast_name, etDob, etGraduation_year, etMajor;
-    private Spinner etType;
+                    etFirst_name, etLast_name, etGraduation_year, etMajor;
     private String usern, password, confirmPassword, email, type, gpa,
                     first_name, last_name, dob, graduation_year, major;
+    static EditText etDob;
+    static String datePicker;
     boolean et;
+    boolean uniqueU, uniqueE;
     HashMap postData = new HashMap();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +57,7 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
         etEmail = (EditText) findViewById(R.id.email);
         etPassword = (EditText) findViewById(R.id.password);
         etConfirmPassword = (EditText) findViewById(R.id.confirmPassword);
+        etDob = (EditText) findViewById(R.id.dob);
         //Would like to implement an email is already being used feature as well
         //This checks the username against our database when the user has changed into another box
         //This allows us to check for uniqueness
@@ -114,12 +122,11 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                 public void onClick(View view) {
                     //Getting value
                     etPassword = (EditText) findViewById(R.id.password);
-                    etType = (Spinner) findViewById(R.id.type);
+                    //etType = (Spinner) findViewById(R.id.type);
                     etGpa = (EditText) findViewById(R.id.gpa);
 
                     etFirst_name = (EditText) findViewById(R.id.first_name);
                     etLast_name = (EditText) findViewById(R.id.last_name);
-                    etDob = (EditText) findViewById(R.id.dob);
                     etGraduation_year = (EditText) findViewById(R.id.graduation_year);
                     etMajor = (EditText) findViewById(R.id.major);
 
@@ -172,7 +179,8 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                                 && gpa.length() <= 5 && gpa.length() > 0 && usern.length() <= 16
                                 && usern.length() >= 6 && password.length() <= 128 && password.length() >= 6
                                 && password.equals(confirmPassword)
-                                && first_name.length() <= 35 && last_name.length() <= 35 && major.length() <= 255) {
+                                && first_name.length() <= 35 && last_name.length() <= 35 && major.length() <= 255
+                                && uniqueU && uniqueE && email.contains("@")) {
                             Toast.makeText(getApplicationContext(), "Signing up...", Toast.LENGTH_SHORT).show();
 
                             postData.put("username", usern);
@@ -183,7 +191,7 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
 
                             postData.put("first_name", first_name);
                             postData.put("last_name", last_name);
-                            postData.put("dob", dob);
+                            postData.put("dob", datePicker);
                             postData.put("graduation_year", graduation_year);
                             postData.put("major", major);
 
@@ -210,6 +218,12 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                             Toast.makeText(getApplicationContext(), "Last name is too long", Toast.LENGTH_SHORT).show();
                         } else if (major.length() > 255) {
                             Toast.makeText(getApplicationContext(), "Major is too long", Toast.LENGTH_SHORT).show();
+                        } else if (!uniqueU) {
+                            Toast.makeText(getApplicationContext(), "Username is already taken!", Toast.LENGTH_SHORT).show();
+                        } else if (!uniqueE) {
+                            Toast.makeText(getApplicationContext(), "Email is already taken!", Toast.LENGTH_SHORT).show();
+                        } else if (!email.contains("@")){
+                            Toast.makeText(getApplicationContext(), "Invalid email", Toast.LENGTH_SHORT).show();
                         }
                         //This should NEVER happen
                         else {
@@ -243,7 +257,58 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
         type="";
     }
 
-    @Override
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            // Do something with the date chosen by the user
+            //Month indices start at 0 so add 1
+            month++;
+            String temp = year + "-" + month + "-" + day;
+            datePicker = temp;
+            etDob.setText(datePicker);
+            Log.e("Date", temp);
+        }
+    }
+
+    /*
+    public void showDatePickerDialog(View v){
+        Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+        System.out.println("the selected " + mDay);
+        DatePickerDialog dialog = new DatePickerDialog(AddUser.this,
+                new mDateSetListener(), mYear, mMonth, mDay);
+        dialog.show();
+    }
+    class mDateSetListener implements DatePickerDialog.OnDateSetListener{
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth){
+            int mYear = year;
+            int mMonth = monthOfYear;
+            int mDay = dayOfMonth;
+            String temp = mYear + "-" + mMonth + "-" + mDay;
+            Log.e("Date", temp);
+        }
+    }
+    */
     public void processFinish(String output){
         //php file echo's the following phrases
         if(output.equals("success")){
@@ -253,15 +318,19 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
         }
         else if(output.equals("Unique Username")){
             Toast.makeText(this, "Username is unique!", Toast.LENGTH_SHORT).show();
+            uniqueU = true;
         }
         else if(output.equals("Username Taken")){
             Toast.makeText(this, "Username is taken!", Toast.LENGTH_SHORT).show();
+            uniqueU = false;
         }
         else if(output.equals("Unique Email")){
             Toast.makeText(this, "Email is unique!", Toast.LENGTH_SHORT).show();
+            uniqueE = true;
         }
         else if(output.equals("Email is already in use")){
             Toast.makeText(this, "Email is already in use", Toast.LENGTH_SHORT).show();
+            uniqueE = false;
         }
         else{
             Toast.makeText(this, "Failed", Toast.LENGTH_LONG).show();
