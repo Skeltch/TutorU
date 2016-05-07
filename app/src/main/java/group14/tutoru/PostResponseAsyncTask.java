@@ -33,10 +33,11 @@ import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
-// The current method is very insecure however generic to allow for easy communication
-//I will probably need to change this later
+// The current method is somewhat insecure however generic to allow for easy communication
 //This class takes a hashmap with the first value as the variable used in php, ex: username
 //And the second value as the actual value, ex: jSmith123
+//Basis for code from KosalGeek
+//https://github.com/kosalgeek/generic_asynctask_v2
 public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
     private ProgressDialog progressDialog;
@@ -55,11 +56,14 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
     private Bitmap bitmap;
 
 
+    //Used for uploading files via content buffer
+    /*
     String attachmentName = "bitmap";
     String attachmentFileName = "bitmap.bmp";
     String crlf = "\r\n";
     String twoHyphens = "--";
     String boundary =  "*****";
+    */
 
 
 
@@ -134,7 +138,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
         if(type==0) {
             String result = "";
-            //Change this later for multiple urls
+            //This can be changed later for multiple urls
             for (int i = 0; i <= 0; i++) {
                 urls[i]=ip+urls[i];
                 result = invokePost(urls[i], postData);
@@ -177,6 +181,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
                 }
             }
         }
+        //File upload/Image upload
         else{
             try {
 
@@ -193,6 +198,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
                 urls[0]=ip+urls[0];
                 return invokePost(urls[0], postData);
 
+                //Unused content wrapper
                 /*
                 HttpURLConnection httpUrlConnection;
                 URL url = new URL(ip+urls[0]);
@@ -276,23 +282,14 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
                 // Open a HTTP  connection to  the URL
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                //conn.setDoInput(true); // Allow Inputs
                 conn.setDoOutput(true); // Allow Outputs
                 conn.setUseCaches(false); // Don't use a Cached Copy
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Connection", "Keep-Alive");
                 conn.setRequestProperty("Cache-Control","no-cache");
-                //conn.setRequestProperty("ENCTYPE", "multipart/form-data");
                 conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-                //conn.setRequestProperty("Content-Type","image/jpeg");
-                //change uploaded_file to other
-                //conn.setRequestProperty("uploaded_file", attachmentFileName);
-
                 //Content wrapper
-
                 DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-
-
                 dos.writeBytes(twoHyphens + boundary + lineEnd);
                 //Change uploaded_file to other
                 dos.writeBytes("Content-Disposition: form-data; name=\""+ attachmentName + "\";filename=\""
@@ -300,7 +297,6 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
                 dos.writeBytes(lineEnd);
 
                 //Convert Bitmap to ByteBuffer for file upload
-
                 byte[] pixels = new byte[bitmap.getWidth() * bitmap.getHeight()];
                 for (int i = 0; i < bitmap.getWidth(); ++i) {
                     for (int j = 0; j < bitmap.getHeight(); ++j) {
@@ -310,10 +306,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
                         pixels[i+j] = (byte) ((bitmap.getPixel(i,j) & 0x80));
                     }
                 }
-
                 dos.write(pixels);
-
-
                 // end content wrapper
                 dos.writeBytes(lineEnd);
                 dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
@@ -356,68 +349,6 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
                 conn.disconnect();
                 return response;
                 */
-
-                /*
-                URL url = new URL(ip + urls[0]);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoOutput(true);
-                connection.setRequestProperty("Content-Type", "image/jpeg");
-                connection.setRequestProperty("Connection", "Keep-Alive");
-                connection.setRequestProperty("Cache-Control", "no-cache");
-                DataOutputStream request = new DataOutputStream(connection.getOutputStream());
-                String lineEnd = "\r\n";
-                String twoHyphens = "--";
-                String boundary = "*****";
-                String attachmentName="bitmap";
-                String attachmentFileName = "bitmap.bmp";
-                request.writeBytes(twoHyphens + boundary + lineEnd);
-                request.writeBytes("Content-Disposition: form-data; name=\""
-                                    + attachmentName + "\";filename=\""
-                                    +attachmentFileName + "\"" + lineEnd);
-                request.writeBytes(lineEnd);
-
-                //Convert Bitmap to ByteBuffer for file upload
-                byte[] pixels = new byte[bitmap.getWidth() * bitmap.getHeight()];
-                for (int i = 0; i < bitmap.getWidth(); ++i) {
-                    for (int j = 0; j < bitmap.getHeight(); ++j) {
-                        //we're interested only in the MSB of the first byte,
-                        //since the other 3 bytes are identical for B&W images
-                        pixels[i + j] = (byte) ((bitmap.getPixel(i, j) & 0x80) >> 7);
-                    }
-                }
-
-                request.write(pixels);
-
-                request.writeBytes(lineEnd);
-                request.writeBytes(twoHyphens + boundary +
-                        twoHyphens + lineEnd);
-
-                request.flush();
-                request.close();
-
-                //Response
-                InputStream responseStream = new
-                        BufferedInputStream(connection.getInputStream());
-
-                BufferedReader responseStreamReader =
-                        new BufferedReader(new InputStreamReader(responseStream));
-
-                String line = "";
-                StringBuilder stringBuilder = new StringBuilder();
-
-                while ((line = responseStreamReader.readLine()) != null) {
-                    stringBuilder.append(line).append("\n");
-                }
-                responseStreamReader.close();
-
-                String response = stringBuilder.toString();
-
-                Log.e("File response", response);
-
-                responseStream.close();
-                connection.disconnect();
-                return response;
-                */
             }
             catch(Exception e){
                 e.printStackTrace();
@@ -452,22 +383,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
             if (responseCode == HttpsURLConnection.HTTP_OK) {
                 String line;
-                /*
-                InputStream content = conn.getInputStream();
-
-                int numRead;
-                final int bufferSize = 8192;
-                byte[] buffer = new byte[bufferSize];
-                ByteArrayOutputStream outString = new ByteArrayOutputStream();
-                try{
-                    while ((numRead = content.read(buffer)) != -1) {
-                        outString.write(buffer, 0, numRead);
-                    }
-                } finally {
-                    content.close();
-                }
-                return new String(outString.toByteArray());
-                */
+                //Can be used for lage amounts of data as well
                 BufferedReader br = new BufferedReader(new
                         InputStreamReader(conn.getInputStream()));
                 while ((line = br.readLine()) != null) {
@@ -507,7 +423,8 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        Log.d("RESULT******", result);
+        //Debugging and general usage
+        Log.d("RESULT", result);
         if(progressDialog.isShowing()){
             progressDialog.dismiss();
         }

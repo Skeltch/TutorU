@@ -41,13 +41,8 @@ Created and debugged by Samuel Cheung
 */
 public class otherProfile extends AppCompatActivity implements AsyncResponse {
 
-    String uEmail;
-    String uName;
-    String uGpa;
-    String uGradYear;
-    String uMajor;
-    String uClasses;
-    String uDescription;
+    //Strings for the tedtviews
+    String uEmail, uName, uGpa, uGradYear, uMajor, uClasses, uDescription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +104,6 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
     }
     @Override
     public void processFinish(String output) {
-        Log.d("raw output*********",output);
         try {
             JSONObject profileT = new JSONObject(output);
             JSONObject profile = profileT.optJSONObject("info");
@@ -135,13 +129,6 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                 profilePic.setImageBitmap(decodedByte);
             }
-
-            /*for late
-            Log.e("request","Request");
-            getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-            Log.e("set","set)");
-            getActionBar().setTitle(profile.optString("first_name")+" "+profile.optString("last_name"));
-            */
 
             //Hide classes you can tutor and something about yourself if tuttee
             uName = profile.optString("first_name")+" "+profile.optString("last_name");

@@ -84,6 +84,7 @@ public class MainPage extends AppCompatActivity
 
         if(!role.equals("Tutee")) {
             navigationView.getMenu().findItem(R.id.advanced_search).setVisible(false);
+            //This is temporary until there is an implementation for tutors to get themselves out there
             navigationView.getMenu().findItem(R.id.temp).setVisible(true);
         }
         else{
