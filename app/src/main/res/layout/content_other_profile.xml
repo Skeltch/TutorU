@@ -26,6 +26,11 @@
 			android:textStyle="bold"
 			android:layout_margin="10dp"
 			android:text="Basic Info"/>
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/request"
+				android:text="Request Tutor"/>
 		</LinearLayout>
 		
 			<TextView
@@ -133,6 +138,25 @@
 			android:layout_width="match_parent"
 			android:background="@drawable/border"
 			android:orientation="vertical">
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Average Rating"
+				android:layout_marginTop="10dp"
+				android:layout_marginLeft="16dp"
+				android:layout_marginBottom="5dp"
+				android:textStyle="bold"/>
+			<TextView
+				android:id="@+id/rating"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="16dp"
+				android:layout_marginBottom="10dp"
+				android:text="No reviews yet"/>
+			<View
+				android:layout_width="match_parent"
+				android:layout_height="3dp"
+				android:background="@color/colorPrimary"/>
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"

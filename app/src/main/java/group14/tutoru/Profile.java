@@ -47,15 +47,15 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.text.DecimalFormat;
 import java.util.HashMap;
-
+/*
+Profile page of user
+Created and debugged by Samuel Cheung
+*/
 public class Profile extends AppCompatActivity implements AsyncResponse {
 
     String uUsername;
-    String uPassword;
     String uEmail;
     String uName;
-    //String uFirstName;
-    //String uLastName;
     String uGpa;
     String uGradYear;
     String uMajor;
@@ -67,37 +67,20 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        //Getting information about the user
         HashMap postData = new HashMap();
         SharedPreferences settings = getSharedPreferences("Userinfo",0);
-        //String id = settings.getString("id","");
-        //Max class length? 20?
-        //uClasses = new String[20];
-
-        //Finding the width of the screen and scaling the profile picture accordingly
-
-        /*
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        Resources resources = this.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        int dp = width / (metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-        AppBarLayout bar = (AppBarLayout)findViewById(R.id.app_bar);
-        bar.setMinimumHeight(dp);
-        */
-
         postData.put("id", settings.getString("id", ""));
         PostResponseAsyncTask profile = new PostResponseAsyncTask(Profile.this,postData);
         Log.e("id", settings.getString("id", ""));
         profile.useLoad(false);
         profile.execute("profile.php");
 
+        //Setting toolbar name and other properties
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
         Spannable text = new SpannableString(settings.getString("first_name","") + " " + settings.getString("last_name",""));
         text.setSpan(new BackgroundColorSpan(Color.BLACK), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         text.setSpan(new ForegroundColorSpan(Color.BLUE), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
@@ -107,8 +90,8 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(0x303F9F));
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
-        //setTitle(text);
 
+        //Button to add picture
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if(fab!=null) {
             fab.setOnClickListener(new View.OnClickListener() {
@@ -128,8 +111,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
             });
         }
 
-
-
+        //Button to edit profile
         Button edit = (Button) findViewById(R.id.edit);
         if(edit!=null) {
             edit.setOnClickListener(new View.OnClickListener() {
@@ -139,13 +121,10 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                     i.putExtra("username", uUsername);
                     i.putExtra("password", "");
                     i.putExtra("name", uName);
-                    //i.putExtra("first_name",uFirstName);
-                    //i.putExtra("last_name",uLastName);
                     i.putExtra("email", uEmail);
                     i.putExtra("gpa", uGpa);
                     i.putExtra("gradYear", uGradYear);
                     i.putExtra("major", uMajor);
-                    //uClasses Array
                     i.putExtra("classes", uClasses);
                     i.putExtra("description", uDescription);
                     startActivity(i);
@@ -165,7 +144,6 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                 else{
                     Log.e("Permission", "Denied");
                 }
-                return;
             }
         }
     }
@@ -227,6 +205,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                     switch (requestCode) {
                         case 1:
                             bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                            //Other options to fitting picture
                             int nh = (int) (bitmap.getHeight() * (512.0 / bitmap.getWidth()));
                             scaled = Bitmap.createScaledBitmap(bitmap, 512, nh, true);
                             DisplayMetrics display = getResources().getDisplayMetrics();
@@ -242,18 +221,6 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
             //BitmapDrawable bmDrawable = new BitmapDrawable(getResources(), bitmap);
             PostResponseAsyncTask fileUpload = new PostResponseAsyncTask(this, scaled);
             fileUpload.execute("uploadString.php");
-            /*
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            int bytes = bitmap.getByteCount();
-            Log.e("bitmap bytes",Integer.toString(bytes));
-            byte[] byte_arr = baos.toByteArray();
-            String image_str = Base64.encodeToString(byte_arr, Base64.DEFAULT);
-            HashMap postData = new HashMap();
-            postData.put("image",image_str);
-            PostResponseAsyncTask fileUpload = new PostResponseAsyncTask(this, postData);
-            fileUpload.execute("uploadString.php");
-            */
             img.setImageBitmap(scaled);
         }
     }
@@ -264,7 +231,6 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                 JSONObject profileT = new JSONObject(output);
                 JSONObject profile = profileT.optJSONObject("info");
                 JSONArray classesArray = profileT.optJSONArray("classes");
-                //JSONObject tutorInfo = profileT.optJSONObject("tutorInfo");
                 if(profile.optString("gpa")=="null"){
                     SharedPreferences settings = getSharedPreferences("Userinfo",0);
                     SharedPreferences.Editor editor = settings.edit();
@@ -281,22 +247,18 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                     TextView gpa = (TextView) findViewById(R.id.gpa);
                     TextView gradYear = (TextView) findViewById(R.id.graduation_year);
                     TextView major = (TextView) findViewById(R.id.major);
-                    //TextView classes = (TextView)findViewById(R.id.classes);
                     TextView description = (TextView) findViewById(R.id.description);
 
                     String encodedImage = profileT.optString("imageString");
-                    byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    profilePic.setImageBitmap(decodedByte);
-
+                    if(!encodedImage.isEmpty()) {
+                        byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                        profilePic.setImageBitmap(decodedByte);
+                    }
 
                     //Hide classes you can tutor and something about yourself if tutee
                     uUsername = profile.optString("username");
                     username.setText(uUsername);
-                /*
-                uPassword = profile.optString("password");
-                password.setText(uPassword);
-                */
                     password.setText("password");
                     uName = profile.optString("first_name") + " " + profile.optString("last_name");
                     name.setText(uName);
@@ -319,16 +281,6 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                         LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams
                                 (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                         lparams.setMargins(48, 0, 0, 10);
-                        //For the first class, must overwrite the current textview
-                /*
-                if(classesArray.length()>0) {
-                    if (classesArray.getJSONObject(0).optString("classes") != "null") {
-                        Log.e("classes", classesArray.getJSONObject(0).optString("classes"));
-                        uClasses = classesArray.getJSONObject(0).optString("classes");
-                        classes.setText(uClasses);
-                    }
-                }
-                */
                         if (classesArray.length() != 0) {
                             uClasses = new String[classesArray.length()];
                         } else {

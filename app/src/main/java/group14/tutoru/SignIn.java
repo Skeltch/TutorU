@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 //What happens after you sign in, replace with something more reasonable
+//Created and debuggged by Samuel Cheung
 public class SignIn extends AppCompatActivity {
 
     @Override

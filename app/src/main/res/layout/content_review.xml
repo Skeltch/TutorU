@@ -23,6 +23,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="10dp"
                 android:id="@+id/picture"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
@@ -35,6 +37,7 @@
                 android:numStars="4"/>
         </LinearLayout>
         <EditText
+            android:paddingLeft="5dp"
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -43,6 +46,8 @@
             android:layout_marginBottom="10dp"
             android:hint="  Headline for your review"/>
         <EditText
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp"
             android:id="@+id/review"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

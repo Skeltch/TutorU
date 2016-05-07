@@ -25,7 +25,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
+/*
+Activity used to edit profile
+Created and debugged by Samuel Cheung
+*/
 public class editProfile extends AppCompatActivity implements AsyncResponse{
 
     private int classViewLength;
@@ -38,7 +41,6 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
         //Temporary function to catch unexepected errors that were not handled
         //This generates a simple error report and sends it to the server
         //Turn this into a generic class that will be extended in every activity
-        //Include networking errors?
         final Thread.UncaughtExceptionHandler oldHandler =
                 Thread.getDefaultUncaughtExceptionHandler();
 
@@ -91,7 +93,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
         //Change to full name
         setTitle("Profile");
 
-        //Use bundle instead?
+        //Can possibly use bundle instead
         String username = getIntent().getStringExtra("username");
         //These can be final because the reference to the object is not changed
         final String password = getIntent().getStringExtra("password");
@@ -113,7 +115,6 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
             classViewLength=0;
         }
 
-        //Password and email need more verification for changing
         final TextView uUsername = (TextView)findViewById(R.id.username);
         final TextView uPassword = (TextView)findViewById(R.id.password);
         final TextView uEmail = (TextView)findViewById(R.id.email);
@@ -121,18 +122,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
         final EditText uGpa = (EditText)findViewById(R.id.gpa);
         final EditText uGradYear = (EditText)findViewById(R.id.graduation_year);
         final EditText uMajor = (EditText)findViewById(R.id.major);
-        //final AutoCompleteTextView uClasses = (AutoCompleteTextView)findViewById(R.id.classes);
-        //final MultiAutoCompleteTextView uClasses = (MultiAutoCompleteTextView)findViewById(R.id.classes);
         final EditText uDescription = (EditText)findViewById(R.id.description);
-
-
-
-
-        /*
-        ArrayAdapter subjectAdapter = ArrayAdapter.createFromResource(this, R.array.Subjects, android.R.layout.select_dialog_item);
-        uClasses.setThreshold(1);
-        uClasses.setAdapter(subjectAdapter);
-        */
 
         uUsername.setText(username);
         uPassword.setText(password);
@@ -141,10 +131,12 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
         uGpa.setText(gpa);
         uGradYear.setText(gradYear);
         uMajor.setText(major);
-        //uClasses.setText(classes);
+        //Getting role from sharedpreferences
         SharedPreferences settings = getSharedPreferences("Userinfo", 0);
         id = Integer.parseInt(settings.getString("id", ""));
         String role = settings.getString("role", "");
+
+        //Variables for the multiple class views
         final LinearLayout classLayout = (LinearLayout) findViewById(R.id.classLayout);
         final List<AutoCompleteTextView> classesList = new ArrayList(classViewLength + 1);
         final LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams
@@ -157,8 +149,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
         Log.e("Role", role);
         if(role.equals("Tutor") || role.equals("Both")) {
             uDescription.setText(description);
-
-            //final AutoCompleteTextView[] classesArray = new AutoCompleteTextView[classViewLength];
+            //Debugging
             Log.e("classViewLength", Integer.toString(classViewLength));
             Log.e("classesListLength", Integer.toString(classesList.size()));
 
@@ -170,9 +161,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                 classLayout.addView(classesArray[i]);
                 classesArray[i].setThreshold(1);
                 classesArray[i].setAdapter(adapter);
-                //classesArray[i].setInputType(InputType.TYPE_CLASS_TEXT);
                 classesArray[i].setImeOptions(EditorInfo.IME_ACTION_NEXT);
-                //Temp
                 classesList.add(classesArray[i]);
             }
             if (classViewLength == 0) {
@@ -184,7 +173,6 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                 classLayout.addView(classesArray[0]);
                 classesArray[0].setThreshold(1);
                 classesArray[0].setAdapter(adapter);
-                //Temp
                 classesList.add(classesArray[0]);
                 classViewLength++;
             }
@@ -195,19 +183,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
             descriptionView.setVisibility(View.GONE);
 
         }
-        //ArrayAdapter[] adapterArray = new ArrayAdapter[classViewLength];
-        //ArrayList<ArrayAdapter> adapterList = new ArrayList(classViewLength);
-        //ArrayAdapter[] adapterArray = adapterList.toArray(new ArrayAdapter[adapterList.size()]);
-
-        //Maybe combine this with for loop above
-        /*
-        for(int i=0; i<classViewLength; i++) {
-            //adapterArray[i] = ArrayAdapter.createFromResource(this, R.array.Subjects, android.R.layout.select_dialog_item);
-            classesArray[i].setThreshold(1);
-            //classesArray[i].setAdapter(adapterArray[i]);
-            classesArray[i].setAdapter(adapter);
-        }
-        */
+        //Go to change pass activity
         Button changePass = (Button)findViewById(R.id.changePass);
         if(changePass!=null) {
             changePass.setOnClickListener(new View.OnClickListener() {
@@ -217,6 +193,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                 }
             });
         }
+        //Add class
         Button addClasses = (Button)findViewById(R.id.addClass);
         if(addClasses!=null){
             addClasses.setOnClickListener(new View.OnClickListener(){
@@ -265,10 +242,8 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                 @Override
                 public void onClick(View view) {
                     //Check the class field is valid
-                    //Implement multiple classes
                     String[] subjects = getResources().getStringArray(R.array.Subjects);
                     String[] tClasses = new String[classViewLength];
-                    //uClasses.getText().toString();
                     AutoCompleteTextView[] newClassesArray = classesList.toArray(new AutoCompleteTextView[classesList.size()]);
                     for (int i = 0; i < classViewLength; i++) {
                         tClasses[i] = newClassesArray[i].getText().toString();
@@ -279,7 +254,6 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                             validClasses = false;
                         }
                     }
-                    //if (Arrays.asList(subjects).contains(tClasses)) {
                     if (validClasses) {
                         String tPassword = uPassword.getText().toString();
                         String tEmail = uEmail.getText().toString();
@@ -310,8 +284,6 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                             postData.put("major", tMajor);
                         }
                         //Classes should be entered on a new line and come with suggestions like the search
-                        //Implement multiple classes
-                        //Right now the system is delete all rows and insert new ones. Need new version
                         int notEmpty=0;
                         JSONArray classJson = new JSONArray();
                         for (int i = 0; i < classViewLength; i++) {
@@ -320,7 +292,6 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                                 if (!tClasses[i].isEmpty()) {
                                     Log.e("Classes",tClasses[i]);
                                     Log.e("classViewLength",Integer.toString(classViewLength));
-                                    //classJson.put(Integer.toString(notEmpty), tClasses[i]);
                                     classJson.put(notEmpty,tClasses[i]);
                                     notEmpty++;
                                 }
@@ -330,11 +301,6 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                         }
                         Log.e("JSON CLASSES", classJson.toString());
                         postData.put("classes", classJson.toString());
-                        /*
-                        if (classes[0] != tClasses) {
-                            postData.put("classes", tClasses);
-                        }
-                        */
                         if (description != tDescription) {
                             postData.put("description", tDescription);
                         }
@@ -352,7 +318,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
     }
     @Override
     public void processFinish(String output){
-        //success fail response
+        //do nothing
     }
 
 

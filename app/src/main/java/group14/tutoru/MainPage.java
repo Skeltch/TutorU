@@ -33,6 +33,8 @@ import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import com.ethanwong.tutoru.MainActivity;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,7 +43,11 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 
-
+/*
+Main activity that users can navigate around and first page after logging in
+Contains featured tutor and navigation bar for moving around
+Created and debugged by Samuel Cheung
+*/
 public class MainPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, AsyncResponse {
 
@@ -85,10 +91,7 @@ public class MainPage extends AppCompatActivity
             navigationView.getMenu().findItem(R.id.temp).setVisible(false);
         }
 
-        /*
-        SearchView searchView = (SearchView) findViewById(R.id.search);
-        String[] subjects = getResources().getStringArray(R.array.Subjects);
-        */
+        //Search bar at the top of the page
         final AutoCompleteTextView search = (AutoCompleteTextView) findViewById(R.id.search);
         ArrayAdapter subjectAdapter = ArrayAdapter.createFromResource(this, R.array.Subjects, android.R.layout.select_dialog_item);
         search.setThreshold(1);
@@ -116,6 +119,7 @@ public class MainPage extends AppCompatActivity
         featured.useLoad(false);
         featured.execute("featured.php");
 
+        //Button to go to the featured tutor's profile
         Button featuredButton = (Button) findViewById(R.id.featured);
         featuredButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -132,7 +136,6 @@ public class MainPage extends AppCompatActivity
     @Override
     public void onBackPressed() {
         //default android code causes issues
-        //This checks whether the user just logged in
         minimizeApp();
     }
 
@@ -192,7 +195,6 @@ public class MainPage extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -205,18 +207,17 @@ public class MainPage extends AppCompatActivity
             Intent i = new Intent(MainPage.this, search.class);
             startActivity(i);
         } else if (id == R.id.notifications){
-            //Notifications
-            Intent i = new Intent(MainPage.this, Review.class);
-            i.putExtra("id","6");
-            startActivity(i);
+            //Notifications not yet implemented
         } else if (id == R.id.schedule) {
-            //Schedule
-        } else if (id == R.id.friends) {
-            //Tutor/Tutee management
+            //Schedule not yet implemented
+        }  else if (id == R.id.tutorPage){
+            startActivity(new Intent(MainPage.this, TutorHomepage.class));
+        }
+        else if (id == R.id.friends) {
+            //Tutor/Tutee management not yet implemented
         } else if (id == R.id.settings) {
-            //Settings
+            //Settings not yet implemented
         } else if (id == R.id.log_out) {
-            //Do more
             //Clear all shared preferences to log out
             SharedPreferences settings = getSharedPreferences("Userinfo",0);
             SharedPreferences.Editor editor = settings.edit();
@@ -246,7 +247,11 @@ public class MainPage extends AppCompatActivity
                 DecimalFormat gpa = new DecimalFormat("#.###");
                 //This function ensures that the decimal is to 3 places
                 String uGpa = Double.toString(Double.valueOf(gpa.format(Float.parseFloat(profile.optString("gpa")))));
+                DecimalFormat decTemp = new DecimalFormat("#.###");
+                //This function ensures that the decimal is to 3 places
+                String num = Double.toString(Double.valueOf(decTemp.format(Float.parseFloat(profile.optString("rating")))));
                 String info = "Name: " + profile.optString("first_name") + " " + profile.optString("last_name")
+                        + "\nAverage Rating: " + num
                         + "\nGpa: " + uGpa
                         + "\nMajor: " + profile.optString("major")
                         + "\nGraduation Year: " + profile.optString("graduation_year");
@@ -275,10 +280,12 @@ public class MainPage extends AppCompatActivity
                 featuredTutor.setText(temp);
 
                 String encodedImage = profileT.optString("imageString");
-                byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                ImageView profilePic = (ImageView) findViewById(R.id.profilePic);
-                profilePic.setImageBitmap(decodedByte);
+                if(!encodedImage.isEmpty()) {
+                    byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    ImageView profilePic = (ImageView) findViewById(R.id.profilePic);
+                    profilePic.setImageBitmap(decodedByte);
+                }
             }
         }
         catch(JSONException e){

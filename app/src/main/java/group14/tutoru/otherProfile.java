@@ -35,7 +35,10 @@ import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
-
+/*
+Other profile activity
+Created and debugged by Samuel Cheung
+*/
 public class otherProfile extends AppCompatActivity implements AsyncResponse {
 
     String uEmail;
@@ -69,7 +72,7 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
 
 
         HashMap postData = new HashMap();
-        String id = getIntent().getStringExtra("id");
+        final String id = getIntent().getStringExtra("id");
         if(getIntent().getStringExtra("name")!=null) {
             setTitle(getIntent().getStringExtra("name"));
         }
@@ -81,6 +84,22 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        //Button to request the tutor from their profile
+        Button request = (Button) findViewById(R.id.request);
+        if(request!=null) {
+            request.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //Replace with proper class
+                    /*
+                    Intent i = new Intent(this, request.class);
+                    i.putExtra("id",id);
+                    startActivity(i);
+                    */
+                }
+            });
+        }
     }
 
     @Override
@@ -104,19 +123,18 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
             TextView gradYear = (TextView)findViewById(R.id.graduation_year);
             TextView major = (TextView)findViewById(R.id.major);
             TextView classes = (TextView)findViewById(R.id.classes);
+            TextView rating = (TextView) findViewById(R.id.rating);
             TextView description = (TextView)findViewById(R.id.description);
 
             LinearLayout emailView = (LinearLayout)findViewById(R.id.emailView);
             View emailBorder = findViewById(R.id.emailBorder);
 
             String encodedImage = profileT.optString("imageString");
-            byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-            profilePic.setImageBitmap(decodedByte);
-
-
-            setTitle(profile.optString("first_name") + " " + profile.optString("last_name"));
-            getSupportActionBar().setTitle(profile.optString("first_name") + " " + profile.optString("last_name"));
+            if(!encodedImage.isEmpty()) {
+                byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                profilePic.setImageBitmap(decodedByte);
+            }
 
             /*for late
             Log.e("request","Request");
@@ -138,6 +156,13 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
             }
             uGpa = profile.optString("gpa");
 
+            if(!profile.optString("rating").equals("null")){
+                DecimalFormat temp = new DecimalFormat("#.###");
+                //This function ensures that the decimal is to 3 places
+                String num = Double.toString(Double.valueOf(temp.format(Float.parseFloat(profile.optString("rating")))));
+                rating.setText(num);
+            }
+
             DecimalFormat temp = new DecimalFormat("#.###");
             //This function ensures that the decimal is to 3 places
             uGpa = Double.toString(Double.valueOf(temp.format(Float.parseFloat(uGpa))));
@@ -146,6 +171,8 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
             gradYear.setText(uGradYear);
             uMajor = profile.optString("major");
             major.setText(uMajor);
+
+            getSupportActionBar().setTitle(uName);
 
             uClasses="";
             if(classesArray.length()==0){

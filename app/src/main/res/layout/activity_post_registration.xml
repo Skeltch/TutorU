@@ -23,7 +23,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="A confirmation link has been sent to your email address. You will be redirected to the login page in a few moments. We recommend uploading a transcript for tutors and filling out the rest of your profile."
+        android:text="A confirmation email has been sent to your email address. You will be redirected to the login page in a few moments.
+We recommend updating your profile for tutors."
         android:id="@+id/textView2"
         android:layout_below="@+id/textView"
         android:layout_alignParentStart="true" />

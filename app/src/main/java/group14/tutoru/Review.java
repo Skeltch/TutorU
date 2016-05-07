@@ -23,13 +23,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-
+/*
+Review activity for reviewing tutors
+Created and debugged by Samuel Cheung
+*/
 public class Review extends AppCompatActivity implements AsyncResponse{
 
 
     private float starRating=0;
-    private int reviewerID;
     private int tutorID;
+    private String tutorName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,13 +45,18 @@ public class Review extends AppCompatActivity implements AsyncResponse{
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         TextView reviewTitle = (TextView) findViewById(R.id.reviewTitle);
-        String name = getIntent().getStringExtra("name");
-        if(name!=null && reviewTitle!=null){
-            reviewTitle.setText(name);
+        //Get information passed through intent
+        tutorName = getIntent().getStringExtra("name");
+        if(tutorName!=null && reviewTitle!=null){
+            reviewTitle.setText(tutorName);
         }
         String id = getIntent().getStringExtra("id");
+        tutorID = Integer.parseInt(id);
         HashMap postData = new HashMap();
-        postData.put("id",id);
+        //Information required for starting activity which includes getting the picture
+        //And checking that the user has not left a review previously
+        postData.put("tutorID",id);
+        postData.put("reviewerID", getSharedPreferences("Userinfo",0).getString("id",""));
         PostResponseAsyncTask profile = new PostResponseAsyncTask(this,postData);
         profile.execute("review.php");
         listenerForRatingBar();
@@ -65,6 +73,8 @@ public class Review extends AppCompatActivity implements AsyncResponse{
                     postData.put("tutorID", Integer.toString(tutorID));
                     postData.put("reviewerID", settings.getString("id", ""));
                     String name = settings.getString("first_name","") + " " + settings.getString("last_name","");
+                    Log.e("values", Integer.toString(tutorID) + "1" + settings.getString("id","") + "2" + name + "3"
+                        + title.getText().toString() + "4" + review.getText().toString() + "5" + Float.toString(starRating));
                     postData.put("name", name);
                     postData.put("title",title.getText().toString());
                     postData.put("review",review.getText().toString());
@@ -75,6 +85,7 @@ public class Review extends AppCompatActivity implements AsyncResponse{
             });
         }
     }
+    //Rating bar
     public void listenerForRatingBar(){
         RatingBar rating = (RatingBar) findViewById(R.id.ratingBar);
         if(rating!=null) {
@@ -90,18 +101,31 @@ public class Review extends AppCompatActivity implements AsyncResponse{
     }
     @Override
     public void processFinish(String output){
-        if(!output.equals("success")){
-            try {
-                JSONObject image = new JSONObject(output);
-                String encodedImage = image.optString("imageString");
-                byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                ImageView picture = (ImageView)findViewById(R.id.picture);
-                picture.setImageBitmap(decodedByte);
+        try {
+            JSONObject review = new JSONObject(output);
+            //Outputs to direct the activity
+            if (review.optString("activity").equals("review")) {
+                Intent i = new Intent(Review.this, otherProfile.class);
+                i.putExtra("id", Integer.toString(tutorID));
+                i.putExtra("name", tutorName);
+                startActivity(i);
             }
-            catch(JSONException e){
-                e.printStackTrace();
+            else if(review.optString("activity").equals("redirect")) {
+                //Allow tutee to edit review
+                //Intent i = new Intent(Review.this, editReview.class);
+                //startActivity(i);
+            } else {
+                    JSONObject image = new JSONObject(output);
+                    String encodedImage = image.optString("imageString");
+                    if (!encodedImage.isEmpty()) {
+                        byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                        ImageView picture = (ImageView) findViewById(R.id.picture);
+                        picture.setImageBitmap(decodedByte);
+                    }
             }
+        } catch(JSONException e){
+            e.printStackTrace();
         }
     }
 }

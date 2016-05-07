@@ -28,18 +28,24 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-//IMPORTANT**** currently date must be added in the mysql fashion, yyyy/mm/dd, however
-//This will be changed to be easier for the user
+/*
+Activity for registering
+Created and debugged by Samuel Cheung
+*/
 public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemSelectedListener {
 
-
+    //The fields that will be entered by the user
     private EditText etUsername, etPassword, etConfirmPassword, etEmail, etGpa,
                     etFirst_name, etLast_name, etGraduation_year, etMajor;
+    //Strings obtained from the edittexts
     private String usern, password, confirmPassword, email, type, gpa,
                     first_name, last_name, dob, graduation_year, major;
+    //Static to allow usage
     static EditText etDob;
     static String datePicker;
+    //Check edit text to make sure all data is entered
     boolean et;
+    //Booleans to check unique username and email
     boolean uniqueU, uniqueE;
     HashMap postData = new HashMap();
     @Override
@@ -58,7 +64,6 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
         etPassword = (EditText) findViewById(R.id.password);
         etConfirmPassword = (EditText) findViewById(R.id.confirmPassword);
         etDob = (EditText) findViewById(R.id.dob);
-        //Would like to implement an email is already being used feature as well
         //This checks the username against our database when the user has changed into another box
         //This allows us to check for uniqueness
         etUsername.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -78,6 +83,7 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                 }
             }
         });
+        //This checks email uniqueness
         etEmail.setOnFocusChangeListener(new View.OnFocusChangeListener(){
             @Override
             public  void onFocusChange(View v, boolean hasFocus){
@@ -92,7 +98,7 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                 }
             }
         });
-
+        //Check that the passwords match
         etPassword.setOnFocusChangeListener(new View.OnFocusChangeListener(){
             @Override
             public void onFocusChange(View v, boolean hasFocus){
@@ -115,7 +121,7 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                 }
             }
         });
-
+        //Register
         if (btnRegister != null) {
             btnRegister.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -172,8 +178,6 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
 
                     //All fields are entered
                     if (et) {
-                        //Need to handle text too large
-                        //Need more validation, check email and name are valid, etc.
                         //Error handling
                         if (Float.valueOf(gpa) <= 4.00 && Float.valueOf(gpa) > 0
                                 && gpa.length() <= 5 && gpa.length() > 0 && usern.length() <= 16
@@ -256,7 +260,7 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
     public void onNothingSelected(AdapterView<?> arg0){
         type="";
     }
-
+    //Dialog for picking date
     public void showDatePickerDialog(View v) {
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getSupportFragmentManager(), "datePicker");
@@ -277,7 +281,6 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            // Do something with the date chosen by the user
             //Month indices start at 0 so add 1
             month++;
             String temp = year + "-" + month + "-" + day;
@@ -287,28 +290,6 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
         }
     }
 
-    /*
-    public void showDatePickerDialog(View v){
-        Calendar c = Calendar.getInstance();
-        int mYear = c.get(Calendar.YEAR);
-        int mMonth = c.get(Calendar.MONTH);
-        int mDay = c.get(Calendar.DAY_OF_MONTH);
-        System.out.println("the selected " + mDay);
-        DatePickerDialog dialog = new DatePickerDialog(AddUser.this,
-                new mDateSetListener(), mYear, mMonth, mDay);
-        dialog.show();
-    }
-    class mDateSetListener implements DatePickerDialog.OnDateSetListener{
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth){
-            int mYear = year;
-            int mMonth = monthOfYear;
-            int mDay = dayOfMonth;
-            String temp = mYear + "-" + mMonth + "-" + mDay;
-            Log.e("Date", temp);
-        }
-    }
-    */
     public void processFinish(String output){
         //php file echo's the following phrases
         if(output.equals("success")){
@@ -335,7 +316,5 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
         else{
             Toast.makeText(this, "Failed", Toast.LENGTH_LONG).show();
         }
-        //Debugging
-        //Log.e("output", output);
     }
 }

@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 //Testing crop
+//Created by Samuel Cheung
 public class test extends AppCompatActivity implements View.OnTouchListener {
 
 

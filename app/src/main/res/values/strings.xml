@@ -92,6 +92,10 @@
     </string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main_page">MainPage</string>
+    <string name="title_activity_tutor_homepage">TutorHomepage</string>
+    <string name="title_activity_tutor_profile">TutorProfile</string>
+    <string name="title_activity_shift_calendar">shiftCalendar</string>
+    <string name="title_activity_tutor_nav_drawer">tutorNavDrawer</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -199,6 +203,47 @@
     <string name="title_activity_review">Review</string>
     <string name="title_activity_change_password">changePassword</string>
 
+    <string-array name="matches">
+        <item>Daniel</item>
+        <item>Elias</item>
+        <item>Philip</item>
+        <item>Samuel</item>
+        <item>Harry</item>
+        <item>Joseph</item>
+        <item>David</item>
+        <item>Sarah</item>
+        <item>Jillian</item>
+    </string-array>
+    <string name="title_activity_tutor_uapp">TutorUApp</string>
+    <string-array name="appointments">
+        <item>5/10/16: 3:00pm - 4:00pm</item>
+        <item>5/12/16: 1:20pm - 5:00pm</item>
+        <item>5/21/16: 10:00am - 12:30pm</item>
+        <item>item 4</item>
+        <item>item 5</item>
+        <item>item 6</item>
+        <item>item 7</item>
+        <item>item 8</item>
+        <item>item 9</item>
+        <item>item 10</item>
+        <item>item 11</item>
+        <item>item 12</item>
+        <item>item 13</item>
+        <item>item 14</item>
+        <item>item 15</item>
+        <item>item 16</item>
+        <item>item 17</item>
+        <item>item 17</item>
+        <item>item 18</item>
+        <item>item 19</item>
+        <item>item 20</item>
+    </string-array>
+    <string name="title_activity_session_start">sessionStart</string>
+    <string name="title_activity_start_live_session">startLiveSession</string>
+    <string name="title_activity_active_session">activeSession</string>
+    <string name="title_activity_match_created_tutor_side">MatchCreatedTutorSide</string>
+    <string name="title_activity_match_list">MatchList</string>
+
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
@@ -211,4 +256,12 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string-array name="shiftCalendar">
+        <item>5/10/16: 6:00pm - 9:00pm -- Daniel Revie</item>
+        <item>5/11/16: 2:00pm - 5:00pm -- Elias Argiris</item>
+        <item>5/12/16: 3:00pm - 4:00pm -- Ethan Wong</item>
+        <item>5/13/16: 5:00pm - 7:00pm -- Harry Li</item>
+        <item>5/14/16: 1:00pm - 3:00pm -- Philip Mak</item>
+        <item>5/15/16: 12:00pm - 3:00pm -- Samuel Cheung</item>
+    </string-array>
 </resources>
