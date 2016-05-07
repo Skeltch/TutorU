@@ -69,8 +69,8 @@ public class TutorHomepage extends AppCompatActivity {
         profBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Intent profPage = new Intent(TutorHomepage.this, TutorProfile.class);
-                startActivity(profPage);
+                //Intent profPage = new Intent(TutorHomepage.this, TutorProfile.class);
+                //startActivity(profPage);
             }
         });
     }

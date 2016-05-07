@@ -31,6 +31,12 @@
 				android:layout_height="wrap_content"
 				android:id="@+id/request"
 				android:text="Request Tutor"/>
+			<Button
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/review"
+				android:text="View Reviews"
+				android:onClick="toReviews"/>
 		</LinearLayout>
 		
 			<TextView
@@ -52,10 +58,9 @@
 			android:layout_marginTop="0dp"
 			android:layout_width="match_parent"
 			android:layout_height="3dp"
-			android:background="#4fa5d5"
+			android:background="@color/colorPrimary"
 			android:visibility="gone"
 			android:id="@+id/emailBorder"/>
-
 		<LinearLayout
 			android:layout_height="wrap_content"
 			android:layout_width="match_parent"
@@ -173,6 +178,25 @@
 				android:id="@+id/classes"
 				android:text="None"/>
 		</LinearLayout>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			android:layout_marginLeft="16dp"
+			android:layout_marginBottom="5dp"
+			android:textStyle="bold"
+			android:text="Price"/>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="@dimen/text_margin"
+			android:layout_marginBottom="10dp"
+			android:id="@+id/price"
+			android:text="Not set"/>
+		<View
+			android:layout_width="match_parent"
+			android:layout_height="3dp"
+			android:background="@color/colorPrimary"/>
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"

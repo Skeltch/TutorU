@@ -30,6 +30,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
@@ -40,6 +41,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -239,6 +241,7 @@ public class MainPage extends AppCompatActivity
             JSONArray classesArray = profileT.optJSONArray("classes");
             //JSONObject tutorInfo = profileT.optJSONObject("tutorInfo");
             TextView featuredTutor = (TextView)findViewById(R.id.tutorInfo);
+            RatingBar ratingBar = (RatingBar) findViewById(R.id.ratingBar);
             featuredId=Integer.parseInt(profile.optString("id"));
             featuredName=profile.optString("first_name" + " " + "last_name");
             if(profile.optString("gpa").isEmpty() || profile.optString("gpa")=="null"){
@@ -251,6 +254,7 @@ public class MainPage extends AppCompatActivity
                 DecimalFormat decTemp = new DecimalFormat("#.###");
                 //This function ensures that the decimal is to 3 places
                 String num = Double.toString(Double.valueOf(decTemp.format(Float.parseFloat(profile.optString("rating")))));
+                ratingBar.setRating(Float.parseFloat(num));
                 String info = "Name: " + profile.optString("first_name") + " " + profile.optString("last_name")
                         + "\nAverage Rating: " + num
                         + "\nGpa: " + uGpa
@@ -270,6 +274,15 @@ public class MainPage extends AppCompatActivity
                     classString += ", " + classesArray.getJSONObject(i).optString("classes");
                 }
                 //String for reviews, price, etc
+                String uPrice = "Not set";
+                if (!profile.optString("price").equals("null")){
+                    //This function ensures that the price is in the correct format
+                    uPrice = profile.optString("price");
+                    NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
+                    uPrice = currencyFormatter.format(Double.parseDouble(uPrice));
+                }
+                String price = "\nPrice: ";
+                price += uPrice;
                 String temp = profile.optString("description");
                 String description = "\nDescription: ";
                 if (temp.isEmpty()) {
@@ -277,7 +290,7 @@ public class MainPage extends AppCompatActivity
                 } else {
                     description += temp;
                 }
-                temp = info + classString + description;
+                temp = info + classString + price + description;
                 featuredTutor.setText(temp);
 
                 String encodedImage = profileT.optString("imageString");

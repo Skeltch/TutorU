@@ -21,6 +21,9 @@ import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -102,9 +105,11 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
         //final String firstName = getIntent().getStringExtra("first_name");
         //final String lastName = getIntent().getStringExtra("last_name");
         final String gpa = getIntent().getStringExtra("gpa");
+        final String dob = getIntent().getStringExtra("dob");
         final String gradYear = getIntent().getStringExtra("gradYear");
         final String major = getIntent().getStringExtra("major");
         final String[] classes = getIntent().getStringArrayExtra("classes");
+        final String price = getIntent().getStringExtra("price");
         final String description = getIntent().getStringExtra("description");
 
         //This however cannot because the length needs to change based on the user input
@@ -120,8 +125,10 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
         final TextView uEmail = (TextView)findViewById(R.id.email);
         final TextView uName = (TextView)findViewById(R.id.name);
         final EditText uGpa = (EditText)findViewById(R.id.gpa);
+        final TextView uDob = (TextView) findViewById(R.id.dateOfBirth);
         final EditText uGradYear = (EditText)findViewById(R.id.graduation_year);
         final EditText uMajor = (EditText)findViewById(R.id.major);
+        final EditText uPrice = (EditText)findViewById(R.id.price);
         final EditText uDescription = (EditText)findViewById(R.id.description);
 
         uUsername.setText(username);
@@ -129,7 +136,9 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
         uEmail.setText(email);
         uName.setText(name);
         uGpa.setText(gpa);
+        uDob.setText(dob);
         uGradYear.setText(gradYear);
+        uPrice.setText(price);
         uMajor.setText(major);
         //Getting role from sharedpreferences
         SharedPreferences settings = getSharedPreferences("Userinfo", 0);
@@ -260,57 +269,76 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                         String tGpa = uGpa.getText().toString();
                         String tGradYear = uGradYear.getText().toString();
                         String tMajor = uMajor.getText().toString();
+                        String tPrice = uPrice.getText().toString();
                         String tDescription = uDescription.getText().toString();
                         //Add phone number?
-
-
-                        HashMap postData = new HashMap();
-                        //Check if data has changed
-                        postData.put("id", Integer.toString(id));
-                        if (password != tPassword) {
-                            postData.put("password", tPassword);
+                        boolean validNums = true;
+                        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
+                        //Try parsing the numbers
+                        try {
+                            Float.parseFloat(tGpa);
+                            Integer.parseInt(tGradYear);
+                            tPrice = currencyFormatter.parse(tPrice).toString();
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(getApplicationContext(), "Invalid Numbers", Toast.LENGTH_SHORT).show();
+                            validNums = false;
+                        } catch (ParseException e){
+                            //It will work regardless since the input is limited to numbers
+                            //This is just to make android happy
+                            //Toast.makeText(getApplicationContext(), "Invalid Price", Toast.LENGTH_SHORT).show();
                         }
-                        //Send email
-                        if (email != tEmail) {
-                            postData.put("email", tEmail);
-                        }
-                        if (gpa != tGpa) {
-                            postData.put("gpa", tGpa);
-                        }
-                        if (gradYear != tGradYear) {
-                            postData.put("graduation_year", tGradYear);
-                        }
-                        if (major != tMajor) {
-                            postData.put("major", tMajor);
-                        }
-                        //Classes should be entered on a new line and come with suggestions like the search
-                        int notEmpty=0;
-                        JSONArray classJson = new JSONArray();
-                        for (int i = 0; i < classViewLength; i++) {
-                            //postData.put("classes", tClasses);
-                            try {
-                                if (!tClasses[i].isEmpty()) {
-                                    Log.e("Classes",tClasses[i]);
-                                    Log.e("classViewLength",Integer.toString(classViewLength));
-                                    classJson.put(notEmpty,tClasses[i]);
-                                    notEmpty++;
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                        if (validNums) {
+                            HashMap postData = new HashMap();
+                            //Check if data has changed
+                            postData.put("id", Integer.toString(id));
+                            if (password != tPassword) {
+                                postData.put("password", tPassword);
                             }
-                        }
-                        Log.e("JSON CLASSES", classJson.toString());
-                        postData.put("classes", classJson.toString());
-                        if (description != tDescription) {
-                            postData.put("description", tDescription);
-                        }
+                            //Send email
+                            if (email != tEmail) {
+                                postData.put("email", tEmail);
+                            }
+                            if (gpa != tGpa) {
+                                postData.put("gpa", tGpa);
+                            }
+                            if (gradYear != tGradYear) {
+                                postData.put("graduation_year", tGradYear);
+                            }
+                            if (major != tMajor) {
+                                postData.put("major", tMajor);
+                            }
+                            //Classes should be entered on a new line and come with suggestions like the search
+                            int notEmpty = 0;
+                            JSONArray classJson = new JSONArray();
+                            for (int i = 0; i < classViewLength; i++) {
+                                //postData.put("classes", tClasses);
+                                try {
+                                    if (!tClasses[i].isEmpty()) {
+                                        Log.e("Classes", tClasses[i]);
+                                        Log.e("classViewLength", Integer.toString(classViewLength));
+                                        classJson.put(notEmpty, tClasses[i]);
+                                        notEmpty++;
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            Log.e("JSON CLASSES", classJson.toString());
+                            postData.put("classes", classJson.toString());
+                            if (price != tPrice) {
+                                postData.put("price", tPrice);
+                            }
+                            if (description != tDescription) {
+                                postData.put("description", tDescription);
+                            }
 
-                        PostResponseAsyncTask editProfile = new PostResponseAsyncTask(editProfile.this, postData);
-                        editProfile.execute("editProfile.php");
-                        Intent i = new Intent(editProfile.this, Profile.class);
-                        startActivity(i);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Invalid Class", Toast.LENGTH_SHORT).show();
+                            PostResponseAsyncTask editProfile = new PostResponseAsyncTask(editProfile.this, postData);
+                            editProfile.execute("editProfile.php");
+                            Intent i = new Intent(editProfile.this, Profile.class);
+                            startActivity(i);
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Invalid Class", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             });

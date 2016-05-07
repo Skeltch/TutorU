@@ -40,7 +40,6 @@ public class Review extends AppCompatActivity implements AsyncResponse{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //Getting from intent the id and name of the person the user will be reviewing
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -111,6 +110,9 @@ public class Review extends AppCompatActivity implements AsyncResponse{
                 startActivity(i);
             }
             else if(review.optString("activity").equals("redirect")) {
+                //Temporary
+                Toast.makeText(this, "You have already reviewed this tutor", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(Review.this, MainPage.class));
                 //Allow tutee to edit review
                 //Intent i = new Intent(Review.this, editReview.class);
                 //startActivity(i);
