@@ -1,3 +1,4 @@
+The apk file to run this is TutorU.apk, use an android device or emulator.
 This project connects to our digital ocean droplet at the ip TutorU.mooo.com.
 Source code for the apk can be found in TutorU/app/src/main.
 From there java is for the application and res is for the xml files.
