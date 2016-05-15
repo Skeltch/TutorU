@@ -46,6 +46,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashMap;
 /*
 Profile page of user
@@ -61,6 +62,8 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
     String uMajor;
     String[] uClasses;
     String uDescription;
+    String uDob;
+    String uPrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,8 +127,10 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                     i.putExtra("email", uEmail);
                     i.putExtra("gpa", uGpa);
                     i.putExtra("gradYear", uGradYear);
+                    i.putExtra("dob",uDob);
                     i.putExtra("major", uMajor);
                     i.putExtra("classes", uClasses);
+                    i.putExtra("price", uPrice);
                     i.putExtra("description", uDescription);
                     startActivity(i);
                 }
@@ -197,7 +202,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
         }
         */
         if (resultCode == Activity.RESULT_OK) {
-            Bitmap bitmap = null;
+            Bitmap bitmap;
             Bitmap scaled = null;
             if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
                 Uri selectedImage = data.getData();
@@ -248,6 +253,8 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                     TextView gradYear = (TextView) findViewById(R.id.graduation_year);
                     TextView major = (TextView) findViewById(R.id.major);
                     TextView description = (TextView) findViewById(R.id.description);
+                    TextView dob = (TextView) findViewById(R.id.dateOfBirth);
+                    TextView price = (TextView) findViewById(R.id.price);
 
                     String encodedImage = profileT.optString("imageString");
                     if(!encodedImage.isEmpty()) {
@@ -256,7 +263,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                         profilePic.setImageBitmap(decodedByte);
                     }
 
-                    //Hide classes you can tutor and something about yourself if tutee
+                    //Hide classes you can tutor, price and description if tutee
                     uUsername = profile.optString("username");
                     username.setText(uUsername);
                     password.setText("password");
@@ -269,12 +276,15 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                     //This function ensures that the decimal is to 3 places
                     uGpa = Double.toString(Double.valueOf(temp.format(Float.parseFloat(uGpa))));
                     gpa.setText(uGpa);
+                    uDob = profile.optString("dob");
+                    dob.setText(uDob);
                     uGradYear = profile.optString("graduation_year");
                     gradYear.setText(uGradYear);
                     uMajor = profile.optString("major");
                     major.setText(uMajor);
                     SharedPreferences settings = getSharedPreferences("Userinfo", 0);
                     LinearLayout classLayout = (LinearLayout) findViewById(R.id.classLayout);
+                    LinearLayout priceLayout = (LinearLayout) findViewById(R.id.priceLayout);
                     LinearLayout descriptionView = (LinearLayout) findViewById(R.id.descriptionView);
                     String role = settings.getString("role", "");
                     if (role.equals("Tutor") || role.equals("Both")) {
@@ -299,8 +309,18 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                             newClass.setLayoutParams(lparams);
                             classLayout.addView(newClass);
                         }
-
-                        if (profile.optString("description") != "null") {
+                        if (!profile.optString("price").equals("null")){
+                            //DecimalFormat priceFormat = new DecimalFormat("##.##");
+                            //This function ensures that the price is in the correct format
+                            uPrice = profile.optString("price");
+                            //uPrice = Double.toString(Double.valueOf(temp.format(Float.parseFloat(uPrice))));
+                            NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
+                            uPrice = currencyFormatter.format(Double.parseDouble(uPrice));
+                            price.setText(uPrice);
+                        } else{
+                            price.setText("Not set");
+                        }
+                        if (!profile.optString("description").equals("null")) {
                             uDescription = profile.optString("description");
                             description.setText(uDescription);
                         } else {
@@ -308,6 +328,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                         }
                     } else {
                         classLayout.setVisibility(View.GONE);
+                        priceLayout.setVisibility(View.GONE);
                         descriptionView.setVisibility(View.GONE);
                     }
                 }

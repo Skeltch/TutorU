@@ -87,20 +87,11 @@
             android:label="@string/title_activity_search"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateUnchanged" />
-        <activity
-            android:name=".PerformSearch"
-            android:label="@string/title_activity_perform_search"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".advancedSearch"
-            android:label="@string/title_activity_advanced_search"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize|stateUnchanged" />
         <activity android:name=".test" />
         <activity
             android:name=".Review"
             android:label="@string/title_activity_review"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="group14.tutoru.MainPage" />
@@ -113,46 +104,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="group14.tutoru.Profile" />
         </activity>
-        <activity android:name="com.ethanwong.tutoru.MainActivity"
+        <activity
+            android:name="com.ethanwong.tutoru.MainActivity"
             android:label="Chat"
-            android:parentActivityName=".MainPage"/>
-
+            android:parentActivityName=".MainPage" />
         <activity
-            android:name="group14.tutoru.ShiftSelection"
-            android:label="@string/app_name"
-            android:parentActivityName="group14.tutoru.TutorHomepage"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name="group14.tutoru.TutorHomepage"
-            android:label="@string/title_activity_tutor_homepage"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity
-            android:name="group14.tutoru.TutorProfile"
-            android:label="@string/title_activity_tutor_profile"
-            android:parentActivityName="group14.tutoru.TutorHomepage"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name="group14.tutoru.shiftCalendar"
-            android:label="@string/title_activity_shift_calendar"
-            android:parentActivityName="group14.tutoru.ShiftSelection"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name="group14.tutoru.startLiveSession"
-            android:label="@string/title_activity_start_live_session"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name="group14.tutoru.activeSession"
-            android:label="@string/title_activity_active_session"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name="group14.tutoru.MatchCreatedTutorSide"
-            android:label="@string/title_activity_match_created_tutor_side"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name="group14.tutoru.MatchList"
-            android:label="@string/title_activity_match_list"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:name=".ListReviews"
+            android:label="@string/title_activity_list_reviews"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="group14.tutoru.Profile" />
+        </activity>
     </application>
-
 
 </manifest>

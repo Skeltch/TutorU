@@ -57,8 +57,8 @@ public class search extends AppCompatActivity implements AsyncResponse, AdapterV
         advancedOptionsBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Intent advancedOptions = new Intent(search.this, advancedSearch.class);
-                startActivity(advancedOptions);
+                //Intent advancedOptions = new Intent(search.this, advancedSearch.class);
+                //startActivity(advancedOptions);
             }
         });
 
@@ -81,8 +81,8 @@ public class search extends AppCompatActivity implements AsyncResponse, AdapterV
                     login.execute("search.php");
 
 
-                    Intent searchInit = new Intent(search.this, PerformSearch.class);
-                    startActivity(searchInit);
+                    //Intent searchInit = new Intent(search.this, PerformSearch.class);
+                    //startActivity(searchInit);
                 }
                 else{
                     Toast.makeText(getApplicationContext(), "Missing Field", Toast.LENGTH_SHORT).show();
@@ -171,8 +171,8 @@ public class search extends AppCompatActivity implements AsyncResponse, AdapterV
                 editor.commit();
 
                 Toast.makeText(this, "Login Successful", Toast.LENGTH_LONG).show();
-                Intent i = new Intent(search.this, PerformSearch.class);
-                startActivity(i);
+                //Intent i = new Intent(search.this, PerformSearch.class);
+                //startActivity(i);
             }
             else if(login.optString("result").equals("Login Failed")){
                 Toast.makeText(this, "Failed, Incorrect Username or Password", Toast.LENGTH_LONG).show();

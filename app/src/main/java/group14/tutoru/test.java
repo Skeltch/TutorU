@@ -27,7 +27,7 @@ public class test extends AppCompatActivity implements View.OnTouchListener {
         ImageView img;
         FrameLayout flCrop;
 
-        int framWidth = 0;
+        int framWidth = 0                               ;
         int framHeight = 0;
 
         int imageHeight ;

@@ -264,4 +264,5 @@
         <item>5/14/16: 1:00pm - 3:00pm -- Philip Mak</item>
         <item>5/15/16: 12:00pm - 3:00pm -- Samuel Cheung</item>
     </string-array>
+    <string name="title_activity_list_reviews">ListReviews</string>
 </resources>

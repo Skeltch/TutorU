@@ -34,6 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashMap;
 /*
 Other profile activity
@@ -41,8 +42,8 @@ Created and debugged by Samuel Cheung
 */
 public class otherProfile extends AppCompatActivity implements AsyncResponse {
 
-    //Strings for the tedtviews
-    String uEmail, uName, uGpa, uGradYear, uMajor, uClasses, uDescription;
+    //Strings for the textviews
+    String uEmail, uName, uGpa, uGradYear, uMajor, uClasses, uDescription, uPrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +103,11 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
         super.onBackPressed();
         return true;
     }
+    public void toReviews(View v){
+        Intent i = new Intent(otherProfile.this, ListReviews.class);
+        i.putExtra("id", getIntent().getStringExtra("id"));
+        startActivity(i);
+    }
     @Override
     public void processFinish(String output) {
         try {
@@ -119,6 +125,7 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
             TextView classes = (TextView)findViewById(R.id.classes);
             TextView rating = (TextView) findViewById(R.id.rating);
             TextView description = (TextView)findViewById(R.id.description);
+            TextView price = (TextView) findViewById(R.id.price);
 
             LinearLayout emailView = (LinearLayout)findViewById(R.id.emailView);
             View emailBorder = findViewById(R.id.emailBorder);
@@ -173,8 +180,19 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
             }
             classes.setText(uClasses);
 
+            if (!profile.optString("price").equals("null")){
+                //DecimalFormat priceFormat = new DecimalFormat("##.##");
+                //This function ensures that the price is in the correct format
+                uPrice = profile.optString("price");
+                //uPrice = Double.toString(Double.valueOf(temp.format(Float.parseFloat(uPrice))));
+                NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
+                uPrice = currencyFormatter.format(Double.parseDouble(uPrice));
+                price.setText(uPrice);
+            } else{
+                price.setText("Not set");
+            }
             description.setText("None");
-            if(profile.optString("description")!="null"){
+            if(!profile.optString("description").equals("null")){
                 uDescription = profile.optString("description");
                 description.setText(uDescription);
             }
