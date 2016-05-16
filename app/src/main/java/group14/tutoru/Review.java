@@ -31,7 +31,7 @@ public class Review extends AppCompatActivity implements AsyncResponse{
 
     private float starRating=0;
     private int tutorID;
-    private String tutorName;
+    //private String tutorName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,7 +106,6 @@ public class Review extends AppCompatActivity implements AsyncResponse{
             if (review.optString("activity").equals("review")) {
                 Intent i = new Intent(Review.this, otherProfile.class);
                 i.putExtra("id", Integer.toString(tutorID));
-                i.putExtra("name", tutorName);
                 startActivity(i);
             }
             else if(review.optString("activity").equals("redirect")) {

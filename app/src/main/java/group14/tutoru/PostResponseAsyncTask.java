@@ -38,6 +38,9 @@ import javax.net.ssl.HttpsURLConnection;
 //And the second value as the actual value, ex: jSmith123
 //Basis for code from KosalGeek
 //https://github.com/kosalgeek/generic_asynctask_v2
+
+//Side note: some activites may not require a reload feature
+//Maybe add ability to remove retry
 public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
     private ProgressDialog progressDialog;
@@ -438,6 +441,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
                 final Activity activity = (Activity) this.context;
                 final Context temp = this.context;
+                //UI changes have to made on a different thread
                 new Thread() {
                     public void run() {
                         activity.runOnUiThread(new Runnable() {

@@ -45,18 +45,11 @@ import java.util.HashMap;
 Profile page of user
 Created and debugged by Samuel Cheung
 */
+//Add tabs to view reviews, etc
 public class Profile extends AppCompatActivity implements AsyncResponse {
 
-    String uUsername;
-    String uEmail;
-    String uName;
-    String uGpa;
-    String uGradYear;
-    String uMajor;
+    String uUsername, uEmail, uName, uGpa, uGradYear, uMajor, uDescription, uDob, uPrice;
     String[] uClasses;
-    String uDescription;
-    String uDob;
-    String uPrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +70,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        //Attempt at creating a white text black border so the name can be easily read, even if the picture is white
         Spannable text = new SpannableString(settings.getString("first_name","") + " " + settings.getString("last_name",""));
         text.setSpan(new BackgroundColorSpan(Color.BLACK), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         text.setSpan(new ForegroundColorSpan(Color.BLUE), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);

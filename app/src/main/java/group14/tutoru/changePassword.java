@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -27,7 +26,6 @@ public class changePassword extends AppCompatActivity implements AsyncResponse{
         setContentView(R.layout.activity_change_password);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        //setupActionBar();
 
         //Get data from sharedpreferences
         SharedPreferences settings = getSharedPreferences("Userinfo", 0);
