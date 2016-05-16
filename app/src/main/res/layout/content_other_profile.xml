@@ -185,7 +185,7 @@
 			android:layout_marginLeft="16dp"
 			android:layout_marginBottom="5dp"
 			android:textStyle="bold"
-			android:text="Price"/>
+			android:text="Price per hour"/>
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"

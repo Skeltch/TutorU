@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 /*
 Review activity for reviewing tutors
+The id of the tutor must be passed through intent
 Created and debugged by Samuel Cheung
 */
 public class Review extends AppCompatActivity implements AsyncResponse{
@@ -41,12 +42,13 @@ public class Review extends AppCompatActivity implements AsyncResponse{
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        TextView reviewTitle = (TextView) findViewById(R.id.reviewTitle);
         //Get information passed through intent
+        /*
         tutorName = getIntent().getStringExtra("name");
         if(tutorName!=null && reviewTitle!=null){
             reviewTitle.setText(tutorName);
         }
+        */
         String id = getIntent().getStringExtra("id");
         tutorID = Integer.parseInt(id);
         HashMap postData = new HashMap();
@@ -114,15 +116,20 @@ public class Review extends AppCompatActivity implements AsyncResponse{
                 //Allow tutee to edit review
                 //Intent i = new Intent(Review.this, editReview.class);
                 //startActivity(i);
-            } else {
-                    JSONObject image = new JSONObject(output);
-                    String encodedImage = image.optString("imageString");
-                    if (!encodedImage.isEmpty()) {
-                        byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                        ImageView picture = (ImageView) findViewById(R.id.picture);
-                        picture.setImageBitmap(decodedByte);
-                    }
+            }
+            else {
+                JSONObject tutor = new JSONObject(output);
+                String encodedImage = tutor.optString("imageString");
+                if (!encodedImage.isEmpty()) {
+                    byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    ImageView picture = (ImageView) findViewById(R.id.picture);
+                    picture.setImageBitmap(decodedByte);
+                }
+                String name = tutor.optString("first_name") + " " + tutor.optString("last_name");
+                TextView reviewTitle = (TextView) findViewById(R.id.reviewTitle);
+                reviewTitle.setText(name);
+                getSupportActionBar().setTitle(name);
             }
         } catch(JSONException e){
             e.printStackTrace();

@@ -196,13 +196,12 @@ public class MainPage extends AppCompatActivity
             Intent i = new Intent(MainPage.this, search.class);
             startActivity(i);
         } else if (id == R.id.notifications){
-            //Notifications not yet implemented
+            Intent i = new Intent(MainPage.this, Review.class);
+            i.putExtra("id", "5");
+            startActivity(i);
         } else if (id == R.id.schedule) {
             //Schedule not yet implemented
-        }  else if (id == R.id.tutorPage){
-            //startActivity(new Intent(MainPage.this, TutorHomepage.class));
-        }
-        else if (id == R.id.friends) {
+        } else if (id == R.id.friends) {
             //Tutor/Tutee management not yet implemented
         } else if (id == R.id.settings) {
             //Settings not yet implemented
@@ -267,7 +266,7 @@ public class MainPage extends AppCompatActivity
                     NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
                     uPrice = currencyFormatter.format(Double.parseDouble(uPrice));
                 }
-                String price = "\nPrice: ";
+                String price = "\nPrice per hour: ";
                 price += uPrice;
                 String temp = profile.optString("description");
                 String description = "\nDescription: ";

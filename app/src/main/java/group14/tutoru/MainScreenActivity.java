@@ -1,5 +1,7 @@
 package group14.tutoru;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
@@ -42,7 +44,19 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
                 public void onClick(View view) {
                     attempts++;
                     if(attempts>=5){
-                        Toast.makeText(MainScreenActivity.this, "Max number of attempts reached", Toast.LENGTH_LONG).show();
+                        AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(MainScreenActivity.this);
+                        dlgAlert.setPositiveButton("Ok",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //dismiss the dialog
+                                    }
+                                });
+                        dlgAlert.setMessage("You have reached the max number of attempts. Please wait before trying again.");
+                        dlgAlert.setTitle("Max Number of attempts");
+                        //dlgAlert.setPositiveButton("OK", null);
+                        dlgAlert.setCancelable(true);
+                        dlgAlert.create().show();
+                        //Toast.makeText(MainScreenActivity.this, "Max number of attempts reached", Toast.LENGTH_LONG).show();
                         //Reset after certain time
                         new CountDownTimer(30000, 1000){
                             public void onTick(long m){
@@ -59,12 +73,13 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
                         text = (EditText) findViewById(R.id.password);
                         String password = text.getText().toString();
                         if (!username.isEmpty() && !password.isEmpty()) {
-                            Toast.makeText(getApplicationContext(), "Signing in...", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getApplicationContext(), "Signing in...", Toast.LENGTH_SHORT).show();
                             HashMap postData = new HashMap();
                             postData.put("username", username);
                             postData.put("password", password);
 
                             PostResponseAsyncTask login = new PostResponseAsyncTask(MainScreenActivity.this, postData);
+                            login.setLoadingMessage("Sgining in...");
                             login.execute("login.php");
                         /*
                         If logging in takes a while we'll move the verification to the signin class

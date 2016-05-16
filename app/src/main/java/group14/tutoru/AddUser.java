@@ -71,7 +71,7 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
             public void onFocusChange(View v, boolean hasFocus) {
                 if(!hasFocus){
                     usern = etUsername.getText().toString();
-                    if(!usern.isEmpty()) {
+                    if(!usern.isEmpty() && usern.length()>=6) {
                         postData.put("username", usern);
                         //We need new here as android only allows a task to be executed once
                         //If a user enters a username that is not unique entering a new one would

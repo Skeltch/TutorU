@@ -3,13 +3,20 @@ package group14.tutoru;
 /**
  * Created by Sam on 3/15/2016.
  */
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -35,7 +42,7 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
     private ProgressDialog progressDialog;
     private AsyncResponse delegate;
-    private Context context;
+    public Context context;
     private HashMap<String, String> postData =
             new HashMap<>();
     private String loadingMessage = "Loading...";
@@ -118,12 +125,53 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPreExecute() {
-        progressDialog = new ProgressDialog(context);
-        if(pause) {
-            progressDialog.setMessage(loadingMessage);
-            progressDialog.show();
+        //Check network connectivity before doing anything
+        ConnectivityManager connectivityManager
+                //activity.getIntent();
+                //activity.recreate();
+                //Attempt at general retry button
+            /*
+            View view = activity.getLayoutInflater().inflate(R.layout.retry, null);
+            Button retryButton = (Button) view.findViewById(R.id.retryButton);
+            retryButton.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View view) {
+                    activity.recreate();
+                }
+            });
+            */           = (ConnectivityManager) this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        boolean isConnected = activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        if(!isConnected){
+            final Activity activity = (Activity) this.context;
+
+            //This creates an alert dialog that will retry to load the page on poor or no network
+            AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
+            builder.setTitle("Network Unavailable");
+            builder.setMessage("Sorry there was an error getting data from the Internet.");
+            builder.setPositiveButton("Retry", new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    dialog.dismiss();
+                    activity.recreate();
+                }
+            }).setNegativeButton("Cancel",null);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+            Toast.makeText(this.context.getApplicationContext(), "No Network Connection", Toast.LENGTH_SHORT).show();
+            //Cancel async task
+            this.cancel(true);
         }
-        super.onPreExecute();
+        else {
+            progressDialog = new ProgressDialog(context);
+            if (pause) {
+                progressDialog.setMessage(loadingMessage);
+                progressDialog.show();
+            }
+            super.onPreExecute();
+        }
     }//onPreExecute
 
     @Override
@@ -372,11 +420,11 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
             writer.flush();
             writer.close();
             os.close();
-            int responseCode = conn.getResponseCode();
+            final int responseCode = conn.getResponseCode();
 
             if (responseCode == HttpsURLConnection.HTTP_OK) {
                 String line;
-                //Can be used for lage amounts of data as well
+                //Can be used for large amounts of data as well
                 BufferedReader br = new BufferedReader(new
                         InputStreamReader(conn.getInputStream()));
                 while ((line = br.readLine()) != null) {
@@ -387,6 +435,38 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
                 response="";
                 //Look for this to see what's wrong
                 Log.i("PostResponseAsyncTask", responseCode + "");
+
+                final Activity activity = (Activity) this.context;
+                final Context temp = this.context;
+                new Thread() {
+                    public void run() {
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //This creates an alert dialog that will retry to load the page on poor or no network
+                                AlertDialog.Builder builder = new AlertDialog.Builder(temp);
+                                builder.setTitle("Network Error");
+                                builder.setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        activity.recreate();
+                                    }
+                                }).setNegativeButton("Cancel", null);
+                                builder.setMessage("Sorry there was an error contacting our server.");
+                                if (responseCode == 500) {
+                                    //This should never happen
+                                    builder.setMessage("There was an error on our part, sorry! We'll fix this as soon as possible.");
+                                }
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
+                                //Needed?
+                                //this.cancel(true);
+                            }
+
+                        });
+                    }
+                }.start();
             }
         } catch (Exception e) {
             e.printStackTrace();

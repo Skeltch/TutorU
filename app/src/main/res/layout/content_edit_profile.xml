@@ -223,7 +223,7 @@
 				android:layout_marginLeft="16dp"
 				android:layout_marginBottom="5dp"
 				android:textStyle="bold"
-				android:text="Price"/>
+				android:text="Price per hour"/>
 			<EditText
 				android:id="@+id/price"
 				android:layout_width="match_parent"
@@ -231,7 +231,7 @@
 				android:layout_marginLeft="@dimen/text_margin"
 				android:layout_marginBottom="10dp"
 				android:inputType="numberDecimal"
-				android:hint="Enter a general price"/>
+				android:hint="Enter a general price per hour"/>
 		</LinearLayout>
 		<View
 			android:layout_width="match_parent"

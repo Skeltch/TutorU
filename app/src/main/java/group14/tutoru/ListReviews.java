@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ public class ListReviews extends AppCompatActivity implements AsyncResponse {
         //Id of the tutor we want to see the reviews for
         String id = getIntent().getStringExtra("id");
         HashMap postData = new HashMap();
+        Log.e("id", id);
         postData.put("id",id);
         //Get all reviews
         PostResponseAsyncTask list = new PostResponseAsyncTask(ListReviews.this, postData);
