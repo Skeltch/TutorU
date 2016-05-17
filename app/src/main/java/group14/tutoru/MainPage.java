@@ -113,7 +113,8 @@ public class MainPage extends AppCompatActivity
         featuredButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Intent i = new Intent(MainPage.this, otherProfile.class);
+                //Intent i = new Intent(MainPage.this, otherProfile.class);
+                Intent i = new Intent(MainPage.this, tabbedProfile.class);
                 i.putExtra("id",String.valueOf(featuredId));
                 i.putExtra("name",String.valueOf(featuredName));
                 startActivity(i);
@@ -229,62 +230,62 @@ public class MainPage extends AppCompatActivity
             RatingBar ratingBar = (RatingBar) findViewById(R.id.ratingBar);
             featuredId=Integer.parseInt(profile.optString("id"));
             featuredName=profile.optString("first_name" + " " + "last_name");
-            if(profile.optString("gpa").isEmpty() || profile.optString("gpa")=="null"){
-                //do nothing
-            }
-            else {
+            String uGpa = profile.optString("gpa");
+            String gpaString = "";
+            if(!uGpa.equals("null")) {
                 DecimalFormat gpa = new DecimalFormat("#.###");
                 //This function ensures that the decimal is to 3 places
-                String uGpa = Double.toString(Double.valueOf(gpa.format(Float.parseFloat(profile.optString("gpa")))));
-                DecimalFormat decTemp = new DecimalFormat("#.###");
-                //This function ensures that the decimal is to 3 places
-                String num = Double.toString(Double.valueOf(decTemp.format(Float.parseFloat(profile.optString("rating")))));
-                ratingBar.setRating(Float.parseFloat(num));
-                String info = "Name: " + profile.optString("first_name") + " " + profile.optString("last_name")
-                        + "\nAverage Rating: " + num
-                        + "\nGpa: " + uGpa
-                        + "\nMajor: " + profile.optString("major")
-                        + "\nGraduation Year: " + profile.optString("graduation_year");
-                //Initiating classes
-                String classString = "\nClasses: ";
-                //No classes, temporary text instead
-                if (classesArray.length() == 0) {
-                    classString += "None";
-                }
-                //Multiple featured tutors?
-                else {
-                    classString += classesArray.getJSONObject(0).optString("classes");
-                }
-                for (int i = 1; i < classesArray.length(); i++) {
-                    classString += ", " + classesArray.getJSONObject(i).optString("classes");
-                }
-                //String for reviews, price, etc
-                String uPrice = "Not set";
-                if (!profile.optString("price").equals("null")){
-                    //This function ensures that the price is in the correct format
-                    uPrice = profile.optString("price");
-                    NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
-                    uPrice = currencyFormatter.format(Double.parseDouble(uPrice));
-                }
-                String price = "\nPrice per hour: ";
-                price += uPrice;
-                String temp = profile.optString("description");
-                String description = "\nDescription: ";
-                if (temp.isEmpty()) {
-                    description += "None";
-                } else {
-                    description += temp;
-                }
-                temp = info + classString + price + description;
-                featuredTutor.setText(temp);
+                uGpa = Double.toString(Double.valueOf(gpa.format(Float.parseFloat(profile.optString("gpa")))));
+                gpaString = "\nGpa: " + uGpa;
+            }
+            DecimalFormat decTemp = new DecimalFormat("#.###");
+            //This function ensures that the decimal is to 3 places
+            String num = Double.toString(Double.valueOf(decTemp.format(Float.parseFloat(profile.optString("rating")))));
+            ratingBar.setRating(Float.parseFloat(num));
+            String info = "Name: " + profile.optString("first_name") + " " + profile.optString("last_name")
+                    + "\nAverage Rating: " + num
+                    + gpaString
+                    + "\nMajor: " + profile.optString("major")
+                    + "\nGraduation Year: " + profile.optString("graduation_year");
+            //Initiating classes
+            String classString = "\nClasses: ";
+            //No classes, temporary text instead
+            if (classesArray.length() == 0) {
+                classString += "None";
+            }
+            //Multiple featured tutors?
+            else {
+                classString += classesArray.getJSONObject(0).optString("classes");
+            }
+            for (int i = 1; i < classesArray.length(); i++) {
+                classString += ", " + classesArray.getJSONObject(i).optString("classes");
+            }
+            //String for reviews, price, etc
+            String uPrice = "Not set";
+            if (!profile.optString("price").equals("null")){
+                //This function ensures that the price is in the correct format
+                uPrice = profile.optString("price");
+                NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
+                uPrice = currencyFormatter.format(Double.parseDouble(uPrice));
+            }
+            String price = "\nPrice per hour: ";
+            price += uPrice;
+            String temp = profile.optString("description");
+            String description = "\nDescription: ";
+            if (temp.isEmpty()) {
+                description += "None";
+            } else {
+                description += temp;
+            }
+            temp = info + classString + price + description;
+            featuredTutor.setText(temp);
 
-                String encodedImage = profileT.optString("imageString");
-                if(!encodedImage.isEmpty()) {
-                    byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                    ImageView profilePic = (ImageView) findViewById(R.id.profilePic);
-                    profilePic.setImageBitmap(decodedByte);
-                }
+            String encodedImage = profileT.optString("imageString");
+            if(!encodedImage.isEmpty()) {
+                byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+                Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                ImageView profilePic = (ImageView) findViewById(R.id.profilePic);
+                profilePic.setImageBitmap(decodedByte);
             }
         }
         catch(JSONException e){

@@ -135,7 +135,12 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
         uPassword.setText(password);
         uEmail.setText(email);
         uName.setText(name);
-        uGpa.setText(gpa);
+        if(gpa.equals("null")){
+            uGpa.setHint("Not Set");
+        }
+        else{
+            uGpa.setText(gpa);
+        }
         uDob.setText(dob);
         uGradYear.setText(gradYear);
         uPrice.setText(price);
@@ -275,17 +280,22 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                         boolean validNums = true;
                         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
                         //Try parsing the numbers
-                        try {
-                            Float.parseFloat(tGpa);
-                            Integer.parseInt(tGradYear);
-                            tPrice = currencyFormatter.parse(tPrice).toString();
-                        } catch (NumberFormatException e) {
-                            Toast.makeText(getApplicationContext(), "Invalid Numbers", Toast.LENGTH_SHORT).show();
-                            validNums = false;
-                        } catch (ParseException e){
-                            //It will work regardless since the input is limited to numbers
-                            //This is just to make android happy
-                            //Toast.makeText(getApplicationContext(), "Invalid Price", Toast.LENGTH_SHORT).show();
+                        if(!tGpa.isEmpty()) {
+                            try {
+                                Float.parseFloat(tGpa);
+                                Integer.parseInt(tGradYear);
+                                tPrice = currencyFormatter.parse(tPrice).toString();
+                            } catch (NumberFormatException e) {
+                                Toast.makeText(getApplicationContext(), "Invalid Numbers", Toast.LENGTH_SHORT).show();
+                                validNums = false;
+                            } catch (ParseException e) {
+                                //It will work regardless since the input is limited to numbers
+                                //This is just to make android happy
+                                //Toast.makeText(getApplicationContext(), "Invalid Price", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        else{
+                            validNums=true;
                         }
                         if (validNums) {
                             HashMap postData = new HashMap();
@@ -299,7 +309,12 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                                 postData.put("email", tEmail);
                             }
                             if (gpa != tGpa) {
-                                postData.put("gpa", tGpa);
+                                if(tGpa.isEmpty()){
+                                    postData.put("gpa","NULL");
+                                }
+                                else {
+                                    postData.put("gpa", tGpa);
+                                }
                             }
                             if (gradYear != tGradYear) {
                                 postData.put("graduation_year", tGradYear);

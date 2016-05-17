@@ -491,10 +491,9 @@ public class PostResponseAsyncTask extends AsyncTask<String, Void, String> {
 
                 result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
                 result.append("=");
+                //This line is causing issues
                 result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
             }
-
-
             return result.toString();
     }//getPostDataString
 

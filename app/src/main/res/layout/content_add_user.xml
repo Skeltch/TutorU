@@ -156,7 +156,7 @@
             <!-- GPA Label -->
             <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="GPA to 3 decimal places"
+                android:text="GPA to 3 decimal places (Optional)"
                 android:paddingLeft="10dip"
                 android:paddingRight="10dip"
                 android:paddingTop="10dip"

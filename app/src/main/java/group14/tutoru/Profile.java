@@ -223,6 +223,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                 JSONObject profileT = new JSONObject(output);
                 JSONObject profile = profileT.optJSONObject("info");
                 JSONArray classesArray = profileT.optJSONArray("classes");
+                /*
                 if(profile.optString("gpa")=="null"){
                     SharedPreferences settings = getSharedPreferences("Userinfo",0);
                     SharedPreferences.Editor editor = settings.edit();
@@ -230,94 +231,98 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                     editor.commit();
                     startActivity(new Intent(Profile.this, MainScreenActivity.class));
                 }
-                else {
-                    ImageView profilePic = (ImageView) findViewById(R.id.profile);
-                    TextView username = (TextView) findViewById(R.id.username);
-                    TextView password = (TextView) findViewById(R.id.password);
-                    TextView name = (TextView) findViewById(R.id.name);
-                    TextView email = (TextView) findViewById(R.id.email);
-                    TextView gpa = (TextView) findViewById(R.id.gpa);
-                    TextView gradYear = (TextView) findViewById(R.id.graduation_year);
-                    TextView major = (TextView) findViewById(R.id.major);
-                    TextView description = (TextView) findViewById(R.id.description);
-                    TextView dob = (TextView) findViewById(R.id.dateOfBirth);
-                    TextView price = (TextView) findViewById(R.id.price);
+                */
+                ImageView profilePic = (ImageView) findViewById(R.id.profile);
+                TextView username = (TextView) findViewById(R.id.username);
+                TextView password = (TextView) findViewById(R.id.password);
+                TextView name = (TextView) findViewById(R.id.name);
+                TextView email = (TextView) findViewById(R.id.email);
+                TextView gpa = (TextView) findViewById(R.id.gpa);
+                TextView gradYear = (TextView) findViewById(R.id.graduation_year);
+                TextView major = (TextView) findViewById(R.id.major);
+                TextView description = (TextView) findViewById(R.id.description);
+                TextView dob = (TextView) findViewById(R.id.dateOfBirth);
+                TextView price = (TextView) findViewById(R.id.price);
 
-                    String encodedImage = profileT.optString("imageString");
-                    if(!encodedImage.isEmpty()) {
-                        byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
-                        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                        profilePic.setImageBitmap(decodedByte);
-                    }
+                String encodedImage = profileT.optString("imageString");
+                if(!encodedImage.isEmpty()) {
+                    byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    profilePic.setImageBitmap(decodedByte);
+                }
 
-                    //Hide classes you can tutor, price and description if tutee
-                    uUsername = profile.optString("username");
-                    username.setText(uUsername);
-                    password.setText("password");
-                    uName = profile.optString("first_name") + " " + profile.optString("last_name");
-                    name.setText(uName);
-                    uEmail = profile.optString("email");
-                    email.setText(uEmail);
-                    uGpa = profile.optString("gpa");
+                //Hide classes you can tutor, price and description if tutee
+                uUsername = profile.optString("username");
+                username.setText(uUsername);
+                password.setText("password");
+                uName = profile.optString("first_name") + " " + profile.optString("last_name");
+                name.setText(uName);
+                uEmail = profile.optString("email");
+                email.setText(uEmail);
+                uGpa = profile.optString("gpa");
+                if(!uGpa.equals("null")) {
                     DecimalFormat temp = new DecimalFormat("#.###");
                     //This function ensures that the decimal is to 3 places
                     uGpa = Double.toString(Double.valueOf(temp.format(Float.parseFloat(uGpa))));
                     gpa.setText(uGpa);
-                    uDob = profile.optString("dob");
-                    dob.setText(uDob);
-                    uGradYear = profile.optString("graduation_year");
-                    gradYear.setText(uGradYear);
-                    uMajor = profile.optString("major");
-                    major.setText(uMajor);
-                    SharedPreferences settings = getSharedPreferences("Userinfo", 0);
-                    LinearLayout classLayout = (LinearLayout) findViewById(R.id.classLayout);
-                    LinearLayout priceLayout = (LinearLayout) findViewById(R.id.priceLayout);
-                    LinearLayout descriptionView = (LinearLayout) findViewById(R.id.descriptionView);
-                    String role = settings.getString("role", "");
-                    if (role.equals("Tutor") || role.equals("Both")) {
-                        LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams
-                                (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                        lparams.setMargins(48, 0, 0, 10);
-                        if (classesArray.length() != 0) {
-                            uClasses = new String[classesArray.length()];
-                        } else {
-                            uClasses = new String[0];
-                        }
-                        if (classesArray.length() == 0) {
-                            TextView newClass = new TextView(this);
-                            newClass.setText("None");
-                            newClass.setLayoutParams(lparams);
-                            classLayout.addView(newClass);
-                        }
-                        for (int i = 0; i < classesArray.length(); i++) {
-                            TextView newClass = new TextView(this);
-                            uClasses[i] = classesArray.getJSONObject(i).optString("classes");
-                            newClass.setText(uClasses[i]);
-                            newClass.setLayoutParams(lparams);
-                            classLayout.addView(newClass);
-                        }
-                        if (!profile.optString("price").equals("null")){
-                            //DecimalFormat priceFormat = new DecimalFormat("##.##");
-                            //This function ensures that the price is in the correct format
-                            uPrice = profile.optString("price");
-                            //uPrice = Double.toString(Double.valueOf(temp.format(Float.parseFloat(uPrice))));
-                            NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
-                            uPrice = currencyFormatter.format(Double.parseDouble(uPrice));
-                            price.setText(uPrice);
-                        } else{
-                            price.setText("Not set");
-                        }
-                        if (!profile.optString("description").equals("null")) {
-                            uDescription = profile.optString("description");
-                            description.setText(uDescription);
-                        } else {
-                            description.setText("Enter something about yourself!");
-                        }
+                }
+                else{
+                    gpa.setText("Not Set");
+                }
+                uDob = profile.optString("dob");
+                dob.setText(uDob);
+                uGradYear = profile.optString("graduation_year");
+                gradYear.setText(uGradYear);
+                uMajor = profile.optString("major");
+                major.setText(uMajor);
+                SharedPreferences settings = getSharedPreferences("Userinfo", 0);
+                LinearLayout classLayout = (LinearLayout) findViewById(R.id.classLayout);
+                LinearLayout priceLayout = (LinearLayout) findViewById(R.id.priceLayout);
+                LinearLayout descriptionView = (LinearLayout) findViewById(R.id.descriptionView);
+                String role = settings.getString("role", "");
+                if (role.equals("Tutor") || role.equals("Both")) {
+                    LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams
+                            (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    lparams.setMargins(48, 0, 0, 10);
+                    if (classesArray.length() != 0) {
+                        uClasses = new String[classesArray.length()];
                     } else {
-                        classLayout.setVisibility(View.GONE);
-                        priceLayout.setVisibility(View.GONE);
-                        descriptionView.setVisibility(View.GONE);
+                        uClasses = new String[0];
                     }
+                    if (classesArray.length() == 0) {
+                        TextView newClass = new TextView(this);
+                        newClass.setText("None");
+                        newClass.setLayoutParams(lparams);
+                        classLayout.addView(newClass);
+                    }
+                    for (int i = 0; i < classesArray.length(); i++) {
+                        TextView newClass = new TextView(this);
+                        uClasses[i] = classesArray.getJSONObject(i).optString("classes");
+                        newClass.setText(uClasses[i]);
+                        newClass.setLayoutParams(lparams);
+                        classLayout.addView(newClass);
+                    }
+                    if (!profile.optString("price").equals("null")){
+                        //DecimalFormat priceFormat = new DecimalFormat("##.##");
+                        //This function ensures that the price is in the correct format
+                        uPrice = profile.optString("price");
+                        //uPrice = Double.toString(Double.valueOf(temp.format(Float.parseFloat(uPrice))));
+                        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
+                        uPrice = currencyFormatter.format(Double.parseDouble(uPrice));
+                        price.setText(uPrice);
+                    } else{
+                        price.setText("Not set");
+                    }
+                    if (!profile.optString("description").equals("null")) {
+                        uDescription = profile.optString("description");
+                        description.setText(uDescription);
+                    } else {
+                        description.setText("Enter something about yourself!");
+                    }
+                } else {
+                    classLayout.setVisibility(View.GONE);
+                    priceLayout.setVisibility(View.GONE);
+                    descriptionView.setVisibility(View.GONE);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

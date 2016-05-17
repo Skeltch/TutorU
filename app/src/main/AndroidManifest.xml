@@ -108,6 +108,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="group14.tutoru.Profile" />
         </activity>
+        <activity
+            android:name=".tabbedProfile"
+            android:label="@string/title_activity_tabbed_profile"
+            android:parentActivityName=".MainPage"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="group14.tutoru.MainPage" />
+        </activity>
     </application>
 
 </manifest>

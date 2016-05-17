@@ -6,6 +6,7 @@ import android.test.ApplicationTestCase;
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
+/*
  @RunWith(AndroidJUnit4.class)
  @LargeTest
  public class MainActivityInstrumentationTest{

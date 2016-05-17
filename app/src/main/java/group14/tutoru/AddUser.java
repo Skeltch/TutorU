@@ -23,10 +23,12 @@ import android.widget.Toast;
 import android.util.Log;
 
 //For input data
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /*
 Activity for registering
@@ -64,6 +66,22 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
         etPassword = (EditText) findViewById(R.id.password);
         etConfirmPassword = (EditText) findViewById(R.id.confirmPassword);
         etDob = (EditText) findViewById(R.id.dob);
+        etGpa = (EditText) findViewById(R.id.gpa);
+        etFirst_name = (EditText) findViewById(R.id.first_name);
+        etLast_name = (EditText) findViewById(R.id.last_name);
+        etGraduation_year = (EditText) findViewById(R.id.graduation_year);
+        etMajor = (EditText) findViewById(R.id.major);
+
+        etUsername.setText("TheSkeltch");
+        etEmail.setText("Scheung901@gmail.com");
+        etPassword.setText("Skeltch01");
+        etConfirmPassword.setText("Skeltch01");
+        etDob.setText("1996-09-01");
+        etGpa.setText("3.751");
+        etFirst_name.setText("Samuel");
+        etLast_name.setText("Cheung");
+        etGraduation_year.setText("2018");
+        etMajor.setText("Electrical and Computer Engineering");
         //This checks the username against our database when the user has changed into another box
         //This allows us to check for uniqueness
         etUsername.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -127,32 +145,21 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                 @Override
                 public void onClick(View view) {
                     //Getting value
-                    etPassword = (EditText) findViewById(R.id.password);
-                    //etType = (Spinner) findViewById(R.id.type);
-                    etGpa = (EditText) findViewById(R.id.gpa);
-
-                    etFirst_name = (EditText) findViewById(R.id.first_name);
-                    etLast_name = (EditText) findViewById(R.id.last_name);
-                    etGraduation_year = (EditText) findViewById(R.id.graduation_year);
-                    etMajor = (EditText) findViewById(R.id.major);
-
                     //Converting to string
                     usern = etUsername.getText().toString();
                     password = etPassword.getText().toString();
                     confirmPassword = etConfirmPassword.getText().toString();
                     email = etEmail.getText().toString();
-                    //type = etType.getText().toString();
                     gpa = etGpa.getText().toString();
-
                     first_name = etFirst_name.getText().toString();
                     last_name = etLast_name.getText().toString();
                     dob = etDob.getText().toString();
                     graduation_year = etGraduation_year.getText().toString();
                     major = etMajor.getText().toString();
 
-
-                    //If any are null a required field is empty
-                    if (usern.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || email.isEmpty() || type.isEmpty() || gpa.isEmpty()
+                            //If any are null a required field is empty
+                    //GPA is optional
+                    if (usern.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || email.isEmpty() || type.isEmpty() /*|| gpa.isEmpty()*/
                             || first_name.isEmpty() || last_name.isEmpty() || dob.isEmpty()
                             || graduation_year.isEmpty() || major.isEmpty()
                             || type.equals("Select Role")) {
@@ -162,6 +169,7 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                         et = true;
                     }
                     //Debugging
+
                     /*
                     Log.e("Value", usern);
                     Log.e("Value", password);
@@ -174,67 +182,103 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                     Log.e("Value", dob);
                     Log.e("Value", graduation_year);
                     Log.e("Value", major);
+
+
+                    Log.e("abc", Integer.toString(usern.length()));
+                    Log.e("abc", Integer.toString(password.length()));
+                    Log.e("abc", Integer.toString(email.length()));
+                    Log.e("abc", Integer.toString(gpa.length()));
+                    Log.e("abc", Integer.toString(first_name.length()));
+                    Log.e("abc", Integer.toString(last_name.length()));
+                    Log.e("abc", Integer.toString(dob.length()));
+                    Log.e("abc", Integer.toString(graduation_year.length()));
+                    Log.e("abc", Integer.toString(major.length()));
                     */
+
 
                     //All fields are entered
                     if (et) {
                         //Error handling
-                        if (Float.valueOf(gpa) <= 4.00 && Float.valueOf(gpa) > 0
-                                && gpa.length() <= 5 && gpa.length() > 0 && usern.length() <= 16
-                                && usern.length() >= 6 && password.length() <= 128 && password.length() >= 6
-                                && password.equals(confirmPassword)
-                                && first_name.length() <= 35 && last_name.length() <= 35 && major.length() <= 255
-                                && uniqueU && uniqueE && email.contains("@")) {
-                            Toast.makeText(getApplicationContext(), "Signing up...", Toast.LENGTH_SHORT).show();
-
-                            postData.put("username", usern);
-                            postData.put("password", password);
-                            postData.put("email", email);
-                            postData.put("type", type);
-                            postData.put("gpa", gpa);
-
-                            postData.put("first_name", first_name);
-                            postData.put("last_name", last_name);
-                            postData.put("dob", datePicker);
-                            postData.put("graduation_year", graduation_year);
-                            postData.put("major", major);
-
-                            PostResponseAsyncTask register = new PostResponseAsyncTask(AddUser.this, postData);
-                            register.execute("addUser.php");
-                        } else if (Float.valueOf(gpa) > 4.00 && Float.valueOf(gpa) <= 0) {
-                            Toast.makeText(getApplicationContext(), "Invalid GPA", Toast.LENGTH_SHORT).show();
-                        } else if (gpa.length() > 5 || gpa.length() <= 0) {
-                            Log.e("length", String.valueOf(gpa.length()));
-                            Toast.makeText(getApplicationContext(), "GPA must be to 3 decimal places", Toast.LENGTH_SHORT).show();
-                        } else if (usern.length() > 16) {
-                            Toast.makeText(getApplicationContext(), "Username too long", Toast.LENGTH_SHORT).show();
-                        } else if (usern.length() < 6) {
-                            Toast.makeText(getApplicationContext(), "Username too short", Toast.LENGTH_SHORT).show();
-                        } else if (password.length() > 128) {
-                            Toast.makeText(getApplicationContext(), "Password too long", Toast.LENGTH_SHORT).show();
-                        } else if (password.length() < 6) {
-                            Toast.makeText(getApplicationContext(), "Password too short", Toast.LENGTH_SHORT).show();
-                        } else if (!password.equals(confirmPassword)) {
-                            Toast.makeText(getApplicationContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
-                        } else if (first_name.length() > 35) {
-                            Toast.makeText(getApplicationContext(), "First name is too long", Toast.LENGTH_SHORT).show();
-                        } else if (last_name.length() > 35) {
-                            Toast.makeText(getApplicationContext(), "Last name is too long", Toast.LENGTH_SHORT).show();
-                        } else if (major.length() > 255) {
-                            Toast.makeText(getApplicationContext(), "Major is too long", Toast.LENGTH_SHORT).show();
-                        } else if (!uniqueU) {
-                            Toast.makeText(getApplicationContext(), "Username is already taken!", Toast.LENGTH_SHORT).show();
-                        } else if (!uniqueE) {
-                            Toast.makeText(getApplicationContext(), "Email is already taken!", Toast.LENGTH_SHORT).show();
-                        } else if (!email.contains("@")){
-                            Toast.makeText(getApplicationContext(), "Invalid email", Toast.LENGTH_SHORT).show();
+                        boolean valid=false;
+                        boolean failed=false;
+                        if(!gpa.isEmpty()) {
+                            if (Float.valueOf(gpa) <= 4.00 && Float.valueOf(gpa) > 0
+                                    && gpa.length() == 5 && usern.length() <= 16
+                                    && usern.length() >= 6 && password.length() <= 128 && password.length() >= 6
+                                    && password.equals(confirmPassword)
+                                    && first_name.length() <= 35 && last_name.length() <= 35 && major.length() <= 255
+                                    && uniqueU && uniqueE && email.contains("@")) {
+                                valid = true;
+                            } else if (Float.valueOf(gpa) > 4.00 || Float.valueOf(gpa) <= 0) {
+                                Toast.makeText(getApplicationContext(), "Invalid GPA", Toast.LENGTH_SHORT).show();
+                                failed=true;
+                            } else if (gpa.length() > 5 || gpa.length() < 5) {
+                                //Log.e("length", String.valueOf(gpa.length()));
+                                Toast.makeText(getApplicationContext(), "GPA must be to 3 decimal places", Toast.LENGTH_SHORT).show();
+                                failed=true;
+                            }
                         }
-                        //This should NEVER happen
-                        else {
-                            Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                        else{
+                            if(usern.length() >= 6 && password.length() <= 128 && password.length() >= 6
+                                    && password.equals(confirmPassword)
+                                    && first_name.length() <= 35 && last_name.length() <= 35 && major.length() <= 255
+                                    && uniqueU && uniqueE && email.contains("@")){
+                                valid=true;
+                                gpa="NULL";
+                            }
+                        }
+                        if(valid){
+                            Toast.makeText(getApplicationContext(), "Signing up...", Toast.LENGTH_SHORT).show();
+                            HashMap<String, String> userData = new HashMap();
+                            userData.put("username", usern);
+                            userData.put("password", password);
+                            userData.put("email", email);
+                            userData.put("type", type);
+                            userData.put("gpa", gpa);
+
+                            userData.put("first_name", first_name);
+                            userData.put("last_name", last_name);
+                            userData.put("dob", dob);
+                            userData.put("graduation_year", graduation_year);
+                            userData.put("major", major);
+                            for (Map.Entry<String, String> entry : userData.entrySet()) {
+                                Log.e(entry.getKey()+"2",entry.getValue()+"1");
+                            }
+                            PostResponseAsyncTask register = new PostResponseAsyncTask(AddUser.this, userData);
+                            register.execute("addUser.php");
+                        }
+                        else if(!failed){
+                            if (usern.length() > 16) {
+                                Toast.makeText(getApplicationContext(), "Username too long", Toast.LENGTH_SHORT).show();
+                            } else if (usern.length() < 6) {
+                                Toast.makeText(getApplicationContext(), "Username too short", Toast.LENGTH_SHORT).show();
+                            } else if (password.length() > 128) {
+                                Toast.makeText(getApplicationContext(), "Password too long", Toast.LENGTH_SHORT).show();
+                            } else if (password.length() < 6) {
+                                Toast.makeText(getApplicationContext(), "Password too short", Toast.LENGTH_SHORT).show();
+                            } else if (!password.equals(confirmPassword)) {
+                                Toast.makeText(getApplicationContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
+                            } else if (first_name.length() > 35) {
+                                Toast.makeText(getApplicationContext(), "First name is too long", Toast.LENGTH_SHORT).show();
+                            } else if (last_name.length() > 35) {
+                                Toast.makeText(getApplicationContext(), "Last name is too long", Toast.LENGTH_SHORT).show();
+                            } else if (major.length() > 255) {
+                                Toast.makeText(getApplicationContext(), "Major is too long", Toast.LENGTH_SHORT).show();
+                            } else if (!uniqueU) {
+                                Toast.makeText(getApplicationContext(), "Username is already taken!", Toast.LENGTH_SHORT).show();
+                            } else if (!uniqueE) {
+                                Toast.makeText(getApplicationContext(), "Email is already taken!", Toast.LENGTH_SHORT).show();
+                            } else if (!email.contains("@")) {
+                                Toast.makeText(getApplicationContext(), "Invalid email", Toast.LENGTH_SHORT).show();
+                            }
+                            //This should NEVER happen
+                            else {
+                                Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                            }
                         }
                         //Possibly error check for dob (age<x), graduation year (year<x), maybe choose from majors
                     }
+                    Log.e("Reach", "Reach");
                 }
             });
         }
@@ -292,6 +336,7 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
 
     public void processFinish(String output){
         //php file echo's the following phrases
+        Log.e("Reach","reach");
         if(output.equals("success")){
             Toast.makeText(this, "Registering Successful", Toast.LENGTH_LONG).show();
             Intent i = new Intent(AddUser.this, PostRegistrationActivity.class);
