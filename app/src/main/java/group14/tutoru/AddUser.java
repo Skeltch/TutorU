@@ -24,6 +24,8 @@ import android.util.Log;
 
 //For input data
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -157,11 +159,11 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                     graduation_year = etGraduation_year.getText().toString();
                     major = etMajor.getText().toString();
 
-                            //If any are null a required field is empty
+                    //If any are null a required field is empty
                     //GPA is optional
                     if (usern.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || email.isEmpty() || type.isEmpty() /*|| gpa.isEmpty()*/
                             || first_name.isEmpty() || last_name.isEmpty() || dob.isEmpty()
-                            || graduation_year.isEmpty() || major.isEmpty()
+                            || major.isEmpty()
                             || type.equals("Select Role")) {
                         Toast.makeText(getApplicationContext(), "Required Field Missing", Toast.LENGTH_SHORT).show();
                         et = false;
@@ -199,35 +201,40 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                     //All fields are entered
                     if (et) {
                         //Error handling
-                        boolean valid=false;
-                        boolean failed=false;
-                        if(!gpa.isEmpty()) {
+                        boolean valid = false;
+                        boolean failed = false;
+                        //Because parsing an empty string for a float can cause errors I split the process up
+                        if (!gpa.isEmpty()) {
                             if (Float.valueOf(gpa) <= 4.00 && Float.valueOf(gpa) > 0
                                     && gpa.length() == 5 && usern.length() <= 16
                                     && usern.length() >= 6 && password.length() <= 128 && password.length() >= 6
                                     && password.equals(confirmPassword)
                                     && first_name.length() <= 35 && last_name.length() <= 35 && major.length() <= 255
-                                    && uniqueU && uniqueE && email.contains("@")) {
+                                    && uniqueU && uniqueE && email.contains("@") && isValidDate(dob)
+                                    && (graduation_year.length() == 4 || graduation_year.isEmpty())) {
                                 valid = true;
                             } else if (Float.valueOf(gpa) > 4.00 || Float.valueOf(gpa) <= 0) {
                                 Toast.makeText(getApplicationContext(), "Invalid GPA", Toast.LENGTH_SHORT).show();
-                                failed=true;
+                                failed = true;
                             } else if (gpa.length() > 5 || gpa.length() < 5) {
                                 //Log.e("length", String.valueOf(gpa.length()));
                                 Toast.makeText(getApplicationContext(), "GPA must be to 3 decimal places", Toast.LENGTH_SHORT).show();
-                                failed=true;
+                                failed = true;
                             }
-                        }
-                        else{
-                            if(usern.length() >= 6 && password.length() <= 128 && password.length() >= 6
+                        } else {
+                            if (usern.length() >= 6 && password.length() <= 128 && password.length() >= 6
                                     && password.equals(confirmPassword)
                                     && first_name.length() <= 35 && last_name.length() <= 35 && major.length() <= 255
-                                    && uniqueU && uniqueE && email.contains("@")){
-                                valid=true;
-                                gpa="NULL";
+                                    && uniqueU && uniqueE && email.contains("@") && isValidDate(dob)
+                                    && (graduation_year.length() == 4 || graduation_year.isEmpty())) {
+                                valid = true;
+                                gpa = "NULL";
                             }
                         }
-                        if(valid){
+                        if (valid) {
+                            if(graduation_year.isEmpty()){
+                                graduation_year="NULL";
+                            }
                             Toast.makeText(getApplicationContext(), "Signing up...", Toast.LENGTH_SHORT).show();
                             HashMap<String, String> userData = new HashMap();
                             userData.put("username", usern);
@@ -242,12 +249,11 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                             userData.put("graduation_year", graduation_year);
                             userData.put("major", major);
                             for (Map.Entry<String, String> entry : userData.entrySet()) {
-                                Log.e(entry.getKey()+"2",entry.getValue()+"1");
+                                Log.e(entry.getKey() + "2", entry.getValue() + "1");
                             }
                             PostResponseAsyncTask register = new PostResponseAsyncTask(AddUser.this, userData);
                             register.execute("addUser.php");
-                        }
-                        else if(!failed){
+                        } else if (!failed) {
                             if (usern.length() > 16) {
                                 Toast.makeText(getApplicationContext(), "Username too long", Toast.LENGTH_SHORT).show();
                             } else if (usern.length() < 6) {
@@ -270,6 +276,10 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                                 Toast.makeText(getApplicationContext(), "Email is already taken!", Toast.LENGTH_SHORT).show();
                             } else if (!email.contains("@")) {
                                 Toast.makeText(getApplicationContext(), "Invalid email", Toast.LENGTH_SHORT).show();
+                            } else if (graduation_year.length()>4 || (graduation_year.length()<4 && graduation_year.length()>0)){
+                                Toast.makeText(getApplicationContext(), "Invalid Graduation year", Toast.LENGTH_SHORT).show();
+                            } else if (!isValidDate(dob)) {
+                                Toast.makeText(getApplicationContext(), "Invalid Date of Birth", Toast.LENGTH_SHORT).show();
                             }
                             //This should NEVER happen
                             else {
@@ -278,7 +288,6 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
                         }
                         //Possibly error check for dob (age<x), graduation year (year<x), maybe choose from majors
                     }
-                    Log.e("Reach", "Reach");
                 }
             });
         }
@@ -295,6 +304,16 @@ public class AddUser extends AppCompatActivity implements AsyncResponse, OnItemS
         role.setAdapter(dataAdapter);
         role.setOnItemSelectedListener(this);
 
+    }
+    public boolean isValidDate(String date){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        dateFormat.setLenient(false);
+        try{
+            dateFormat.parse(date.trim());
+        } catch(ParseException e){
+            return false;
+        }
+        return true;
     }
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id){

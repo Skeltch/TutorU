@@ -142,7 +142,12 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
             uGpa.setText(gpa);
         }
         uDob.setText(dob);
-        uGradYear.setText(gradYear);
+        if(gradYear.equals("null")){
+            uGradYear.setHint("Not Set");
+        }
+        else {
+            uGradYear.setText(gradYear);
+        }
         uPrice.setText(price);
         uMajor.setText(major);
         //Getting role from sharedpreferences
@@ -317,7 +322,12 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                                 }
                             }
                             if (gradYear != tGradYear) {
-                                postData.put("graduation_year", tGradYear);
+                                if(tGradYear.isEmpty()){
+                                    postData.put("graduation_year","NULL");
+                                }
+                                else {
+                                    postData.put("graduation_year", tGradYear);
+                                }
                             }
                             if (major != tMajor) {
                                 postData.put("major", tMajor);

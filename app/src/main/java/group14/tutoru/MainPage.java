@@ -238,15 +238,21 @@ public class MainPage extends AppCompatActivity
                 uGpa = Double.toString(Double.valueOf(gpa.format(Float.parseFloat(profile.optString("gpa")))));
                 gpaString = "\nGpa: " + uGpa;
             }
+            //No need to check rating as tutor will always have rating to be selected as featured tutor
             DecimalFormat decTemp = new DecimalFormat("#.###");
             //This function ensures that the decimal is to 3 places
             String num = Double.toString(Double.valueOf(decTemp.format(Float.parseFloat(profile.optString("rating")))));
             ratingBar.setRating(Float.parseFloat(num));
+            String uGradYear = profile.optString("graduation_year");
+            String gradYearString = "";
+            if(!uGradYear.equals("null")){
+                gradYearString = "\nGraduation Year: " + uGradYear;
+            }
             String info = "Name: " + profile.optString("first_name") + " " + profile.optString("last_name")
                     + "\nAverage Rating: " + num
                     + gpaString
                     + "\nMajor: " + profile.optString("major")
-                    + "\nGraduation Year: " + profile.optString("graduation_year");
+                    + gradYearString;
             //Initiating classes
             String classString = "\nClasses: ";
             //No classes, temporary text instead

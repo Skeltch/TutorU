@@ -267,12 +267,15 @@ public class tabbedProfile extends AppCompatActivity implements AsyncResponse {
                     gpa.setText(uGpa);
                 }
                 else{
-                    findViewById(R.id.gpaHeader).setVisibility(View.GONE);
-                    findViewById(R.id.gpaBorder).setVisibility(View.GONE);
-                    gpa.setVisibility(View.GONE);
+                    findViewById(R.id.gpaRow).setVisibility(View.GONE);
                 }
                 uGradYear = profile.optString("graduation_year");
-                gradYear.setText(uGradYear);
+                if(!uGradYear.equals("null")){
+                    gradYear.setText(uGradYear);
+                }
+                else{
+                    findViewById(R.id.gradRow).setVisibility(View.GONE);
+                }
                 uMajor = profile.optString("major");
                 major.setText(uMajor);
 

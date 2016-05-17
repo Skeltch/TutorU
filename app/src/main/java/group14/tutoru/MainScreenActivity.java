@@ -30,6 +30,7 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
         SharedPreferences settings = getSharedPreferences("Userinfo", 0);
 
         if(settings.contains("id")){
+            //Change to do a check
             startActivity(new Intent(this, MainPage.class));
         }
 

@@ -48,7 +48,7 @@ Created and debugged by Samuel Cheung
 //Add tabs to view reviews, etc
 public class Profile extends AppCompatActivity implements AsyncResponse {
 
-    String uUsername, uEmail, uName, uGpa, uGradYear, uMajor, uDescription, uDob, uPrice;
+    String uUsername, uEmail, uName, uGpa, uGradYear, uMajor, uDescription, uDob, uPrice, uRating;
     String[] uClasses;
 
     @Override
@@ -243,6 +243,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                 TextView description = (TextView) findViewById(R.id.description);
                 TextView dob = (TextView) findViewById(R.id.dateOfBirth);
                 TextView price = (TextView) findViewById(R.id.price);
+                TextView rating = (TextView) findViewById(R.id.rating);
 
                 String encodedImage = profileT.optString("imageString");
                 if(!encodedImage.isEmpty()) {
@@ -272,10 +273,23 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                 uDob = profile.optString("dob");
                 dob.setText(uDob);
                 uGradYear = profile.optString("graduation_year");
-                gradYear.setText(uGradYear);
+                if(uGradYear.equals("null")){
+                    gradYear.setText("Not set");
+                }
+                else {
+                    gradYear.setText(uGradYear);
+                }
                 uMajor = profile.optString("major");
                 major.setText(uMajor);
+                uRating = profile.optString("rating");
+                if(uRating.equals("null")){
+                    rating.setText("None");
+                }
+                else{
+                    rating.setText(uRating);
+                }
                 SharedPreferences settings = getSharedPreferences("Userinfo", 0);
+                LinearLayout ratingLayout = (LinearLayout) findViewById(R.id.ratingLayout);
                 LinearLayout classLayout = (LinearLayout) findViewById(R.id.classLayout);
                 LinearLayout priceLayout = (LinearLayout) findViewById(R.id.priceLayout);
                 LinearLayout descriptionView = (LinearLayout) findViewById(R.id.descriptionView);
@@ -302,7 +316,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                         newClass.setLayoutParams(lparams);
                         classLayout.addView(newClass);
                     }
-                    if (!profile.optString("price").equals("null")){
+                    if (!profile.optString("price").equals("null") && !profile.optString("price").isEmpty()){
                         //DecimalFormat priceFormat = new DecimalFormat("##.##");
                         //This function ensures that the price is in the correct format
                         uPrice = profile.optString("price");
@@ -313,13 +327,14 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                     } else{
                         price.setText("Not set");
                     }
-                    if (!profile.optString("description").equals("null")) {
+                    if (!profile.optString("description").equals("null") && !profile.optString("description").isEmpty()) {
                         uDescription = profile.optString("description");
                         description.setText(uDescription);
                     } else {
                         description.setText("Enter something about yourself!");
                     }
                 } else {
+                    ratingLayout.setVisibility(View.GONE);
                     classLayout.setVisibility(View.GONE);
                     priceLayout.setVisibility(View.GONE);
                     descriptionView.setVisibility(View.GONE);

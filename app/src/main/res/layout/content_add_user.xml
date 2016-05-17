@@ -178,7 +178,7 @@
                 android:orientation="horizontal">
                 <TextView android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="Date of Birth"
+                    android:text="Date of Birth (yyyy-mm-dd)"
                     android:paddingLeft="10dip"
                     android:paddingRight="10dip"
                     android:paddingTop="10dip"
@@ -204,7 +204,7 @@
             <!-- Graduation Label -->
             <TextView android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="Graduation Year"
+                android:text="Graduation Year (Optional)"
                 android:paddingLeft="10dip"
                 android:paddingRight="10dip"
                 android:paddingTop="10dip"
