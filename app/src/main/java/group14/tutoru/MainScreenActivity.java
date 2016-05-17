@@ -31,6 +31,10 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
 
         if(settings.contains("id")){
             //Change to do a check
+            HashMap postData = new HashMap();
+            postData.put("id", settings.getString("id", ""));
+            PostResponseAsyncTask check = new PostResponseAsyncTask(MainScreenActivity.this, postData);
+            check.execute("loginCheck.php");
             startActivity(new Intent(this, MainPage.class));
         }
 
@@ -131,6 +135,12 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
             }
             else if(login.optString("result").equals("Login Failed")){
                 Toast.makeText(this, "Failed, Incorrect Username or Password", Toast.LENGTH_LONG).show();
+            }
+            else if(login.optString("result").equals("Check")){
+                //do nothing
+            }
+            else if(login.optString("result").equals("Check Failed")){
+                startActivity(new Intent(this, MainScreenActivity.class));
             }
             else{
                 Toast.makeText(this, "Failed could not connect to server",Toast.LENGTH_LONG).show();

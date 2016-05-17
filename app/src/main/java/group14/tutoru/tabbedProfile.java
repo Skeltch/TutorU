@@ -320,6 +320,9 @@ public class tabbedProfile extends AppCompatActivity implements AsyncResponse {
                         (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 entryParams.setMargins(10, 5, 5, 10);
 
+                ViewGroup.LayoutParams viewParams = new ViewGroup.LayoutParams (ViewGroup.LayoutParams.MATCH_PARENT,
+                        3);
+
                 JSONArray reviews = new JSONArray(output);
                 //Dynamically add reviews
                 for (int i = 0; i < reviews.length(); i++) {
@@ -327,7 +330,7 @@ public class tabbedProfile extends AppCompatActivity implements AsyncResponse {
                     //Each review will be put into an entry layout which will be added to the whole list layout
                     entry.setLayoutParams(entryParams);
                     //Set the round layout for entry
-                    entry.setBackground(ContextCompat.getDrawable(tabbedProfile.this, R.drawable.round_layout));
+                    //entry.setBackground(ContextCompat.getDrawable(tabbedProfile.this, R.drawable.round_layout));
                     entry.setOrientation(LinearLayout.VERTICAL);
                     //Loading the reviews into strings
                     String name = reviews.getJSONObject(i).optString("name");
@@ -355,6 +358,10 @@ public class tabbedProfile extends AppCompatActivity implements AsyncResponse {
                     body.setText(review);
                     body.setLayoutParams(lparams);
                     entry.addView(body);
+                    View lineBreak = new View(tabbedProfile.this);
+                    lineBreak.setLayoutParams(viewParams);
+                    lineBreak.setBackgroundColor(ContextCompat.getColor(tabbedProfile.this, R.color.colorPrimary));
+                    entry.addView(lineBreak);
                     //Finally insert into full view
                     reviewList.addView(entry);
                 }
