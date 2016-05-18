@@ -1,5 +1,7 @@
 package group14.tutoru;
 
+import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -10,6 +12,8 @@ import android.view.animation.Transformation;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 
@@ -74,6 +78,8 @@ public class forgotPassword extends AppCompatActivity implements AsyncResponse {
         }
         else{
             postData.put("contactUs",contactUs.getText().toString());
+            TextView message = (TextView) findViewById(R.id.message);
+            message.setText("Your message has been sent to us. We will review your case and respond as quickly as we can.");
         }
         PostResponseAsyncTask retrieve = new PostResponseAsyncTask(forgotPassword.this, postData);
         retrieve.execute("forgotPassword.php");
@@ -94,6 +100,39 @@ public class forgotPassword extends AppCompatActivity implements AsyncResponse {
     }
     public void processFinish(String output){
         //temp
+        final LinearLayout completeLayout = (LinearLayout) findViewById(R.id.completeLayout);
+        if(output.equals("success")){
+            //email sent
+            LinearLayout messageLayout = (LinearLayout) findViewById(R.id.messageLayout);
+            expand(messageLayout);
+            collapse(completeLayout);
+            Thread welcomeThread = new Thread() {
+                public void run() {
+                    try {
+                        super.run();
+                        //Wait for 5 seconds
+                        sleep(5000);
+                    } catch (Exception e) {
+
+                    } finally {
+                        //Go back to main screen
+                        Intent i = new Intent(forgotPassword.this, MainScreenActivity.class);
+                        startActivity(i);
+                        finish();
+                    }
+                }
+            };
+            welcomeThread.start();
+        }
+        else if(output.equals("Not Found")){
+            Snackbar snackbar = Snackbar
+                    .make(completeLayout, "Account not found", Snackbar.LENGTH_LONG);
+            snackbar.show();
+            Toast.makeText(getApplicationContext(), "Account not found", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            //error
+        }
     }
     public static void expand(final View v) {
         v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
