@@ -23,6 +23,7 @@ Created and debugged by Samuel Cheung
 public class MainScreenActivity extends AppCompatActivity implements AsyncResponse {
 
     private int attempts;
+    EditText etUsername, etPassword;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,10 +74,10 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
                         }.start();
                     }
                     else {
-                        EditText text = (EditText) findViewById(R.id.username);
-                        String username = text.getText().toString();
-                        text = (EditText) findViewById(R.id.password);
-                        String password = text.getText().toString();
+                        etUsername = (EditText) findViewById(R.id.username);
+                        String username = etUsername.getText().toString();
+                        etPassword = (EditText) findViewById(R.id.password);
+                        String password = etPassword.getText().toString();
                         if (!username.isEmpty() && !password.isEmpty()) {
                             //Toast.makeText(getApplicationContext(), "Signing in...", Toast.LENGTH_SHORT).show();
                             HashMap postData = new HashMap();
@@ -109,6 +110,13 @@ public class MainScreenActivity extends AppCompatActivity implements AsyncRespon
             });
         }
     }
+
+    public void gotoForgot(View view){
+        Intent i = new Intent(MainScreenActivity.this, forgotPassword.class);
+        //i.putExtra("username",etUsername.getText().toString());
+        startActivity(i);
+    }
+
     public void onBackPressed(){
         Intent startMain = new Intent(Intent.ACTION_MAIN);
         startMain.addCategory(Intent.CATEGORY_HOME);

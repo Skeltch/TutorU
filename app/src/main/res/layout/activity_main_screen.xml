@@ -44,12 +44,19 @@
         android:text="Sign in"
         android:layout_marginTop="10dip"/>
 
+    <Button android:id="@+id/btnForgot"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/buttonForgot"
+        android:onClick="gotoForgot"
+        style="?android:attr/borderlessButtonStyle"
+        android:background="@android:color/transparent"/>
     <!--  Button to create a new product screen -->
 
     <Button android:id="@+id/btnRegister"
         android:layout_width="233dp"
         android:layout_height="wrap_content"
-        android:text="Register"
+        android:text="Sign Up for TutorU"
         android:layout_marginTop="100dip"/>
 
 </LinearLayout>
