@@ -43,6 +43,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/round_layout"
             android:minHeight="40dp"
+            android:singleLine="true"
             android:layout_marginBottom="10dp"
             android:hint="  Headline for your review"/>
         <EditText

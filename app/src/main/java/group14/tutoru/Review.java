@@ -104,7 +104,7 @@ public class Review extends AppCompatActivity implements AsyncResponse{
             JSONObject review = new JSONObject(output);
             //Outputs to direct the activity
             if (review.optString("activity").equals("review")) {
-                Intent i = new Intent(Review.this, otherProfile.class);
+                Intent i = new Intent(Review.this, tabbedProfile.class);
                 i.putExtra("id", Integer.toString(tutorID));
                 startActivity(i);
             }

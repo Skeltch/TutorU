@@ -1,5 +1,6 @@
 package group14.tutoru;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -37,13 +38,18 @@ import org.json.JSONTokener;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class tabbedProfile extends AppCompatActivity implements AsyncResponse {
 
     String uEmail, uName, uGpa, uGradYear, uMajor, uClasses, uDescription, uPrice;
     float ratingNum;
-    String ratingString;
+    String ratingString, id;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -80,7 +86,7 @@ public class tabbedProfile extends AppCompatActivity implements AsyncResponse {
 
         //Activity for Profile
         HashMap postData = new HashMap();
-        final String id = getIntent().getStringExtra("id");
+        id = getIntent().getStringExtra("id");
         if(getIntent().getStringExtra("name")!=null) {
             setTitle(getIntent().getStringExtra("name"));
         }
@@ -217,6 +223,13 @@ public class tabbedProfile extends AppCompatActivity implements AsyncResponse {
             return null;
         }
     }
+
+    public void gotoReview(View view){
+        Intent review = new Intent(tabbedProfile.this, Review.class);
+        review.putExtra("id", id);
+        startActivity(review);
+    }
+
     public void processFinish(String output){
         try {
             Object json = new JSONTokener(output).nextValue();
@@ -347,6 +360,7 @@ public class tabbedProfile extends AppCompatActivity implements AsyncResponse {
                     entry.setLayoutParams(entryParams);
                     entryParams.setMargins(20,0,0,25);
                     header.setLayoutParams(entryParams);
+
                     //Set the round layout for entry
                     //entry.setBackground(ContextCompat.getDrawable(tabbedProfile.this, R.drawable.round_layout));
                     entry.setOrientation(LinearLayout.VERTICAL);
@@ -355,10 +369,16 @@ public class tabbedProfile extends AppCompatActivity implements AsyncResponse {
                     String title = reviews.getJSONObject(i).optString("title");
                     String review = reviews.getJSONObject(i).optString("review");
                     String rating = reviews.getJSONObject(i).optString("rating");
+                    String date = reviews.getJSONObject(i).optString("date");
                     //Setting the rating bar accordingly
                     RatingBar ratingBar = new RatingBar(tabbedProfile.this,null,R.attr.ratingBarStyleSmall);
                     ratingBar.setIsIndicator(true);
-                    ratingBar.setRating(Float.parseFloat(rating));
+                    if(!rating.equals("null")) {
+                        ratingBar.setRating(Float.parseFloat(rating));
+                    }
+                    else{
+                        ratingBar.setVisibility(View.GONE);
+                    }
                     /*
                     ratingBar.setScaleX(Float.parseFloat("0.5"));
                     ratingBar.setScaleY(Float.parseFloat("0.5"));
@@ -389,7 +409,17 @@ public class tabbedProfile extends AppCompatActivity implements AsyncResponse {
                     TextView author = new TextView(tabbedProfile.this);
                     author.setTextSize(12);
                     //Add date
-                    String temp = "By " + name;
+                    Calendar calendar = Calendar.getInstance();
+                    try {
+                        calendar.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(date));
+                    } catch(ParseException e){
+                        e.printStackTrace();
+                    }
+                    String month = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
+                    String day = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
+                    String year = Integer.toString(calendar.get(Calendar.YEAR));
+                    date = month + " " + day + ", " + year;
+                    String temp = "By " + name + " on " + date;
                     author.setText(temp);
                     author.setLayoutParams(lparams);
                     entry.addView(author);
@@ -413,7 +443,6 @@ public class tabbedProfile extends AppCompatActivity implements AsyncResponse {
                     authorRow.addView(authorButton);
                     entry.addView(authorRow);
                     */
-
 
                     //Body of review
                     TextView body = new TextView(tabbedProfile.this);

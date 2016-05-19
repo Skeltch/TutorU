@@ -17,11 +17,18 @@
             android:textSize="30sp"
             android:textStyle="bold"
             android:text="Student Reviews"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Write a Review"
+            android:layout_marginLeft="20dp"
+            android:onClick="gotoReview"/>
         <RatingBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
-            android:id="@+id/ratingBar"/>
+            android:id="@+id/ratingBar"
+            android:isIndicator="true"/>
         <TextView
             android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
