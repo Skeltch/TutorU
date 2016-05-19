@@ -2,6 +2,8 @@ package group14.tutoru;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -40,6 +42,8 @@ import java.util.HashMap;
 public class tabbedProfile extends AppCompatActivity implements AsyncResponse {
 
     String uEmail, uName, uGpa, uGradYear, uMajor, uClasses, uDescription, uPrice;
+    float ratingNum;
+    String ratingString;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -255,7 +259,10 @@ public class tabbedProfile extends AppCompatActivity implements AsyncResponse {
                 if (!profile.optString("rating").equals("null")) {
                     DecimalFormat temp = new DecimalFormat("#.###");
                     //This function ensures that the decimal is to 3 places
-                    String num = Double.toString(Double.valueOf(temp.format(Float.parseFloat(profile.optString("rating")))));
+                    ratingNum=Float.parseFloat(profile.optString("rating"));
+                    String num = Double.toString(Double.valueOf(temp.format(ratingNum)));
+                    num+=" out of 5  stars";
+                    ratingString=num;
                     rating.setText(num);
                 }
 
@@ -278,7 +285,6 @@ public class tabbedProfile extends AppCompatActivity implements AsyncResponse {
                 }
                 uMajor = profile.optString("major");
                 major.setText(uMajor);
-
                 getSupportActionBar().setTitle(uName);
 
                 uClasses = "";
@@ -312,23 +318,35 @@ public class tabbedProfile extends AppCompatActivity implements AsyncResponse {
             } else if (json instanceof JSONArray) {
                 LinearLayout reviewList = (LinearLayout) findViewById(R.id.reviewList);
                 //Different layouts for different parts of the review
-                LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams
-                        (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                //Left top right bottom
-                lparams.setMargins(40, 0, 0, 20);
+                //Rating bar needs its own parameters to space out text and stars equally
+                /*
                 LinearLayout.LayoutParams entryParams = new LinearLayout.LayoutParams
                         (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                entryParams.setMargins(10, 5, 5, 10);
+                entryParams.setMargins(25, 0, 0, 10);
+                */
 
-                ViewGroup.LayoutParams viewParams = new ViewGroup.LayoutParams (ViewGroup.LayoutParams.MATCH_PARENT,
-                        3);
+
+                TextView averageRating = (TextView) findViewById(R.id.averageRating);
+                RatingBar averageRatingBar = (RatingBar) findViewById(R.id.ratingBar);
+                ViewGroup.LayoutParams viewParams = new ViewGroup.LayoutParams (ViewGroup.LayoutParams.MATCH_PARENT, 3);
 
                 JSONArray reviews = new JSONArray(output);
                 //Dynamically add reviews
                 for (int i = 0; i < reviews.length(); i++) {
+                    //Set average rating
+                    averageRatingBar.setRating(ratingNum);
+                    averageRating.setText(ratingString);
+                    //style="?android:attr/ratingBarStyleSmall"
                     LinearLayout entry = new LinearLayout(tabbedProfile.this);
+                    LinearLayout header = new LinearLayout(tabbedProfile.this);
                     //Each review will be put into an entry layout which will be added to the whole list layout
+                    LinearLayout.LayoutParams entryParams = new LinearLayout.LayoutParams
+                            (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    //Left top right bottom
+                    entryParams.setMargins(20, 20, 0, 15);
                     entry.setLayoutParams(entryParams);
+                    entryParams.setMargins(20,0,0,25);
+                    header.setLayoutParams(entryParams);
                     //Set the round layout for entry
                     //entry.setBackground(ContextCompat.getDrawable(tabbedProfile.this, R.drawable.round_layout));
                     entry.setOrientation(LinearLayout.VERTICAL);
@@ -338,32 +356,85 @@ public class tabbedProfile extends AppCompatActivity implements AsyncResponse {
                     String review = reviews.getJSONObject(i).optString("review");
                     String rating = reviews.getJSONObject(i).optString("rating");
                     //Setting the rating bar accordingly
-                    RatingBar ratingBar = new RatingBar(tabbedProfile.this);
-                    ratingBar.setNumStars(4);
+                    RatingBar ratingBar = new RatingBar(tabbedProfile.this,null,R.attr.ratingBarStyleSmall);
                     ratingBar.setIsIndicator(true);
                     ratingBar.setRating(Float.parseFloat(rating));
-                    ratingBar.setLayoutParams(lparams);
-                    entry.addView(ratingBar);
+                    /*
+                    ratingBar.setScaleX(Float.parseFloat("0.5"));
+                    ratingBar.setScaleY(Float.parseFloat("0.5"));
+                    ratingBar.setPivotX(0);
+                    ratingBar.setPivotY(0);
+                    */
+                    LinearLayout.LayoutParams ratingParams = new LinearLayout.LayoutParams
+                            (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    ratingBar.setLayoutParams(ratingParams);
+                    header.addView(ratingBar);
 
                     //Title of each review with name of the reviewer
-                    TextView header = new TextView(tabbedProfile.this);
-                    header.setTextSize(25);
-                    String temp = title + " by " + name;
-                    header.setText(temp);
-                    header.setLayoutParams(lparams);
+                    LinearLayout.LayoutParams headerParams = new LinearLayout.LayoutParams
+                            (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    headerParams.setMargins(10, 0, 0, 0);
+                    TextView headerString = new TextView(tabbedProfile.this);
+                    headerString.setTextSize(15);
+                    headerString.setTypeface(null, Typeface.BOLD);
+                    //String temp = title + " by " + name;
+                    headerString.setText(title);
+                    headerString.setLayoutParams(headerParams);
+                    header.addView(headerString);
                     entry.addView(header);
+
+                    LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams
+                            (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    lparams.setMargins(20, 0, 0, 10);
+                    TextView author = new TextView(tabbedProfile.this);
+                    author.setTextSize(12);
+                    //Add date
+                    String temp = "By " + name;
+                    author.setText(temp);
+                    author.setLayoutParams(lparams);
+                    entry.addView(author);
+                    /*
+                    LinearLayout authorRow = new LinearLayout(tabbedProfile.this);
+                    authorRow.addView(author);
+
+                    //style="?android:attr/borderlessButtonStyle"
+                    //android:background="@android:color/transparent"
+                    Button authorButton = new Button(tabbedProfile.this);
+                    authorButton.setText(name);
+                    authorButton.setBackgroundColor(Color.TRANSPARENT);
+                    authorButton.setMinHeight(0);
+                    authorButton.setMinWidth(0);
+
+                    LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT);
+                    buttonParams.setMargins(0, -10, 0, -5);
+                    authorButton.setLayoutParams(buttonParams);
+                    //authorButton.setTextSize(8);
+                    authorRow.addView(authorButton);
+                    entry.addView(authorRow);
+                    */
+
 
                     //Body of review
                     TextView body = new TextView(tabbedProfile.this);
                     body.setText(review);
                     body.setLayoutParams(lparams);
                     entry.addView(body);
-                    View lineBreak = new View(tabbedProfile.this);
-                    lineBreak.setLayoutParams(viewParams);
-                    lineBreak.setBackgroundColor(ContextCompat.getColor(tabbedProfile.this, R.color.colorPrimary));
-                    entry.addView(lineBreak);
+                    //Line break (necessary?)
+                    /*
+                    if(i!=reviews.length()-1) {
+                        View lineBreak = new View(tabbedProfile.this);
+                        lineBreak.setLayoutParams(viewParams);
+                        lineBreak.setBackgroundColor(ContextCompat.getColor(tabbedProfile.this, R.color.colorPrimary));
+                        entry.addView(lineBreak);
+                    }
+                    */
                     //Finally insert into full view
                     reviewList.addView(entry);
+                }
+                if(reviews.length()==0){
+                    averageRatingBar.setVisibility(View.GONE);
+                    averageRating.setText("This tutor has no reviews");
                 }
             }
         }
