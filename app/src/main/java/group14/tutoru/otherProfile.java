@@ -254,7 +254,7 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
 
         @Override
         public int getCount() {
-            //return 3;
+            //return amount sets the amount of tabs
             if(role!=null){
                 if(role.equals("Tutee")){
                     return 2;
@@ -302,13 +302,16 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
             if(settings.getString("id", "").equals(id)) {
                 findViewById(R.id.request).setVisibility(View.GONE);
                 Button review = (Button) findViewById(R.id.reviewButton);
-                //review.setVisibility(View.GONE);
+                review.setVisibility(View.GONE);
             }
+            //Load profile from data
             if (json instanceof JSONObject) {
+                //Get the JSON objects
                 JSONObject profileT = new JSONObject(output);
                 JSONObject profile = profileT.optJSONObject("info");
                 JSONArray classesArray = profileT.optJSONArray("classes");
 
+                //Get views to set data
                 ImageView profilePic = (ImageView) findViewById(R.id.profile);
                 TextView name = (TextView) findViewById(R.id.name);
                 TextView email = (TextView) findViewById(R.id.email);
@@ -319,9 +322,10 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                 TextView rating = (TextView) findViewById(R.id.rating);
                 TextView description = (TextView) findViewById(R.id.description);
                 TextView price = (TextView) findViewById(R.id.price);
-
                 LinearLayout emailView = (LinearLayout) findViewById(R.id.emailView);
                 View emailBorder = findViewById(R.id.emailBorder);
+
+                //If the profile's role is tutee we must change the views
                 role = profile.optString("role");
                 if(role.equals("Tutee")) {
                     //Hide tabs or new activity
@@ -336,6 +340,7 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                         }
                     });
                     */
+                    //Update tabs
                     mSectionsPagerAdapter.notifyDataSetChanged();
                     /*
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -356,6 +361,7 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                         tab3.gone();
                     }
                 }
+                //Load profile picture
                 String encodedImage = profileT.optString("imageString");
                 if (!encodedImage.isEmpty()) {
                     byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
@@ -363,7 +369,7 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                     profilePic.setImageBitmap(decodedByte);
                 }
 
-                //Hide classes you can tutor and something about yourself if tuttee
+                //Setting information
                 uName = profile.optString("first_name") + " " + profile.optString("last_name");
                 if(name!=null) {
                     name.setText(uName);
@@ -390,6 +396,7 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                 }
 
                 uGpa = profile.optString("gpa");
+                //Checking if optional data sets are available and handle them accordingly
                 if(!uGpa.equals("null")){
                     DecimalFormat temp = new DecimalFormat("#.###");
                     //This function ensures that the decimal is to 3 places
@@ -428,9 +435,11 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                 //text.setSpan(new BackgroundColorSpan(Color.BLACK), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                 //text.setSpan(new ForegroundColorSpan(Color.BLUE), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                 uClasses = "";
+                //Check length and handle accordingly
                 if (classesArray.length() == 0) {
                     uClasses = "None";
                 }
+                //Load classes in a simple manner
                 for (int i = 0; i < classesArray.length(); i++) {
                     uClasses += classesArray.getJSONObject(i).optString("classes");
                     if (i != classesArray.length() - 1) {
@@ -439,6 +448,7 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                 }
                 classes.setText(uClasses);
 
+                //Handle optional value with numbers accordingly
                 if (!profile.optString("price").equals("null")) {
                     //DecimalFormat priceFormat = new DecimalFormat("##.##");
                     //This function ensures that the price is in the correct format
@@ -455,21 +465,15 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                     uDescription = profile.optString("description");
                     description.setText(uDescription);
                 }
-            } else if (json instanceof JSONArray) {
+            }
+            //Load data for reviews
+            else if (json instanceof JSONArray) {
                 LinearLayout reviewList = (LinearLayout) findViewById(R.id.reviewList);
-                //Different layouts for different parts of the review
-                //Rating bar needs its own parameters to space out text and stars equally
-                /*
-                LinearLayout.LayoutParams entryParams = new LinearLayout.LayoutParams
-                        (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                entryParams.setMargins(25, 0, 0, 10);
-                */
 
-
+                //Getting views
                 TextView averageRating = (TextView) findViewById(R.id.averageRating);
                 RatingBar averageRatingBar = (RatingBar) findViewById(R.id.ratingBar);
                 TextView headerBar = (TextView) findViewById(R.id.header);
-                //ViewGroup.LayoutParams viewParams = new ViewGroup.LayoutParams (ViewGroup.LayoutParams.MATCH_PARENT, 3);
 
                 JSONArray reviews = new JSONArray(output);
                 //OnClickListener for author profiles
@@ -479,6 +483,7 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                         SharedPreferences settings = getSharedPreferences("Userinfo",0);
                         //Setting the id the of the view as the id of the reviewer allows for information to be passed
                         //Through a view very simply. Since ids are unique there will be no id conflict
+                        //Replace with ((LinearLayout)v.getParent()).getId(); so multiple views inside entry can get id
                         if(settings.getString("id", "").equals(Integer.toString(v.getId()))) {
                             Intent profile = new Intent(otherProfile.this, Profile.class);
                             profile.putExtra("stack", stack);
@@ -493,26 +498,13 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                         }
                     }
                 };
+                averageRatingBar.setRating(ratingNum);
+                averageRating.setText(ratingString);
                 //Dynamically add reviews
                 for (int i = 0; i < reviews.length(); i++) {
                     //Set average rating
-                    averageRatingBar.setRating(ratingNum);
-                    averageRating.setText(ratingString);
                     //style="?android:attr/ratingBarStyleSmall"
-                    LinearLayout entry = new LinearLayout(otherProfile.this);
-                    LinearLayout header = new LinearLayout(otherProfile.this);
-                    //Each review will be put into an entry layout which will be added to the whole list layout
-                    LinearLayout.LayoutParams entryParams = new LinearLayout.LayoutParams
-                            (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    //Left top right bottom
-                    entryParams.setMargins(20, 20, 0, 15);
-                    entry.setLayoutParams(entryParams);
-                    entryParams.setMargins(20,0,0,25);
-                    header.setLayoutParams(entryParams);
 
-                    //Set the round layout for entry
-                    //entry.setBackground(ContextCompat.getDrawable(otherProfile.this, R.drawable.round_layout));
-                    entry.setOrientation(LinearLayout.VERTICAL);
                     //Loading the reviews into strings
                     String name = reviews.getJSONObject(i).optString("name");
                     String title = reviews.getJSONObject(i).optString("title");
@@ -520,64 +512,70 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                     String rating = reviews.getJSONObject(i).optString("rating");
                     String date = reviews.getJSONObject(i).optString("date");
                     String reviewerID = reviews.getJSONObject(i).optString("reviewerID");
+                    //Each review will be put into an entry layout which will be added to the whole list layout
+                    LinearLayout entry = new LinearLayout(otherProfile.this);
                     //Setting the rating bar accordingly
-                    RatingBar ratingBar = new RatingBar(otherProfile.this,null,R.attr.ratingBarStyleSmall);
-                    ratingBar.setIsIndicator(true);
-                    if(!rating.equals("null")) {
-                        ratingBar.setRating(Float.parseFloat(rating));
-                    }
-                    else{
-                        ratingBar.setVisibility(View.GONE);
-                    }
+                    //Different layouts for different parts of the review
+                    LinearLayout.LayoutParams entryParams = new LinearLayout.LayoutParams
+                            (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    //Left top right bottom
+                    entryParams.setMargins(20, 20, 0, 15);
+                    entry.setLayoutParams(entryParams);
+                    entryParams.setMargins(20, 0, 0, 25);
+                    entry.setOrientation(LinearLayout.VERTICAL);
                     /*
                     ratingBar.setScaleX(Float.parseFloat("0.5"));
                     ratingBar.setScaleY(Float.parseFloat("0.5"));
                     ratingBar.setPivotX(0);
                     ratingBar.setPivotY(0);
                     */
+                    //Header will be in a horizontal format to fit rating bar and title
+                    LinearLayout header = new LinearLayout(otherProfile.this);
+                    header.setLayoutParams(entryParams);
                     LinearLayout.LayoutParams ratingParams = new LinearLayout.LayoutParams
                             (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                    //Adding rating to header
+                    RatingBar ratingBar = new RatingBar(otherProfile.this,null,R.attr.ratingBarStyleSmall);
+                    ratingBar.setIsIndicator(true);
+                    //Making sure rating isn't null
+                    if(!rating.equals("null")) {
+                        ratingBar.setRating(Float.parseFloat(rating));
+                    }
+                    else{
+                        ratingBar.setVisibility(View.GONE);
+                    }
                     ratingBar.setLayoutParams(ratingParams);
                     header.addView(ratingBar);
-
-                    //Title of each review with name of the reviewer
+                    //Adding title of each review to header
                     LinearLayout.LayoutParams headerParams = new LinearLayout.LayoutParams
                             (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     headerParams.setMargins(10, 0, 0, 0);
                     TextView headerString = new TextView(otherProfile.this);
                     headerString.setTextSize(15);
                     headerString.setTypeface(null, Typeface.BOLD);
-                    //String temp = title + " by " + name;
                     headerString.setText(title);
                     headerString.setLayoutParams(headerParams);
                     header.addView(headerString);
+                    //Add header to the entry
                     entry.addView(header);
 
+                    //Add the author row
+                    LinearLayout authorRow = new LinearLayout(otherProfile.this);
+                    //Add views to author row
                     LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams
                             (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     lparams.setMargins(20, 0, 0, 10);
                     TextView author = new TextView(otherProfile.this);
                     author.setTextSize(12);
-                    //Add date
-                    Calendar calendar = Calendar.getInstance();
-                    try {
-                        calendar.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(date));
-                    } catch(ParseException e){
-                        e.printStackTrace();
-                    }
-                    String month = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
-                    String day = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
-                    String year = Integer.toString(calendar.get(Calendar.YEAR));
-                    date = month + " " + day + ", " + year;
                     //String temp = "By " + name + " on " + date;
                     String temp = "By ";
                     author.setText(temp);
                     author.setLayoutParams(lparams);
                     //entry.addView(author);
-
-                    LinearLayout authorRow = new LinearLayout(otherProfile.this);
                     authorRow.addView(author);
 
+                    //Add text with author's name that is clickable to go to their profile
                     //style="?android:attr/borderlessButtonStyle"
                     //android:background="@android:color/transparent"
                     TextView authorButton = new TextView(otherProfile.this);
@@ -586,26 +584,34 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                     //Setting id as reviewer id so we can retrieve it later to go to their profile
                     authorButton.setId(Integer.parseInt(reviewerID));
                     authorButton.setOnClickListener(gotoProfile);
-                    /*
-                    LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT);
-                    buttonParams.setMargins(0, -10, 0, -5);
-                    authorButton.setLayoutParams(buttonParams);
-                    */
-                    //authorButton.setTextSize(8);
+
+                    //Add date
+                    Calendar calendar = Calendar.getInstance();
+                    try {
+                        calendar.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(date));
+                    } catch(ParseException e){
+                        //This should never happen
+                        e.printStackTrace();
+                    }
+                    String month = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
+                    String day = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
+                    String year = Integer.toString(calendar.get(Calendar.YEAR));
+                    date = month + " " + day + ", " + year;
                     authorRow.addView(authorButton);
                     TextView dateView = new TextView(otherProfile.this);
                     temp = " on " + date;
                     dateView.setText(temp);
                     authorRow.addView(dateView);
+                    //Add author row to entry
                     entry.addView(authorRow);
 
-                    //Body of review
+                    //Simply adding the text of the review to entry
                     TextView body = new TextView(otherProfile.this);
                     body.setText(review);
                     body.setLayoutParams(lparams);
                     entry.addView(body);
 
+                    //Adding buttons and interactions with each review
                     //LinearLayout extraRow = new LinearLayout(otherProfile.this);
                     RelativeLayout  extraRow = new RelativeLayout(otherProfile.this);
                     extraRow.setLayoutParams(lparams);
@@ -639,19 +645,10 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                     //report.setOnClickListener(report);
 
                     entry.addView(extraRow);
-
-                    //Line break (necessary?)
-                    /*
-                    if(i!=reviews.length()-1) {
-                        View lineBreak = new View(otherProfile.this);
-                        lineBreak.setLayoutParams(viewParams);
-                        lineBreak.setBackgroundColor(ContextCompat.getColor(otherProfile.this, R.color.colorPrimary));
-                        entry.addView(lineBreak);
-                    }
-                    */
                     //Finally insert into full view
                     reviewList.addView(entry);
                 }
+                //No reviews, fix views and leave proper message
                 if(reviews.length()==0){
                     averageRatingBar.setVisibility(View.GONE);
                     averageRating.setVisibility(View.GONE);
