@@ -483,8 +483,8 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                         SharedPreferences settings = getSharedPreferences("Userinfo",0);
                         //Setting the id the of the view as the id of the reviewer allows for information to be passed
                         //Through a view very simply. Since ids are unique there will be no id conflict
-                        //Replace with ((LinearLayout)v.getParent()).getId(); so multiple views inside entry can get id
-                        if(settings.getString("id", "").equals(Integer.toString(v.getId()))) {
+                        //Replaced with ((LinearLayout)v.getParent()).getId(); so multiple views inside entry can get id
+                        if(settings.getString("id", "").equals(((LinearLayout)v.getParent()).getId())) {
                             Intent profile = new Intent(otherProfile.this, Profile.class);
                             profile.putExtra("stack", stack);
                             startActivityForResult(profile, 1);
@@ -514,6 +514,8 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                     String reviewerID = reviews.getJSONObject(i).optString("reviewerID");
                     //Each review will be put into an entry layout which will be added to the whole list layout
                     LinearLayout entry = new LinearLayout(otherProfile.this);
+                    //Setting id as reviewer id so we can retrieve it later from multiple child views
+                    entry.setId(Integer.parseInt(reviewerID));
                     //Setting the rating bar accordingly
                     //Different layouts for different parts of the review
                     LinearLayout.LayoutParams entryParams = new LinearLayout.LayoutParams
@@ -582,7 +584,7 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                     authorButton.setText(name);
                     authorButton.setTypeface(null, Typeface.BOLD);
                     //Setting id as reviewer id so we can retrieve it later to go to their profile
-                    authorButton.setId(Integer.parseInt(reviewerID));
+                    //authorButton.setId(Integer.parseInt(reviewerID));
                     authorButton.setOnClickListener(gotoProfile);
 
                     //Add date
