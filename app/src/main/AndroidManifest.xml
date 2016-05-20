@@ -61,9 +61,6 @@
             android:name=".Profile"
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="group14.tutoru.MainPage" />
         </activity>
         <activity
             android:name=".editProfile"
@@ -74,10 +71,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="group14.tutoru.Profile" />
         </activity>
+        <!--
         <activity
             android:name=".otherProfile"
             android:label="@string/title_activity_other_profile"
             android:theme="@style/AppTheme.NoActionBar" />
+            -->
         <activity
             android:name=".search"
             android:label="@string/title_activity_search"
@@ -109,13 +108,8 @@
                 android:value="group14.tutoru.Profile" />
         </activity>
         <activity
-            android:name=".tabbedProfile"
-            android:label="@string/title_activity_tabbed_profile"
-            android:parentActivityName=".MainPage"
+            android:name=".otherProfile"
             android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="group14.tutoru.MainPage" />
         </activity>
         <activity android:name=".forgotPassword"
             android:theme="@style/AppTheme.NoActionBar">

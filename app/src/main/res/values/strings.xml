@@ -265,7 +265,7 @@
         <item>5/15/16: 12:00pm - 3:00pm -- Samuel Cheung</item>
     </string-array>
     <string name="title_activity_list_reviews">ListReviews</string>
-    <string name="title_activity_tabbed_profile">tabbedProfile</string>
+    <string name="title_activity_tabbed_profile">otherProfile</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="buttonForgot"><u>Forgot Password?</u></string>
 </resources>

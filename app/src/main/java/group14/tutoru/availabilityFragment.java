@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class availabilityFragment extends Fragment {
+    View mView;
     public availabilityFragment() {
 
     }
@@ -22,6 +23,10 @@ public class availabilityFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        this.mView = inflater.inflate(R.layout.availability_fragment, container, false);
         return inflater.inflate(R.layout.availability_fragment, container, false);
+    }
+    public void gone(){
+        this.mView.setVisibility(View.GONE);
     }
 }

@@ -40,6 +40,7 @@ import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 /*
 Profile page of user
@@ -50,6 +51,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
 
     String uUsername, uEmail, uName, uGpa, uGradYear, uMajor, uDescription, uDob, uPrice, uRating;
     String[] uClasses;
+    ArrayList stack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,20 +143,8 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
-        switch(item.getItemId()){
-            case android.R.id.home:
-                Intent upIntent = NavUtils.getParentActivityIntent(this);
-                if(NavUtils.shouldUpRecreateTask(this,upIntent)){
-                    TaskStackBuilder.create(this)
-                        .addNextIntentWithParentStack(upIntent)
-                        .startActivities();
-                }
-                else{
-                    NavUtils.navigateUpTo(this,upIntent);
-                }
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        finish();
+        return true;
     }
     //Next, work on profile picture, replace button with invisible button on picture, cropping, scaling, etc
     @Override

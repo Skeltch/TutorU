@@ -114,10 +114,10 @@ public class MainPage extends AppCompatActivity
             @Override
             public void onClick(View view){
                 //Intent i = new Intent(MainPage.this, otherProfile.class);
-                Intent i = new Intent(MainPage.this, tabbedProfile.class);
+                Intent i = new Intent(MainPage.this, otherProfile.class);
                 i.putExtra("id",String.valueOf(featuredId));
                 i.putExtra("name",String.valueOf(featuredName));
-                startActivity(i);
+                startActivityForResult(i,1);
             }
         });
     }

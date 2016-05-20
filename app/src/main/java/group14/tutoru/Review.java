@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +33,7 @@ public class Review extends AppCompatActivity implements AsyncResponse{
 
     private float starRating=0;
     private int tutorID;
+    boolean edit;
     //private String tutorName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,12 +81,32 @@ public class Review extends AppCompatActivity implements AsyncResponse{
                     postData.put("title",title.getText().toString());
                     postData.put("review",review.getText().toString());
                     postData.put("rating", Float.toString(starRating));
+                    if(edit){
+                        postData.put("edit","set");
+                    }
                     PostResponseAsyncTask send = new PostResponseAsyncTask(Review.this, postData);
                     send.execute("review.php");
                 }
             });
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //getMenuInflater().inflate(R.menu.menu_tabbed_profile, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        finish();
+        return true;
+    }
+
     //Rating bar
     public void listenerForRatingBar(){
         RatingBar rating = (RatingBar) findViewById(R.id.ratingBar);
@@ -98,25 +121,29 @@ public class Review extends AppCompatActivity implements AsyncResponse{
             );
         }
     }
+
+    public void deleteReview(View view){
+        HashMap postData = new HashMap();
+        SharedPreferences settings = getSharedPreferences("Userinfo",0);
+        postData.put("tutorID", Integer.toString(tutorID));
+        postData.put("reviewerID", settings.getString("id", ""));
+        postData.put("delete", "true");
+        PostResponseAsyncTask send = new PostResponseAsyncTask(Review.this, postData);
+        send.execute("review.php");
+    }
+
     @Override
     public void processFinish(String output){
         try {
             JSONObject review = new JSONObject(output);
             //Outputs to direct the activity
             if (review.optString("activity").equals("review")) {
-                Intent i = new Intent(Review.this, tabbedProfile.class);
+                Intent i = new Intent(Review.this, otherProfile.class);
                 i.putExtra("id", Integer.toString(tutorID));
+                finish();
                 startActivity(i);
             }
-            else if(review.optString("activity").equals("redirect")) {
-                //Temporary
-                Toast.makeText(this, "You have already reviewed this tutor", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(Review.this, MainPage.class));
-                //Allow tutee to edit review
-                //Intent i = new Intent(Review.this, editReview.class);
-                //startActivity(i);
-            }
-            else {
+            else{
                 JSONObject tutor = new JSONObject(output);
                 String encodedImage = tutor.optString("imageString");
                 if (!encodedImage.isEmpty()) {
@@ -129,6 +156,18 @@ public class Review extends AppCompatActivity implements AsyncResponse{
                 TextView reviewTitle = (TextView) findViewById(R.id.reviewTitle);
                 reviewTitle.setText(name);
                 getSupportActionBar().setTitle(name);
+                if(review.optString("activity").equals("edit")) {
+                    //Temporary
+                    Toast.makeText(this, "You have already reviewed this tutor. You can delete or edit your review.", Toast.LENGTH_SHORT).show();
+                    //startActivity(new Intent(Review.this, MainPage.class));
+                    TextView titleView = (TextView) findViewById(R.id.title);
+                    TextView reviewView = (TextView) findViewById(R.id.review);
+                    RatingBar ratingView = (RatingBar) findViewById(R.id.ratingBar);
+                    titleView.setText(review.optString("title"));
+                    reviewView.setText(review.optString("review"));
+                    ratingView.setRating(Float.parseFloat(review.optString("rating")));
+                    edit=true;
+                }
             }
         } catch(JSONException e){
             e.printStackTrace();
