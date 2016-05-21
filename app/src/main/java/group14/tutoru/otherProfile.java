@@ -20,7 +20,6 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,7 +32,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,7 +52,7 @@ import java.util.Locale;
 public class otherProfile extends AppCompatActivity implements AsyncResponse {
 
     String uEmail, uName, uGpa, uGradYear, uMajor, uClasses, uDescription, uPrice, role, commendNum;
-    HashMap<String,String> commendMap;
+    HashMap<String,ArrayList<String>> commendMap;
     boolean empty;
     float ratingNum;
     int loadNum;
@@ -466,7 +464,8 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                 }
                 //Load classes in a simple manner
                 for (int i = 0; i < classesArray.length(); i++) {
-                    uClasses += classesArray.getJSONObject(i).optString("classes");
+                    //uClasses += classesArray.getJSONObject(i).optString("classes");
+                    uClasses += (String)classesArray.get(i);
                     if (i != classesArray.length() - 1) {
                         uClasses += '\n';
                     }
@@ -556,16 +555,28 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                 @Override
                 public void onClick(View v) {
                     //Add undo commend  ability
+                    //Through hashmap that is initially filled from data send by server
                     String parentID = Integer.toString(((LinearLayout) (v.getParent()).getParent()).getId());
-                    commendNum = commendMap.get(parentID);
-                    Log.e("commendNum", commendNum);
-                    commendNum = Integer.toString(Integer.parseInt(commendNum) + 1);
-                    commendMap.put(parentID, commendNum);
-                    Log.e("newNum", commendNum);
+                    ArrayList<String> commendList = commendMap.get(parentID);
+                    HashMap commendData = new HashMap();
+                    commendNum = commendList.get(0);
+                    Log.e("num", commendList.get(1));
+                    //commendNum = commendMap.get(parentID);
+                    if(commendList.get(1).equals("0")) {
+                        commendNum = Integer.toString(Integer.parseInt(commendNum) + 1);
+                        commendList.set(1, "1");
+                        commendData.put("add","true");
+                    }
+                    else{
+                        commendNum = Integer.toString(Integer.parseInt(commendNum) - 1);
+                        commendList.set(1, "0");
+                    }
+                    commendList.set(0, commendNum);
+                    commendMap.put(parentID, commendList);
+                    //commendMap.put(parentID, commendNum);
                     String commendString = "(" + commendNum + ")" + "Commend";
                     TextView temp = (TextView) v;
                     temp.setText(commendString);
-                    HashMap commendData = new HashMap();
                     commendData.put("commend", parentID);
                     commendData.put("tutorID", id);
                     PostResponseAsyncTask commend = new PostResponseAsyncTask(otherProfile.this, commendData);
@@ -575,6 +586,7 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
             View.OnClickListener gotoReport = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Toast.makeText(getApplicationContext(), "We will review this case.", Toast.LENGTH_SHORT).show();
                     String parentID = Integer.toString(((LinearLayout) (v.getParent()).getParent()).getId());
                     HashMap reportData = new HashMap();
                     reportData.put("report", parentID);
@@ -601,7 +613,6 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                 //Each review will be put into an entry layout which will be added to the whole list layout
                 LinearLayout entry = new LinearLayout(otherProfile.this);
                 //Setting id as reviewer id so we can retrieve it later from multiple child views
-                Log.e("reviewerID", reviewerID);
                 entry.setId(Integer.parseInt(reviewerID));
                 //Setting the rating bar accordingly
                 //Different layouts for different parts of the review
@@ -650,6 +661,9 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
 
                 //Add the author row
                 LinearLayout authorRow = new LinearLayout(otherProfile.this);
+                LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams
+                        (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                authorRow.setLayoutParams(rowParams);
                 //Add views to author row
                 LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams
                         (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -685,6 +699,7 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                 String day = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
                 String year = Integer.toString(calendar.get(Calendar.YEAR));
                 date = month + " " + day + ", " + year;
+                Log.e("date",date);
                 authorRow.addView(authorButton);
                 TextView dateView = new TextView(otherProfile.this);
                 temp = " on " + date;
@@ -703,14 +718,18 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                 //LinearLayout extraRow = new LinearLayout(otherProfile.this);
                 //RelativeLayout  extraRow = new RelativeLayout(otherProfile.this);
                 LinearLayout extraRow = new LinearLayout(otherProfile.this);
-                extraRow.setLayoutParams(lparams);
+                extraRow.setLayoutParams(rowParams);
                 TextView commend = new TextView(otherProfile.this);
                 //Add number of commends this review has gotten
                 //String commendString="Commend";
                 //Create hashmap with uniqueID?
 
                 String commendString = "(" + commendNum + ")" + "Commend";
-                commendMap.put(reviewerID, commendNum);
+                ArrayList<String> tempList = new ArrayList();
+                tempList.add(0,commendNum);
+                //Change to 1 if commended before
+                tempList.add(1,"0");
+                commendMap.put(reviewerID, tempList);
                 commend.setText(commendString);
                 commend.setTypeface(null, Typeface.BOLD);
                 commend.setOnClickListener(gotoCommend);

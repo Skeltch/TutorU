@@ -268,4 +268,5 @@
     <string name="title_activity_tabbed_profile">otherProfile</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="buttonForgot"><u>Forgot Password?</u></string>
+    <string name="title_activity_cards">Cards</string>
 </resources>

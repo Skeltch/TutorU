@@ -1,5 +1,6 @@
 package group14.tutoru;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +20,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-public class search extends AppCompatActivity implements AsyncResponse, AdapterView.OnItemSelectedListener {
+public class search extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
 
 
@@ -76,12 +77,9 @@ public class search extends AppCompatActivity implements AsyncResponse, AdapterV
                     postData.put("PriceRange", priceBand);
                     postData.put("StarRating", starRating);
 
-                    PostResponseAsyncTask login = new PostResponseAsyncTask(search.this, postData);
-                    login.execute("search.php");
 
-
-                    //Intent searchInit = new Intent(search.this, PerformSearch.class);
-                    //startActivity(searchInit);
+                    Intent searchInit = new Intent(search.this, Cards.class);
+                    startActivity(searchInit);
                 }
                 else{
                     Toast.makeText(getApplicationContext(), "Missing Field", Toast.LENGTH_SHORT).show();
@@ -154,37 +152,5 @@ public class search extends AppCompatActivity implements AsyncResponse, AdapterV
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
-    }
-
-
-    @Override
-    public void processFinish(String output){
-        Log.d("result", output);
-        try {
-            JSONObject login = new JSONObject(output);
-            if(login.optString("result").equals("success")){
-                //Storing user information, possibly used in future
-                SharedPreferences settings = getSharedPreferences("Userinfo",0);
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putString("id",login.optString("id").toString());
-                editor.commit();
-
-                Toast.makeText(this, "Login Successful", Toast.LENGTH_LONG).show();
-                //Intent i = new Intent(search.this, PerformSearch.class);
-                //startActivity(i);
-            }
-            else if(login.optString("result").equals("Login Failed")){
-                Toast.makeText(this, "Failed, Incorrect Username or Password", Toast.LENGTH_LONG).show();
-            }
-            else{
-                Toast.makeText(this, "Failed could not connect to server",Toast.LENGTH_LONG).show();
-            }
-        }
-        catch(JSONException e){
-            e.printStackTrace();
-        }
-        //Debugging on phone
-        //Intent i = new Intent(MainScreenActivity.this, SignIn.class);
-        //startActivity(i);
     }
 }

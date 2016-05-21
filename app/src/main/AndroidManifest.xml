@@ -4,7 +4,9 @@
     android:versionCode="1"
     android:versionName="1.0">
 
+    <!--
     <uses-sdk android:minSdkVersion="8" />
+    -->
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -60,8 +62,7 @@
         <activity
             android:name=".Profile"
             android:label="@string/title_activity_profile"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".editProfile"
             android:label="@string/title_activity_edit_profile"
@@ -76,7 +77,7 @@
             android:name=".otherProfile"
             android:label="@string/title_activity_other_profile"
             android:theme="@style/AppTheme.NoActionBar" />
-            -->
+        -->
         <activity
             android:name=".search"
             android:label="@string/title_activity_search"
@@ -109,14 +110,18 @@
         </activity>
         <activity
             android:name=".otherProfile"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity android:name=".forgotPassword"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".forgotPassword"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="group14.tutoru.MainScreenActivity" />
         </activity>
+        <activity
+            android:name=".Cards"
+            android:label="@string/title_activity_cards"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -89,18 +89,18 @@ public class MainPage extends AppCompatActivity
         search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                //Intent i = new Intent(MainPage.this, PerformSearch.class);
-                //i.putExtra("searchTerm", search.getText());
-                //startActivity(i);
+                Intent i = new Intent(MainPage.this, Cards.class);
+                i.putExtra("searchTerm", search.getText());
+                startActivity(i);
                 return true;
             }
         });
         search.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Intent i = new Intent(MainPage.this, PerformSearch.class);
-                //i.putExtra("searchTerm", parent.getItemAtPosition(position).toString());
-                //startActivity(i);
+                Intent i = new Intent(MainPage.this, Cards.class);
+                i.putExtra("searchTerm", parent.getItemAtPosition(position).toString());
+                startActivity(i);
             }
         });
 
@@ -261,10 +261,12 @@ public class MainPage extends AppCompatActivity
             }
             //Multiple featured tutors?
             else {
-                classString += classesArray.getJSONObject(0).optString("classes");
+                //classString += classesArray.getJSONObject(0).optString("classes");
+                classString += classesArray.get(0);
             }
             for (int i = 1; i < classesArray.length(); i++) {
-                classString += ", " + classesArray.getJSONObject(i).optString("classes");
+                //uClasses[i] = (String)classesArray.get(i);
+                classString += ", " + classesArray.get(i);
             }
             //String for reviews, price, etc
             String uPrice = "Not set";

@@ -181,7 +181,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
         if (resultCode == Activity.RESULT_OK) {
             Bitmap bitmap;
             Bitmap scaled = null;
-            if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            if (requestCode == 1) {
                 Uri selectedImage = data.getData();
                 try {
                     switch (requestCode) {
@@ -190,7 +190,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                             //Other options to fitting picture
                             int nh = (int) (bitmap.getHeight() * (512.0 / bitmap.getWidth()));
                             scaled = Bitmap.createScaledBitmap(bitmap, 512, nh, true);
-                            DisplayMetrics display = getResources().getDisplayMetrics();
+                            //DisplayMetrics display = getResources().getDisplayMetrics();
                             //Stretches
                             //scaled = Bitmap.createScaledBitmap(bitmap, Math.round(display.widthPixels/display.density), 200, true);
                     }
@@ -299,9 +299,11 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                         newClass.setLayoutParams(lparams);
                         classLayout.addView(newClass);
                     }
+                    //Load into each textview so that retrieval is possible without parsing a string
                     for (int i = 0; i < classesArray.length(); i++) {
                         TextView newClass = new TextView(this);
-                        uClasses[i] = classesArray.getJSONObject(i).optString("classes");
+                        //uClasses[i] = classesArray.getJSONObject(i).optString("classes");
+                        uClasses[i] = (String)classesArray.get(i);
                         newClass.setText(uClasses[i]);
                         newClass.setLayoutParams(lparams);
                         classLayout.addView(newClass);
