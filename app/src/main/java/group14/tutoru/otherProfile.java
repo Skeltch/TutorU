@@ -25,13 +25,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,8 +53,11 @@ import java.util.Locale;
 
 public class otherProfile extends AppCompatActivity implements AsyncResponse {
 
-    String uEmail, uName, uGpa, uGradYear, uMajor, uClasses, uDescription, uPrice, role;
+    String uEmail, uName, uGpa, uGradYear, uMajor, uClasses, uDescription, uPrice, role, commendNum;
+    HashMap<String,String> commendMap;
+    boolean empty;
     float ratingNum;
+    int loadNum;
     String ratingString, id;
     profileFragment tab1;
     reviewFragment tab2;
@@ -132,10 +139,11 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
         //End activity for profile
 
         //Start activity for reviews
+        commendMap = new HashMap();
         HashMap postDataReviews = new HashMap();
         //Log.e("id", id);
         postDataReviews.put("id", id);
-        //Get all reviews
+        //Get reviews up to limit
         PostResponseAsyncTask list = new PostResponseAsyncTask(otherProfile.this, postDataReviews);
         list.execute("getReviews.php");
         //End activity for reviews
@@ -295,8 +303,25 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
         startActivityForResult(review, 1);
     }
 
+    public void loadMore(View view){
+        if(!empty) {
+            loadNum++;
+            HashMap loadData = new HashMap();
+            loadData.put("loadNum", Integer.toString(loadNum));
+            loadData.put("id", id);
+            PostResponseAsyncTask load = new PostResponseAsyncTask(otherProfile.this, loadData);
+            load.execute("getReviews.php");
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "No more reviews", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public void processFinish(String output){
         try {
+            if(output.equals("commend")){
+
+            }
             Object json = new JSONTokener(output).nextValue();
             SharedPreferences settings = getSharedPreferences("Userinfo", 0);
             if(settings.getString("id", "").equals(id)) {
@@ -469,197 +494,298 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
             //Load data for reviews
             else if (json instanceof JSONArray) {
                 LinearLayout reviewList = (LinearLayout) findViewById(R.id.reviewList);
-
-                //Getting views
-                TextView averageRating = (TextView) findViewById(R.id.averageRating);
-                RatingBar averageRatingBar = (RatingBar) findViewById(R.id.ratingBar);
-                TextView headerBar = (TextView) findViewById(R.id.header);
-
-                JSONArray reviews = new JSONArray(output);
-                //OnClickListener for author profiles
-                View.OnClickListener gotoProfile = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        SharedPreferences settings = getSharedPreferences("Userinfo",0);
-                        //Setting the id the of the view as the id of the reviewer allows for information to be passed
-                        //Through a view very simply. Since ids are unique there will be no id conflict
-                        //Replaced with ((LinearLayout)v.getParent()).getId(); so multiple views inside entry can get id
-                        if(settings.getString("id", "").equals(((LinearLayout)v.getParent()).getId())) {
-                            Intent profile = new Intent(otherProfile.this, Profile.class);
-                            profile.putExtra("stack", stack);
-                            startActivityForResult(profile, 1);
-                        }
-                        else {
-                            Intent i = new Intent(otherProfile.this, otherProfile.class);
-                            stack.add(Integer.toString(v.getId()));
-                            //i.putExtra("id",Integer.toString(v.getId()));
-                            i.putExtra("stack", stack);
-                            startActivityForResult(i, 1);
-                        }
-                    }
-                };
-                averageRatingBar.setRating(ratingNum);
-                averageRating.setText(ratingString);
-                //Dynamically add reviews
-                for (int i = 0; i < reviews.length(); i++) {
-                    //Set average rating
-                    //style="?android:attr/ratingBarStyleSmall"
-
-                    //Loading the reviews into strings
-                    String name = reviews.getJSONObject(i).optString("name");
-                    String title = reviews.getJSONObject(i).optString("title");
-                    String review = reviews.getJSONObject(i).optString("review");
-                    String rating = reviews.getJSONObject(i).optString("rating");
-                    String date = reviews.getJSONObject(i).optString("date");
-                    String reviewerID = reviews.getJSONObject(i).optString("reviewerID");
-                    //Each review will be put into an entry layout which will be added to the whole list layout
-                    LinearLayout entry = new LinearLayout(otherProfile.this);
-                    //Setting id as reviewer id so we can retrieve it later from multiple child views
-                    entry.setId(Integer.parseInt(reviewerID));
-                    //Setting the rating bar accordingly
-                    //Different layouts for different parts of the review
-                    LinearLayout.LayoutParams entryParams = new LinearLayout.LayoutParams
-                            (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    //Left top right bottom
-                    entryParams.setMargins(20, 20, 0, 15);
-                    entry.setLayoutParams(entryParams);
-                    entryParams.setMargins(20, 0, 0, 25);
-                    entry.setOrientation(LinearLayout.VERTICAL);
-                    /*
-                    ratingBar.setScaleX(Float.parseFloat("0.5"));
-                    ratingBar.setScaleY(Float.parseFloat("0.5"));
-                    ratingBar.setPivotX(0);
-                    ratingBar.setPivotY(0);
-                    */
-                    //Header will be in a horizontal format to fit rating bar and title
-                    LinearLayout header = new LinearLayout(otherProfile.this);
-                    header.setLayoutParams(entryParams);
-                    LinearLayout.LayoutParams ratingParams = new LinearLayout.LayoutParams
-                            (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                    //Adding rating to header
-                    RatingBar ratingBar = new RatingBar(otherProfile.this,null,R.attr.ratingBarStyleSmall);
-                    ratingBar.setIsIndicator(true);
-                    //Making sure rating isn't null
-                    if(!rating.equals("null")) {
-                        ratingBar.setRating(Float.parseFloat(rating));
-                    }
-                    else{
-                        ratingBar.setVisibility(View.GONE);
-                    }
-                    ratingBar.setLayoutParams(ratingParams);
-                    header.addView(ratingBar);
-                    //Adding title of each review to header
-                    LinearLayout.LayoutParams headerParams = new LinearLayout.LayoutParams
-                            (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    headerParams.setMargins(10, 0, 0, 0);
-                    TextView headerString = new TextView(otherProfile.this);
-                    headerString.setTextSize(15);
-                    headerString.setTypeface(null, Typeface.BOLD);
-                    headerString.setText(title);
-                    headerString.setLayoutParams(headerParams);
-                    header.addView(headerString);
-                    //Add header to the entry
-                    entry.addView(header);
-
-                    //Add the author row
-                    LinearLayout authorRow = new LinearLayout(otherProfile.this);
-                    //Add views to author row
-                    LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams
-                            (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    lparams.setMargins(20, 0, 0, 10);
-                    TextView author = new TextView(otherProfile.this);
-                    author.setTextSize(12);
-                    //String temp = "By " + name + " on " + date;
-                    String temp = "By ";
-                    author.setText(temp);
-                    author.setLayoutParams(lparams);
-                    //entry.addView(author);
-                    authorRow.addView(author);
-
-                    //Add text with author's name that is clickable to go to their profile
-                    //style="?android:attr/borderlessButtonStyle"
-                    //android:background="@android:color/transparent"
-                    TextView authorButton = new TextView(otherProfile.this);
-                    authorButton.setText(name);
-                    authorButton.setTypeface(null, Typeface.BOLD);
-                    //Setting id as reviewer id so we can retrieve it later to go to their profile
-                    //authorButton.setId(Integer.parseInt(reviewerID));
-                    authorButton.setOnClickListener(gotoProfile);
-
-                    //Add date
-                    Calendar calendar = Calendar.getInstance();
-                    try {
-                        calendar.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(date));
-                    } catch(ParseException e){
-                        //This should never happen
-                        e.printStackTrace();
-                    }
-                    String month = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
-                    String day = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
-                    String year = Integer.toString(calendar.get(Calendar.YEAR));
-                    date = month + " " + day + ", " + year;
-                    authorRow.addView(authorButton);
-                    TextView dateView = new TextView(otherProfile.this);
-                    temp = " on " + date;
-                    dateView.setText(temp);
-                    authorRow.addView(dateView);
-                    //Add author row to entry
-                    entry.addView(authorRow);
-
-                    //Simply adding the text of the review to entry
-                    TextView body = new TextView(otherProfile.this);
-                    body.setText(review);
-                    body.setLayoutParams(lparams);
-                    entry.addView(body);
-
-                    //Adding buttons and interactions with each review
-                    //LinearLayout extraRow = new LinearLayout(otherProfile.this);
-                    RelativeLayout  extraRow = new RelativeLayout(otherProfile.this);
-                    extraRow.setLayoutParams(lparams);
-                    TextView Commend = new TextView(otherProfile.this);
-                    Commend.setText("Commend");
-                    //Commend.setOnClickListener(commend);
-                    extraRow.addView(Commend);
-
-                    LinearLayout.LayoutParams extra = new LinearLayout.LayoutParams
-                            (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    extra.setMargins(50, 0, 0, 0);
-
-                    RelativeLayout.LayoutParams extraRelative = new RelativeLayout.LayoutParams
-                            (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    extraRelative.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-
-                    TextView Report = new TextView(otherProfile.this);
-                    Report.setText("Report");
-                    Report.setLayoutParams(extraRelative);
-
-                    extraRelative.removeRule(RelativeLayout.ALIGN_PARENT_LEFT);
-                    //Add ability to comment?
-                    //TextView Comment = new TextView(otherProfile.this);
-                    //Comment.setText("Comment");
-                    //Comment.setOnClickListener(comment);
-
-                    extraRelative.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-                    Report.setLayoutParams(extraRelative);
-                    Report.setGravity(Gravity.CENTER);
-                    extraRow.addView(Report);
-                    //report.setOnClickListener(report);
-
-                    entry.addView(extraRow);
-                    //Finally insert into full view
-                    reviewList.addView(entry);
+                if (loadNum == 0) {
+                    LinearLayout loadSection = addReviews(output);
+                    reviewList.addView(loadSection);
                 }
-                //No reviews, fix views and leave proper message
-                if(reviews.length()==0){
-                    averageRatingBar.setVisibility(View.GONE);
-                    averageRating.setVisibility(View.GONE);
-                    headerBar.setText("This tutor has no reviews");
+                else{
+                    //This will only happen once if there are no more reviews
+                    if(output.equals("[]")) {
+                        empty=true;
+                        Toast.makeText(getApplicationContext(), "No more reviews", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        LinearLayout loadSection = addReviews(output);
+                        loadSection.setOrientation(LinearLayout.VERTICAL);
+                        loadSection.setVisibility(View.GONE);
+                        reviewList.addView(loadSection);
+                        expand(loadSection);
+                    }
+
                 }
             }
         }
         catch(JSONException e){
             e.printStackTrace();
         }
+    }
+    public LinearLayout addReviews(String output){
+        try {
+            LinearLayout loadSection = new LinearLayout(otherProfile.this);
+            loadSection.setOrientation(LinearLayout.VERTICAL);
+
+            //Getting views
+            TextView averageRating = (TextView) findViewById(R.id.averageRating);
+            RatingBar averageRatingBar = (RatingBar) findViewById(R.id.ratingBar);
+            TextView headerBar = (TextView) findViewById(R.id.header);
+
+            JSONArray reviews = new JSONArray(output);
+            //OnClickListener for author profiles
+            View.OnClickListener gotoProfile = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SharedPreferences settings = getSharedPreferences("Userinfo", 0);
+                    //Setting the id the of the view as the id of the reviewer allows for information to be passed
+                    //Through a view very simply. Since ids are unique there will be no id conflict
+                    //Replaced with parents so multiple views inside entry can get id
+                    String parentID = Integer.toString(((LinearLayout) (v.getParent()).getParent()).getId());
+                    //String parentID = Integer.toString(((LinearLayout) v.getParent()).getId());
+                    if (settings.getString("id", "").equals(parentID)) {
+                        Intent profile = new Intent(otherProfile.this, Profile.class);
+                        profile.putExtra("stack", stack);
+                        startActivityForResult(profile, 1);
+                    } else {
+                        Intent i = new Intent(otherProfile.this, otherProfile.class);
+                        stack.add(parentID);
+                        i.putExtra("stack", stack);
+                        startActivityForResult(i, 1);
+                    }
+                }
+            };
+            View.OnClickListener gotoCommend = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Add undo commend  ability
+                    String parentID = Integer.toString(((LinearLayout) (v.getParent()).getParent()).getId());
+                    commendNum = commendMap.get(parentID);
+                    Log.e("commendNum", commendNum);
+                    commendNum = Integer.toString(Integer.parseInt(commendNum) + 1);
+                    commendMap.put(parentID, commendNum);
+                    Log.e("newNum", commendNum);
+                    String commendString = "(" + commendNum + ")" + "Commend";
+                    TextView temp = (TextView) v;
+                    temp.setText(commendString);
+                    HashMap commendData = new HashMap();
+                    commendData.put("commend", parentID);
+                    commendData.put("tutorID", id);
+                    PostResponseAsyncTask commend = new PostResponseAsyncTask(otherProfile.this, commendData);
+                    commend.execute("review.php");
+                }
+            };
+            View.OnClickListener gotoReport = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String parentID = Integer.toString(((LinearLayout) (v.getParent()).getParent()).getId());
+                    HashMap reportData = new HashMap();
+                    reportData.put("report", parentID);
+                    reportData.put("tutorID", id);
+                    PostResponseAsyncTask report = new PostResponseAsyncTask(otherProfile.this, reportData);
+                    report.execute("review.php");
+                }
+            };
+            averageRatingBar.setRating(ratingNum);
+            averageRating.setText(ratingString);
+            //Dynamically add reviews
+            for (int i = 0; i < reviews.length(); i++) {
+                //Set average rating
+                //style="?android:attr/ratingBarStyleSmall"
+
+                //Loading the reviews into strings
+                String name = reviews.getJSONObject(i).optString("name");
+                String title = reviews.getJSONObject(i).optString("title");
+                String review = reviews.getJSONObject(i).optString("review");
+                String rating = reviews.getJSONObject(i).optString("rating");
+                String date = reviews.getJSONObject(i).optString("date");
+                String reviewerID = reviews.getJSONObject(i).optString("reviewerID");
+                commendNum = reviews.getJSONObject(i).optString("commends");
+                //Each review will be put into an entry layout which will be added to the whole list layout
+                LinearLayout entry = new LinearLayout(otherProfile.this);
+                //Setting id as reviewer id so we can retrieve it later from multiple child views
+                Log.e("reviewerID", reviewerID);
+                entry.setId(Integer.parseInt(reviewerID));
+                //Setting the rating bar accordingly
+                //Different layouts for different parts of the review
+                LinearLayout.LayoutParams entryParams = new LinearLayout.LayoutParams
+                        (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                //Left top right bottom
+                entryParams.setMargins(20, 20, 0, 15);
+                entry.setLayoutParams(entryParams);
+                entry.setOrientation(LinearLayout.VERTICAL);
+                    /*
+                    ratingBar.setScaleX(Float.parseFloat("0.5"));
+                    ratingBar.setScaleY(Float.parseFloat("0.5"));
+                    ratingBar.setPivotX(0);
+                    ratingBar.setPivotY(0);
+                    */
+                //Header will be in a horizontal format to fit rating bar and title
+                LinearLayout header = new LinearLayout(otherProfile.this);
+                entryParams.setMargins(20, 0, 0, 25);
+                header.setLayoutParams(entryParams);
+                LinearLayout.LayoutParams ratingParams = new LinearLayout.LayoutParams
+                        (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                //Adding rating to header
+                RatingBar ratingBar = new RatingBar(otherProfile.this, null, R.attr.ratingBarStyleSmall);
+                ratingBar.setIsIndicator(true);
+                //Making sure rating isn't null
+                if (!rating.equals("null")) {
+                    ratingBar.setRating(Float.parseFloat(rating));
+                } else {
+                    ratingBar.setVisibility(View.GONE);
+                }
+                ratingBar.setLayoutParams(ratingParams);
+                header.addView(ratingBar);
+                //Adding title of each review to header
+                LinearLayout.LayoutParams headerParams = new LinearLayout.LayoutParams
+                        (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                headerParams.setMargins(10, 0, 0, 0);
+                TextView headerString = new TextView(otherProfile.this);
+                headerString.setTextSize(15);
+                headerString.setTypeface(null, Typeface.BOLD);
+                headerString.setText(title);
+                headerString.setLayoutParams(headerParams);
+                header.addView(headerString);
+                //Add header to the entry
+                entry.addView(header);
+
+                //Add the author row
+                LinearLayout authorRow = new LinearLayout(otherProfile.this);
+                //Add views to author row
+                LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams
+                        (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                lparams.setMargins(20, 0, 0, 10);
+                TextView author = new TextView(otherProfile.this);
+                author.setTextSize(12);
+                //String temp = "By " + name + " on " + date;
+                String temp = "By ";
+                author.setText(temp);
+                author.setLayoutParams(lparams);
+                //entry.addView(author);
+                authorRow.addView(author);
+
+                //Add text with author's name that is clickable to go to their profile
+                //style="?android:attr/borderlessButtonStyle"
+                //android:background="@android:color/transparent"
+                TextView authorButton = new TextView(otherProfile.this);
+                authorButton.setText(name);
+                authorButton.setTypeface(null, Typeface.BOLD);
+                //Setting id as reviewer id so we can retrieve it later to go to their profile
+                //authorButton.setId(Integer.parseInt(reviewerID));
+                authorButton.setOnClickListener(gotoProfile);
+
+                //Add date
+                Calendar calendar = Calendar.getInstance();
+                try {
+                    calendar.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(date));
+                } catch (ParseException e) {
+                    //This should never happen
+                    e.printStackTrace();
+                }
+                String month = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
+                String day = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
+                String year = Integer.toString(calendar.get(Calendar.YEAR));
+                date = month + " " + day + ", " + year;
+                authorRow.addView(authorButton);
+                TextView dateView = new TextView(otherProfile.this);
+                temp = " on " + date;
+                dateView.setText(temp);
+                authorRow.addView(dateView);
+                //Add author row to entry
+                entry.addView(authorRow);
+
+                //Simply adding the text of the review to entry
+                TextView body = new TextView(otherProfile.this);
+                body.setText(review);
+                body.setLayoutParams(lparams);
+                entry.addView(body);
+
+                //Adding buttons and interactions with each review
+                //LinearLayout extraRow = new LinearLayout(otherProfile.this);
+                //RelativeLayout  extraRow = new RelativeLayout(otherProfile.this);
+                LinearLayout extraRow = new LinearLayout(otherProfile.this);
+                extraRow.setLayoutParams(lparams);
+                TextView commend = new TextView(otherProfile.this);
+                //Add number of commends this review has gotten
+                //String commendString="Commend";
+                //Create hashmap with uniqueID?
+
+                String commendString = "(" + commendNum + ")" + "Commend";
+                commendMap.put(reviewerID, commendNum);
+                commend.setText(commendString);
+                commend.setTypeface(null, Typeface.BOLD);
+                commend.setOnClickListener(gotoCommend);
+                extraRow.addView(commend);
+
+                //Not sure if any of these are useful
+                LinearLayout.LayoutParams extra = new LinearLayout.LayoutParams
+                        (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                extra.setMargins(50, 0, 0, 0);
+
+                    /*
+                    RelativeLayout.LayoutParams extraRelative = new RelativeLayout.LayoutParams
+                            (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    extraRelative.setMargins(20,0,0,30);
+                    */
+                //extraRelative.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+                TextView report = new TextView(otherProfile.this);
+                report.setText("Report");
+                report.setTypeface(null, Typeface.BOLD);
+                report.setLayoutParams(extra);
+                //report.setLayoutParams(extraRelative);
+                //report.setGravity(Gravity.CENTER);
+                //extraRelative.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+                //Report.setLayoutParams(extraRelative);
+                report.setOnClickListener(gotoReport);
+                extraRow.addView(report);
+
+
+                //extraRelative.removeRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                //Add ability to comment?
+                //TextView Comment = new TextView(otherProfile.this);
+                //Comment.setText("Comment");
+                //Comment.setOnClickListener(comment);
+                entry.addView(extraRow);
+                //Finally insert into partial full view
+                //reviewList.addView(entry);
+                loadSection.addView(entry);
+            }
+            //No reviews, fix views and leave proper message
+            if (reviews.length() == 0) {
+                averageRatingBar.setVisibility(View.GONE);
+                averageRating.setVisibility(View.GONE);
+                headerBar.setText("This tutor has no reviews");
+            }
+            return loadSection;
+        } catch(JSONException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public static void expand(final View v) {
+        v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = v.getMeasuredHeight();
+
+        // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+        v.getLayoutParams().height = 1;
+        v.setVisibility(View.VISIBLE);
+        Animation a = new Animation()
+        {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                v.getLayoutParams().height = interpolatedTime == 1
+                        ? ViewGroup.LayoutParams.WRAP_CONTENT
+                        : (int)(targetHeight * interpolatedTime);
+                v.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
     }
 }
