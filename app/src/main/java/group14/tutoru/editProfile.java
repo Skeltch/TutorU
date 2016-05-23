@@ -264,6 +264,10 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                     String[] subjects = getResources().getStringArray(R.array.Subjects);
                     String[] tClasses = new String[classViewLength];
                     AutoCompleteTextView[] newClassesArray = classesList.toArray(new AutoCompleteTextView[classesList.size()]);
+
+                    String tGpa = uGpa.getText().toString();
+                    String tGradYear = uGradYear.getText().toString();
+                    String tMajor = uMajor.getText().toString();
                     for (int i = 0; i < classViewLength; i++) {
                         tClasses[i] = newClassesArray[i].getText().toString();
                     }
@@ -273,12 +277,23 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                             validClasses = false;
                         }
                     }
-                    if (validClasses) {
+                    boolean validInput = false;
+                    try {
+                        if(tMajor.isEmpty()){
+                            Toast.makeText(getApplicationContext(), "Field Major is missing", Toast.LENGTH_SHORT).show();
+                        }
+                        else if(tGradYear.length()!=4){
+                            Toast.makeText(getApplicationContext(), "Invalid Graduation Year", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            validInput=true;
+                        }
+                    } catch(NumberFormatException e){
+                        Toast.makeText(getApplicationContext(), "Invalid Number.", Toast.LENGTH_SHORT).show();
+                    }
+                    if (validClasses && validInput) {
                         String tPassword = uPassword.getText().toString();
                         String tEmail = uEmail.getText().toString();
-                        String tGpa = uGpa.getText().toString();
-                        String tGradYear = uGradYear.getText().toString();
-                        String tMajor = uMajor.getText().toString();
                         String tPrice = uPrice.getText().toString();
                         String tDescription = uDescription.getText().toString();
                         //Add phone number?
@@ -290,6 +305,10 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                                 Float.parseFloat(tGpa);
                                 Integer.parseInt(tGradYear);
                                 tPrice = currencyFormatter.parse(tPrice).toString();
+                                if (tGpa.length() != 5 || Float.parseFloat(tGpa) > 4 || Float.parseFloat(tGpa) <= 0) {
+                                    //Log.e(Float.toString(gpa.length()), gpa);
+                                    Toast.makeText(getApplicationContext(), "Invalid GPA. GPA must be to 3 decimals", Toast.LENGTH_SHORT).show();
+                                }
                             } catch (NumberFormatException e) {
                                 Toast.makeText(getApplicationContext(), "Invalid Numbers", Toast.LENGTH_SHORT).show();
                                 validNums = false;
@@ -348,19 +367,28 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                                     e.printStackTrace();
                                 }
                             }
-                            Log.e("JSON CLASSES", classJson.toString());
                             postData.put("classes", classJson.toString());
                             if (price != tPrice) {
-                                postData.put("price", tPrice);
+                                if (tPrice.isEmpty()) {
+                                    postData.put("price","NULL");
+                                }
+                                else {
+                                    postData.put("price", tPrice);
+                                }
                             }
                             if (description != tDescription) {
                                 postData.put("description", tDescription);
                             }
+                            //Debugging
+                            for(Object temp : postData.keySet()){
+                                String key = temp.toString();
+                                String value = postData.get(key).toString();
+                                Log.e(key,value);
+                            }
 
                             PostResponseAsyncTask editProfile = new PostResponseAsyncTask(editProfile.this, postData);
+                            editProfile.useLoad(false);
                             editProfile.execute("editProfile.php");
-                            Intent i = new Intent(editProfile.this, Profile.class);
-                            startActivity(i);
                         } else {
                             Toast.makeText(getApplicationContext(), "Invalid Class", Toast.LENGTH_SHORT).show();
                         }
@@ -371,7 +399,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
     }
     @Override
     public void processFinish(String output){
-        //do nothing
+        finish();
     }
 
 

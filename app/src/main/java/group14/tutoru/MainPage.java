@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -21,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -90,7 +92,8 @@ public class MainPage extends AppCompatActivity
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 Intent i = new Intent(MainPage.this, Cards.class);
-                i.putExtra("searchTerm", search.getText());
+                Log.e("class", search.getText()+".");
+                i.putExtra("class", search.getText().toString().trim());
                 startActivity(i);
                 return true;
             }
@@ -99,7 +102,9 @@ public class MainPage extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(MainPage.this, Cards.class);
-                i.putExtra("searchTerm", parent.getItemAtPosition(position).toString());
+                TextView temp = (TextView)view;
+                Log.e("setOnItemClickListener",parent.getItemAtPosition(position).toString()+" "+temp.getText()+".");
+                i.putExtra("class", parent.getItemAtPosition(position).toString());
                 startActivity(i);
             }
         });
@@ -109,7 +114,7 @@ public class MainPage extends AppCompatActivity
         featured.execute("featured.php");
 
         //Button to go to the featured tutor's profile
-        Button featuredButton = (Button) findViewById(R.id.featured);
+        LinearLayout featuredButton = (LinearLayout) findViewById(R.id.featured);
         featuredButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){

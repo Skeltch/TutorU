@@ -12,8 +12,8 @@
     tools:context="group14.tutoru.MainPage"
     tools:showIn="@layout/app_bar_main_page"
 	android:background="#dbdada">
-	
 	<LinearLayout
+		android:id="@+id/featured"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:orientation="vertical"
@@ -57,10 +57,4 @@
                 android:layout_marginBottom="16dp"/>
 			</LinearLayout>
 	</LinearLayout>
-	<Button
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:id="@+id/featured"
-	android:background="@null"/>
-
 </RelativeLayout>

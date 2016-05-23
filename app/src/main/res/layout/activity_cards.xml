@@ -20,7 +20,22 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
-
+    <!--
     <include layout="@layout/content_cards" />
-
+    -->
+    <!--Use frame layout for stacked cards-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/cardFrame"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:animateLayoutChanges="true">
+        <!--
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/cardList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"/>
+        -->
+    </FrameLayout>
 </android.support.design.widget.CoordinatorLayout>

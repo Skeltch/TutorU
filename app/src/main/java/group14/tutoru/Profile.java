@@ -121,7 +121,7 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                     i.putExtra("classes", uClasses);
                     i.putExtra("price", uPrice);
                     i.putExtra("description", uDescription);
-                    startActivity(i);
+                    startActivityForResult(i, 1);
                 }
             });
         }
@@ -254,7 +254,13 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                 if(!uGpa.equals("null")) {
                     DecimalFormat temp = new DecimalFormat("#.###");
                     //This function ensures that the decimal is to 3 places
-                    uGpa = Double.toString(Double.valueOf(temp.format(Float.parseFloat(uGpa))));
+                    //uGpa = Double.toString(Double.valueOf(temp.format(Float.parseFloat(uGpa))));
+                    if(Integer.parseInt(uGpa)==Float.parseFloat(uGpa)){
+                        uGpa+=".000";
+                    }
+                    else {
+                        uGpa = temp.format(Double.parseDouble(uGpa));
+                    }
                     gpa.setText(uGpa);
                 }
                 else{
