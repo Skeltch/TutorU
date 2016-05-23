@@ -282,7 +282,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                         if(tMajor.isEmpty()){
                             Toast.makeText(getApplicationContext(), "Field Major is missing", Toast.LENGTH_SHORT).show();
                         }
-                        else if(tGradYear.length()!=4){
+                        else if(tGradYear.isEmpty() || tGradYear.length()!=4){
                             Toast.makeText(getApplicationContext(), "Invalid Graduation Year", Toast.LENGTH_SHORT).show();
                         }
                         else{
@@ -308,6 +308,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                                 if (tGpa.length() != 5 || Float.parseFloat(tGpa) > 4 || Float.parseFloat(tGpa) <= 0) {
                                     //Log.e(Float.toString(gpa.length()), gpa);
                                     Toast.makeText(getApplicationContext(), "Invalid GPA. GPA must be to 3 decimals", Toast.LENGTH_SHORT).show();
+                                    validNums=false;
                                 }
                             } catch (NumberFormatException e) {
                                 Toast.makeText(getApplicationContext(), "Invalid Numbers", Toast.LENGTH_SHORT).show();
@@ -325,22 +326,14 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                             HashMap postData = new HashMap();
                             //Check if data has changed
                             postData.put("id", Integer.toString(id));
-                            if (password != tPassword) {
-                                postData.put("password", tPassword);
-                            }
-                            //Send email
-                            if (email != tEmail) {
-                                postData.put("email", tEmail);
-                            }
-                            if (gpa != tGpa) {
-                                if(tGpa.isEmpty()){
-                                    postData.put("gpa","NULL");
+                                if (!tGpa.equals(gpa)) {
+                                    if (tGpa.isEmpty()) {
+                                        postData.put("gpa", "NULL");
+                                    } else {
+                                        postData.put("gpa", tGpa);
+                                    }
                                 }
-                                else {
-                                    postData.put("gpa", tGpa);
-                                }
-                            }
-                            if (gradYear != tGradYear) {
+                            if (!gradYear.equals(tGradYear)) {
                                 if(tGradYear.isEmpty()){
                                     postData.put("graduation_year","NULL");
                                 }
@@ -348,7 +341,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                                     postData.put("graduation_year", tGradYear);
                                 }
                             }
-                            if (major != tMajor) {
+                            if (!major.equals(tMajor)) {
                                 postData.put("major", tMajor);
                             }
                             //Classes should be entered on a new line and come with suggestions like the search
@@ -368,15 +361,14 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
                                 }
                             }
                             postData.put("classes", classJson.toString());
-                            if (price != tPrice) {
+                            if (!tPrice.equals(price)) {
                                 if (tPrice.isEmpty()) {
-                                    postData.put("price","NULL");
-                                }
-                                else {
+                                    postData.put("price", "NULL");
+                                } else {
                                     postData.put("price", tPrice);
                                 }
                             }
-                            if (description != tDescription) {
+                            if (!tDescription.equals(description)) {
                                 postData.put("description", tDescription);
                             }
                             //Debugging
@@ -400,6 +392,7 @@ public class editProfile extends AppCompatActivity implements AsyncResponse{
     @Override
     public void processFinish(String output){
         finish();
+        startActivity(new Intent(editProfile.this, Profile.class));
     }
 
 

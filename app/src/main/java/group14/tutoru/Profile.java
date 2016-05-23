@@ -255,10 +255,14 @@ public class Profile extends AppCompatActivity implements AsyncResponse {
                     DecimalFormat temp = new DecimalFormat("#.###");
                     //This function ensures that the decimal is to 3 places
                     //uGpa = Double.toString(Double.valueOf(temp.format(Float.parseFloat(uGpa))));
-                    if(Integer.parseInt(uGpa)==Float.parseFloat(uGpa)){
-                        uGpa+=".000";
-                    }
-                    else {
+                    try {
+                        if (Integer.parseInt(uGpa) == Float.parseFloat(uGpa)) {
+                            uGpa += ".000";
+                        }
+                        else {
+                            uGpa = temp.format(Double.parseDouble(uGpa));
+                        }
+                    } catch(NumberFormatException e){
                         uGpa = temp.format(Double.parseDouble(uGpa));
                     }
                     gpa.setText(uGpa);
