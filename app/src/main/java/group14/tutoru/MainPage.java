@@ -5,9 +5,12 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v4.view.GestureDetectorCompat;
 import android.util.Base64;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,14 +20,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Transformation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,18 +49,18 @@ Contains featured tutor and navigation bar for moving around
 Created and debugged by Samuel Cheung
 */
 public class MainPage extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AsyncResponse {
+        implements NavigationView.OnNavigationItemSelectedListener, AsyncResponse{
 
     int featuredId;
     String featuredName;
+    LinearLayout featuredView;
+    MoveViewGesture moveGesture;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        //setTitle("Search bar placeholder");
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -92,7 +102,6 @@ public class MainPage extends AppCompatActivity
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 Intent i = new Intent(MainPage.this, Cards.class);
-                Log.e("class", search.getText()+".");
                 i.putExtra("class", search.getText().toString().trim());
                 startActivity(i);
                 return true;
@@ -102,8 +111,6 @@ public class MainPage extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(MainPage.this, Cards.class);
-                TextView temp = (TextView)view;
-                Log.e("setOnItemClickListener",parent.getItemAtPosition(position).toString()+" "+temp.getText()+".");
                 i.putExtra("class", parent.getItemAtPosition(position).toString());
                 startActivity(i);
             }
@@ -114,17 +121,28 @@ public class MainPage extends AppCompatActivity
         featured.execute("featured.php");
 
         //Button to go to the featured tutor's profile
-        LinearLayout featuredButton = (LinearLayout) findViewById(R.id.featured);
-        featuredButton.setOnClickListener(new View.OnClickListener(){
+        featuredView = (LinearLayout) findViewById(R.id.featured);
+        moveGesture = new MoveViewGesture(featuredView, MainPage.this);
+        final GestureDetector gDetector = new GestureDetector(this, moveGesture);
+        featuredView.setOnTouchListener(new View.OnTouchListener(){
             @Override
-            public void onClick(View view){
-                //Intent i = new Intent(MainPage.this, otherProfile.class);
-                Intent i = new Intent(MainPage.this, otherProfile.class);
-                i.putExtra("id",String.valueOf(featuredId));
-                i.putExtra("name",String.valueOf(featuredName));
-                startActivityForResult(i,1);
+            public boolean onTouch(View v, MotionEvent event){
+                if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+                    moveGesture.action();
+                }
+                return gDetector.onTouchEvent(event);
             }
         });
+        /*
+        featuredView.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent featured = new Intent(MainPage.this, otherProfile.class);
+                featured.putExtra("id",Integer.toString(featuredId));
+                startActivityForResult(featured, 1);
+            }
+        });
+        */
     }
 
 
@@ -234,6 +252,7 @@ public class MainPage extends AppCompatActivity
             TextView featuredTutor = (TextView)findViewById(R.id.tutorInfo);
             RatingBar ratingBar = (RatingBar) findViewById(R.id.ratingBar);
             featuredId=Integer.parseInt(profile.optString("id"));
+            moveGesture.setId(featuredId);
             featuredName=profile.optString("first_name" + " " + "last_name");
             String uGpa = profile.optString("gpa");
             String gpaString = "";
@@ -305,4 +324,5 @@ public class MainPage extends AppCompatActivity
             e.printStackTrace();
         }
     }
+
 }

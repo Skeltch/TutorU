@@ -11,50 +11,51 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="group14.tutoru.MainPage"
     tools:showIn="@layout/app_bar_main_page"
-	android:background="#dbdada">
-	<LinearLayout
-		android:id="@+id/featured"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:orientation="vertical"
-		android:background="@drawable/round_layout">
-		<TextView
+	android:background="#dbdada"
+    android:id="@+id/root">
+		<LinearLayout
+			android:id="@+id/featured"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_margin="@dimen/text_margin" 
-			android:textStyle="bold"
-			android:textSize="32dp"
-			android:text="Featured Tutors"/>
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:orientation="vertical">
-			<View
-				android:layout_width="match_parent"
-				android:layout_height="3dp"
-				android:background="@color/colorPrimary"/>
-			<ImageView
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
-				android:layout_width="100dp"
-				android:layout_height="100dp"
-				android:id="@+id/profilePic"
-                android:scaleType="centerCrop"
-				android:src="@android:drawable/ic_menu_gallery"/>
-			<RatingBar
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:id="@+id/ratingBar"
-				android:layout_marginLeft="10dp"
-				android:isIndicator="true"/>
+			android:orientation="vertical"
+			android:background="@drawable/round_layout">
 			<TextView
-				android:id="@+id/tutorInfo"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:textSize="15dp"
-				android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginBottom="16dp"/>
-			</LinearLayout>
-	</LinearLayout>
+				android:layout_margin="@dimen/text_margin"
+				android:textStyle="bold"
+				android:textSize="32dp"
+				android:text="Featured Tutors"/>
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:orientation="vertical">
+				<View
+					android:layout_width="match_parent"
+					android:layout_height="3dp"
+					android:background="@color/colorPrimary"/>
+				<ImageView
+					android:layout_marginLeft="15dp"
+					android:layout_marginTop="10dp"
+					android:layout_width="100dp"
+					android:layout_height="100dp"
+					android:id="@+id/profilePic"
+					android:scaleType="centerCrop"
+					android:src="@android:drawable/ic_menu_gallery"/>
+				<RatingBar
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:id="@+id/ratingBar"
+					android:layout_marginLeft="10dp"
+					android:isIndicator="true"/>
+				<TextView
+					android:id="@+id/tutorInfo"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textSize="15dp"
+					android:layout_marginLeft="16dp"
+					android:layout_marginRight="16dp"
+					android:layout_marginBottom="16dp"/>
+				</LinearLayout>
+		</LinearLayout>
 </RelativeLayout>

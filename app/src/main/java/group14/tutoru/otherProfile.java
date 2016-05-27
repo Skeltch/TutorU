@@ -100,8 +100,9 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
         HashMap postData = new HashMap();
         if(getIntent().hasExtra("id")) {
             id = getIntent().getStringExtra("id");
+            Log.e("id", id);
             stack = new ArrayList();
-            stack.add(0,id);
+            stack.add(0, id);
         }
         else{
             stack = getIntent().getStringArrayListExtra("stack");
@@ -139,7 +140,6 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
         //Start activity for reviews
         commendMap = new HashMap();
         HashMap postDataReviews = new HashMap();
-        //Log.e("id", id);
         postDataReviews.put("id", id);
         //Get reviews up to limit
         PostResponseAsyncTask list = new PostResponseAsyncTask(otherProfile.this, postDataReviews);
@@ -374,13 +374,10 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                     //getSupportFragmentManager().beginTransaction().
                     //remove(getSupportFragmentManager().findFragmentById(R.id.reviewFragment)).commit();
                     if(tab2!=null) {
-                        Log.e("tab2", "gone");
                         //tab2.gone();
                         tab2.setTutee();
-
                     }
                     if(tab3!=null){
-                        Log.e("tab3","gone");
                         tab3.gone();
                     }
                 }
@@ -560,7 +557,6 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                     ArrayList<String> commendList = commendMap.get(parentID);
                     HashMap commendData = new HashMap();
                     commendNum = commendList.get(0);
-                    Log.e("num", commendList.get(1));
                     //commendNum = commendMap.get(parentID);
                     if(commendList.get(1).equals("0")) {
                         commendNum = Integer.toString(Integer.parseInt(commendNum) + 1);
@@ -699,7 +695,6 @@ public class otherProfile extends AppCompatActivity implements AsyncResponse {
                 String day = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
                 String year = Integer.toString(calendar.get(Calendar.YEAR));
                 date = month + " " + day + ", " + year;
-                Log.e("date",date);
                 authorRow.addView(authorButton);
                 TextView dateView = new TextView(otherProfile.this);
                 temp = " on " + date;

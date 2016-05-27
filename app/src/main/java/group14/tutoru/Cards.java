@@ -1,14 +1,14 @@
 package group14.tutoru;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -17,19 +17,21 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class Cards extends AppCompatActivity implements AsyncResponse {
+
+    ArrayList<MoveViewGesture> moveGesture;
+    ArrayList<GestureDetector> gDetector;
+    int numCards;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +41,12 @@ public class Cards extends AppCompatActivity implements AsyncResponse {
         setSupportActionBar(toolbar);
 
         String uClass = getIntent().getStringExtra("class");
-        Log.e("Classes", uClass+".");
+        Log.e("Classes", uClass + ".");
         HashMap postData = new HashMap();
         postData.put("class", uClass);
         PostResponseAsyncTask search = new PostResponseAsyncTask(Cards.this, postData);
         search.execute("search.php");
+
         /*
         RecyclerView list = (RecyclerView) findViewById(R.id.cardList);
         LinearLayoutManager manager = new LinearLayoutManager(this);
@@ -58,17 +61,32 @@ public class Cards extends AppCompatActivity implements AsyncResponse {
     public void processFinish(String output){
         try {
             JSONArray tutors = new JSONArray(output);
-            View.OnClickListener cardClick = new View.OnClickListener() {
+            View.OnTouchListener cardTouch = new View.OnTouchListener(){
                 @Override
-                public void onClick(View v) {
-                    v.setVisibility(View.GONE);
-                    //Intent profile = new Intent(Cards.this, otherProfile.class);
-                    //profile.putExtra("id",v.getId());
-                    //startActivityForResult(profile);
+                public boolean onTouch(View v, MotionEvent event) {
+                    //We need this to capture action_cancel
+                    if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+                        moveGesture.get(v.getId()).action();
+                        //inefficient, maybe change so moveviewgesture class handles this
+                        for(int i=0; i<moveGesture.size()-1; i++){
+                            if(!moveGesture.get(i).isSwiped()){
+                                break;
+                            }
+                            else{
+                                //Change to something else
+                                startActivity(new Intent(Cards.this, MainPage.class));
+                            }
+                        }
+                    }
+                    return gDetector.get(v.getId()).onTouchEvent(event);
                 }
             };
             FrameLayout frame = (FrameLayout)findViewById(R.id.cardFrame);
-            for(int i=0; i<tutors.length(); i++){
+            numCards=tutors.length();
+            Log.e("numCards",Integer.toString(numCards));
+            moveGesture = new ArrayList(numCards);
+            gDetector = new ArrayList(numCards);
+            for(int i=0; i<numCards; i++){
                 String id = tutors.optJSONObject(i).optString("id");
                 String firstName = tutors.optJSONObject(i).optString("first_name");
                 String lastName = tutors.optJSONObject(i).optString("last_name");
@@ -87,10 +105,27 @@ public class Cards extends AppCompatActivity implements AsyncResponse {
 
                 //LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams
                 //        (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                CardView.LayoutParams cardParams = new CardView.LayoutParams
-                        (LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-                cardParams.setMargins(10, 10, 10, 10);
+                RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams
+                        (RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+                RelativeLayout parentLayout = new RelativeLayout(Cards.this);
+                parentLayout.setLayoutParams(relativeParams);
+//                CardView.LayoutParams cardParams = new CardView.LayoutParams
+//                        (CardView.LayoutParams.WRAP_CONTENT, CardView.LayoutParams.WRAP_CONTENT);
+//                cardParams.setMargins(10, 10, 10, 10);
+                DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
+                float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+                float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+                //Log.e(Float.toString(dpWidth),Float.toString(dpHeight));
+                Log.e(Integer.toString(displayMetrics.widthPixels),Integer.toString(displayMetrics.heightPixels));
+                RelativeLayout.LayoutParams cardParams = new RelativeLayout.LayoutParams
+                        //(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                        //((int)(dpWidth), (int)(dpHeight));
+                        (displayMetrics.widthPixels-100,displayMetrics.heightPixels-500);
+                cardParams.setMargins(50, 10, 10, 10);
+                //cardParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
                 card.setCardElevation(10);
+                card.setMinimumHeight(1000);
+                card.setMinimumWidth(600);
                 card.setRadius(10);
                 card.setLayoutParams(cardParams);
 
@@ -115,7 +150,7 @@ public class Cards extends AppCompatActivity implements AsyncResponse {
                 tutorText.setLayoutParams(textParams);
                 tutorText.setTextSize(15);
 
-                String nameString ="Name: " + name;
+                String nameString ="\nName: " + name;
                 String gpaString = "";
                 if(!gpa.equals("null")) {
                     DecimalFormat gpaFormat = new DecimalFormat("#.###");
@@ -123,6 +158,7 @@ public class Cards extends AppCompatActivity implements AsyncResponse {
                     gpa = Double.toString(Double.valueOf(gpaFormat.format(Float.parseFloat(gpa))));
                     gpaString = "\nGpa: " + gpa;
                 }
+                ratingBar.setIsIndicator(true);
                 String averageRating="\nAverage Rating: ";
                 if(!rating.equals("null")) {
                     DecimalFormat decTemp = new DecimalFormat("#.###");
@@ -140,8 +176,12 @@ public class Cards extends AppCompatActivity implements AsyncResponse {
                     gradYearString = "\nGraduation Year: " + gradYear;
                 }
                 String majorString = "\nMajor: " + major;
-                String descriptionString = "\nDescription: " + description;
-                String temp = nameString + gpaString + averageRating + gradYearString + majorString + descriptionString;
+                String descriptionString = "";
+                if(!description.equals("null")){
+                    descriptionString = "\nDescription: " + description;
+                }
+                //Add sample review
+                String temp = averageRating + nameString + gpaString + gradYearString + majorString + descriptionString;
                 tutorText.setText(temp);
 
                 linLayout.addView(pic);
@@ -149,7 +189,22 @@ public class Cards extends AppCompatActivity implements AsyncResponse {
                 linLayout.addView(tutorText);
                 card.addView(linLayout);
                 card.setId(Integer.parseInt(id));
-                card.setOnClickListener(cardClick);
+                card.setOnTouchListener(cardTouch);
+
+                card.setId(i);
+                //Edit settings for moveGesture
+                MoveViewGesture tempMVG = new MoveViewGesture(card,Cards.this);
+                tempMVG.setReturn(50, 10);
+                tempMVG.setId(Integer.parseInt(id));
+                tempMVG.setUndo(frame);
+                moveGesture.add(i, tempMVG);
+
+                //Edit settings for gDetector
+                GestureDetector tempGD = new GestureDetector(Cards.this, moveGesture.get(i));
+                tempGD.setIsLongpressEnabled(false);
+                gDetector.add(i, tempGD);
+                parentLayout.addView(card);
+                frame.addView(parentLayout);
                 /*
                 final int targetHeight = card.getMeasuredHeight();
                 Animation a = new Animation(){
@@ -169,7 +224,6 @@ public class Cards extends AppCompatActivity implements AsyncResponse {
                 a.setDuration((int) (targetHeight / card.getContext().getResources().getDisplayMetrics().density));
                 card.setAnimation(a);
                 */
-                frame.addView(card);
                 /*
                 //Initiating classes
                 String classString = "\nClasses: ";
